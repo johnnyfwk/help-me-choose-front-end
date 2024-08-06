@@ -1,12 +1,12 @@
 export default function InputPassword({
-    inputPassword,
-    setInputPassword,
-    inputPasswordErrorMessage,
-    setInputPasswordErrorMessage
+    password,
+    setPassword,
+    passwordErrorMessage,
+    setPasswordErrorMessage
 }) {
-    function handleInputPassword(event) {
-        setInputPassword(event.target.value);
-        setInputPasswordErrorMessage("");
+    function handlePassword(event) {
+        setPassword(event.target.value);
+        setPasswordErrorMessage("");
     }
 
     return (
@@ -19,12 +19,12 @@ export default function InputPassword({
                 type="password"
                 id="password"
                 name="password"
-                value={inputPassword}
-                onChange={handleInputPassword}
+                value={password}
+                onChange={handlePassword}
                 maxLength="128"
             ></input>
 
-            <div className="error">{inputPasswordErrorMessage}</div>
+            <div className="error">{passwordErrorMessage}</div>
         </div>
     )
 }

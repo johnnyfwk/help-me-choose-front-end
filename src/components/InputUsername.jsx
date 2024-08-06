@@ -1,12 +1,12 @@
 export default function InputUsername({
-    inputUsername,
-    setInputUsername,
-    inputUsernameErrorMessage,
-    setInputUsernameErrorMessage
+    username,
+    setUsername,
+    usernameErrorMessage,
+    setUsernameErrorMessage
 }) {
-    function handleInputUsername(event) {
-        setInputUsername(event.target.value);
-        setInputUsernameErrorMessage("");
+    function handleUsername(event) {
+        setUsername(event.target.value);
+        setUsernameErrorMessage("");
     }
 
     return (
@@ -19,13 +19,13 @@ export default function InputUsername({
                 type="text"
                 id="username"
                 name="username"
-                value={inputUsername}
-                onChange={handleInputUsername}
+                value={username}
+                onChange={handleUsername}
                 maxLength="20"
                 size="20"
             ></input>
 
-            <div className="error">{inputUsernameErrorMessage}</div>
+            <div className="error">{usernameErrorMessage}</div>
         </div>
     )
 }

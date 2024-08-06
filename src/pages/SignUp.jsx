@@ -1,22 +1,28 @@
 import { Helmet } from 'react-helmet';
 import { useState } from 'react';
 import * as utils from '../../utils';
+import InputEmail from '../components/InputEmail';
 import InputUsername from '../components/InputUsername';
 import InputPassword from '../components/InputPassword';
 
 export default function SignUp() {
-    const [inputUsername, setInputUsername] = useState("");    
-    const [inputUsernameErrorMessage, setInputUsernameErrorMessage] = useState("");
+    const [email, setEmail] = useState("");
+    const [emailErrorMessage, setEmailErrorMessage] = useState("");
 
-    const [inputPassword, setInputPassword] = useState("");
-    const [inputPasswordErrorMessage, setInputPasswordErrorMessage] = useState("");
+    const [username, setUsername] = useState("");
+    const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
+
+    const [password, setPassword] = useState("");
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
 
     function handleCreateAccount() {
-        const usernameValidity = utils.validateUsernameInput(inputUsername);
-        setInputUsernameErrorMessage(usernameValidity.msg);
-        const passwordValidity = utils.validatePasswordInput(inputPassword);
-        setInputPasswordErrorMessage(passwordValidity.msg);
-        if (usernameValidity.isValid && passwordValidity.isValid) {
+        const emailCheck = utils.validateEmail(email);
+        setEmailErrorMessage(emailCheck.msg);
+        const usernameCheck = utils.validateUsername(username);
+        setUsernameErrorMessage(usernameCheck.msg);
+        const passwordCheck = utils.validatePassword(password);
+        setPasswordErrorMessage(passwordCheck.msg);        
+        if (usernameCheck.isValid && passwordCheck.isValid && emailCheck.isValid) {
             console.log("Account has been created successfully!");
         } else {
             console.log("Account could not be created.");
@@ -38,25 +44,32 @@ export default function SignUp() {
                 <p>Create an account to post questions and get answers from other users.</p>
 
                 <form>
+                    <InputEmail
+                        email={email}
+                        setEmail={setEmail}
+                        emailErrorMessage={emailErrorMessage}
+                        setEmailErrorMessage={setEmailErrorMessage}
+                    />
+
                     <InputUsername
-                        inputUsername={inputUsername}
-                        setInputUsername={setInputUsername}
-                        inputUsernameErrorMessage={inputUsernameErrorMessage}
-                        setInputUsernameErrorMessage={setInputUsernameErrorMessage}
+                        username={username}
+                        setUsername={setUsername}
+                        usernameErrorMessage={usernameErrorMessage}
+                        setUsernameErrorMessage={setUsernameErrorMessage}
                     />
 
                     <InputPassword
-                        inputPassword={inputPassword}
-                        setInputPassword={setInputPassword}
-                        inputPasswordErrorMessage={inputPasswordErrorMessage}
-                        setInputPasswordErrorMessage={setInputPasswordErrorMessage}
+                        password={password}
+                        setPassword={setPassword}
+                        passwordErrorMessage={passwordErrorMessage}
+                        setPasswordErrorMessage={setPasswordErrorMessage}
                     />
 
                     <input
                         type="button"
                         value="Create Account"
                         onClick={handleCreateAccount}
-                        disabled={!inputUsername || !inputPassword}
+                        disabled={!username || !password || !email}
                     />
                 </form>
 
