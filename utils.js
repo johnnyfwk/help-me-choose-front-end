@@ -36,8 +36,6 @@ export function validateUsername(username) {
 }
 
 export function validatePassword(password) {
-    // const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]*$/;
-
     if (password.length < 8) {
         return {
             isValid: false,
