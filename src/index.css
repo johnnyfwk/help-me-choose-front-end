@@ -9,6 +9,11 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    --success: green;
+    --error: red;
+
+    --main-background: pink;
 }
 
 * {
@@ -16,16 +21,24 @@
     margin: 0;
 }
 
+.success {
+    color: var(--success);
+}
+
+.error {
+    color: var(--error);
+}
+
 #logo {
     background-color: cyan;
 }
 
 nav {
-    background-color: grey;
+    background-color: lightgrey;
 }
 
 main {
-    background-color: orange;
+    background-color: var(--main-background);
 }
 
 footer {
