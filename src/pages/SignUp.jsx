@@ -28,11 +28,11 @@ export default function SignUp() {
         if (usernameCheck.isValid && passwordCheck.isValid && emailCheck.isValid) {
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
-                    const user = userCredential.user;
-                    console.log(user);
-                    return setDoc(doc(db, 'users', user.uid), {
+                    const member = userCredential.user;
+                    console.log(member);
+                    return setDoc(doc(db, 'users', member.uid), {
                         username: username,
-                        email: user.email,
+                        email: member.email,
                         createdAt: new Date()
                     });
                 })
