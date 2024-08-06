@@ -1,15 +1,10 @@
-export function validateUsernameInput(username) {
-    const regex = /^[a-zA-Z0-9]*$/;
+export function validateEmail(email) {
+    const emailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9_-]+)*@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
 
-    if (!regex.test(username)) {
+    if (!emailRegex.test(email)) {
         return {
             isValid: false,
-            msg: "Username can only contain letters and numbers."
-        };
-    } else if (username.length < 3) {
-        return {
-            isValid: false,
-            msg: "Username be at least 3 characters long."
+            msg: "Email entered is not valid."
         };
     } else {
         return {
@@ -19,8 +14,29 @@ export function validateUsernameInput(username) {
     }
 }
 
-export function validatePasswordInput(password) {
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]*$/;
+export function validateUsername(username) {
+    const usernameRegex = /^[a-zA-Z0-9]*$/;
+
+    if (!usernameRegex.test(username)) {
+        return {
+            isValid: false,
+            msg: "Username can only contain letters and numbers."
+        };
+    } else if (username.length < 3) {
+        return {
+            isValid: false,
+            msg: "Username must be at least 3 characters long."
+        };
+    } else {
+        return {
+            isValid: true,
+            msg: ""
+        };
+    }
+}
+
+export function validatePassword(password) {
+    // const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]*$/;
 
     if (password.length < 8) {
         return {
@@ -30,7 +46,7 @@ export function validatePasswordInput(password) {
     } else if (password.length > 128) {
         return {
             isValid: false,
-            msg: "Password must be less than 128 characters."
+            msg: "Password must be 128 characters or less."
         };
     } else {
         return {
