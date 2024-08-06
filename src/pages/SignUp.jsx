@@ -1,41 +1,25 @@
 import { Helmet } from 'react-helmet';
 import { useState } from 'react';
 import * as utils from '../../utils';
+import InputUsername from '../components/InputUsername';
+import InputPassword from '../components/InputPassword';
 
 export default function SignUp() {
     const [inputUsername, setInputUsername] = useState("");    
-    const [isUsernameValid, setIsUsernameValid] = useState(false);
     const [inputUsernameErrorMessage, setInputUsernameErrorMessage] = useState("");
 
     const [inputPassword, setInputPassword] = useState("");
-    const [isPasswordValid, setIsPasswordValid] = useState(false);
     const [inputPasswordErrorMessage, setInputPasswordErrorMessage] = useState("");
-
-    const [accountCreationMessage, setAccountCreationMessage] = useState("");
-
-    function handleInputUsername(event) {
-        setInputUsername(event.target.value);
-        setInputUsernameErrorMessage("");
-        setAccountCreationMessage("");
-    }
-
-    function handleInputPassword(event) {
-        setInputPassword(event.target.value);
-        setInputPasswordErrorMessage("");
-        setAccountCreationMessage("");
-    }
 
     function handleCreateAccount() {
         const usernameValidity = utils.validateUsernameInput(inputUsername);
-        setIsUsernameValid(usernameValidity.isValid);
         setInputUsernameErrorMessage(usernameValidity.msg);
         const passwordValidity = utils.validatePasswordInput(inputPassword);
-        setIsPasswordValid(passwordValidity.isValid);
         setInputPasswordErrorMessage(passwordValidity.msg);
         if (usernameValidity.isValid && passwordValidity.isValid) {
-            setAccountCreationMessage("Account has been created successfully!");
+            console.log("Account has been created successfully!");
         } else {
-            setAccountCreationMessage("Account could not be created.");
+            console.log("Account could not be created.");
         }
     }
 
@@ -54,40 +38,19 @@ export default function SignUp() {
                 <p>Create an account to post questions and get answers from other users.</p>
 
                 <form>
-                    <div id="username-input">
-                        <label
-                            htmlFor="username"
-                        >Username</label>
+                    <InputUsername
+                        inputUsername={inputUsername}
+                        setInputUsername={setInputUsername}
+                        inputUsernameErrorMessage={inputUsernameErrorMessage}
+                        setInputUsernameErrorMessage={setInputUsernameErrorMessage}
+                    />
 
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            value={inputUsername}
-                            onChange={handleInputUsername}
-                            maxLength="20"
-                            size="20"
-                        ></input>
-
-                        <div className="error">{inputUsernameErrorMessage}</div>
-                    </div>
-
-                    <div id="password-input">
-                        <label
-                            htmlFor="password"
-                        >Password</label>
-
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={inputPassword}
-                            onChange={handleInputPassword}
-                            maxLength="128"
-                        ></input>
-
-                        <div className="error">{inputPasswordErrorMessage}</div>
-                    </div>                    
+                    <InputPassword
+                        inputPassword={inputPassword}
+                        setInputPassword={setInputPassword}
+                        inputPasswordErrorMessage={inputPasswordErrorMessage}
+                        setInputPasswordErrorMessage={setInputPasswordErrorMessage}
+                    />
 
                     <input
                         type="button"
@@ -95,7 +58,6 @@ export default function SignUp() {
                         onClick={handleCreateAccount}
                         disabled={!inputUsername || !inputPassword}
                     />
-                    <div className={isUsernameValid && isPasswordValid ? "success" : "error"}>{accountCreationMessage}</div>
                 </form>
 
                 <h2>Username and Password Requirements</h2>
@@ -109,8 +71,7 @@ export default function SignUp() {
                 <h3>Password:</h3>
                 <ul>
                     <li>Between 8 and 128 characters (inclusive) long.</li>
-                </ul>
-                
+                </ul>                
 
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt tellus eu mattis gravida. Praesent et lacinia elit. Phasellus mauris orci, ultricies id ipsum quis, mollis aliquet diam. Curabitur sollicitudin, nisi vel rhoncus porta, ligula odio volutpat leo, vitae sodales dui justo non tortor. Pellentesque interdum diam ac sem condimentum efficitur. Cras dictum risus at porta vulputate. Nullam pulvinar, ante in congue vulputate, nisi dolor congue sapien, nec pellentesque ipsum dui nec tellus. Vivamus non purus est. Curabitur vitae gravida neque. Sed in massa at sem luctus mattis a eget ipsum. Nam lectus risus, placerat euismod elit eget, blandit faucibus metus. Aenean tristique dictum est, cursus ultrices sem blandit at. Mauris at eros auctor, congue lorem nec, convallis massa. Quisque feugiat eros vel quam convallis, eget malesuada risus cursus.</p>
 
