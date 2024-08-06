@@ -10,10 +10,11 @@ export default function Footer() {
             <div className="footer-heading-and-links-wrapper">
                 <div>HelpMeChoose.uk</div>
                 <div className="footer-links" onClick={handleFooterLinks}>
-                    <Link to="/">Home</Link>
                     <Link to="/about">About</Link>
                     <Link to="/contact">Contact</Link>
                     <Link to="/sign-up">Sign Up</Link>
+                    <Link to="/login">Login</Link>
+                    <Link to="/profile">Profile</Link>
                 </div>                
             </div>
             <div id="copyright">Copyright &copy; {new Date().getFullYear()} HelpMeChoose.uk. All Rights Reserved.</div>
