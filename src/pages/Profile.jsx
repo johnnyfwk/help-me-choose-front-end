@@ -14,9 +14,9 @@ export default function Profile() {
             </Helmet>
 
             <main>
-                <h1>Profile</h1>
+                <h1>{user.displayName}</h1>
 
-                <p>This is a paragraph.</p>
+                <p>This is your profile page.</p>
 
                 <h2>This is a sub-heading</h2>
 
