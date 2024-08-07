@@ -1,18 +1,23 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import InputTitle from "../components/InputTitle";
 import InputDescription from "../components/InputDescription";
 import InputCategory from "../components/InputCategory";
 import InputOptions from "../components/InputOptions";
 import { db } from '../firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
-export default function PostAQuestion() {
+export default function PostAQuestion({
+    user
+}) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("");
     const [options, setOptions] = useState(["", "", ""]);
     const [error, setError] = useState("");
+
+    const navigate = useNavigate();
 
     function handlePostQuestion() {
         const filledOptions = options.filter(option => option !== '').map(opt => opt.trim());
@@ -20,11 +25,14 @@ export default function PostAQuestion() {
             setError("Please enter at least two options.");
         } else {
             addDoc(collection(db, 'questions'), {
+                username: user.displayName,
                 title: title.trim(),
                 description: description.trim(),
                 category,
                 options: filledOptions,
-                votes: Array(filledOptions.length).fill(0)
+                votes: Array(filledOptions.length).fill(0),
+                created: serverTimestamp(),
+                modified: ""
             })
             .then((response) => {
                 console.log(response);
@@ -32,6 +40,7 @@ export default function PostAQuestion() {
                 setDescription("");
                 setCategory("");
                 setOptions(["", "", ""]);
+                navigate('/');
             })
             .catch((error) => {
                 console.log(error);
@@ -39,7 +48,6 @@ export default function PostAQuestion() {
                 setError("Question could not be posted.");
             })
         }
-
     }
 
     return (

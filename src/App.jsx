@@ -19,7 +19,9 @@ function App() {
     return (
         <>
             <Logo />
-            <Nav />
+            <Nav
+                user={user}
+            />
             <Routes>
                 <Route
                     path="/"
@@ -48,7 +50,7 @@ function App() {
                     path="/post-a-question"
                     element={
                         user
-                            ? <PostAQuestion />
+                            ? <PostAQuestion user={user} />
                             : <Navigate to="/login" />
                     }
                 />
@@ -57,7 +59,7 @@ function App() {
                     path="/profile"
                     element={
                         user
-                            ? <Profile />
+                            ? <Profile user={user} />
                             : <Navigate to="/login" />
                     }
                 />

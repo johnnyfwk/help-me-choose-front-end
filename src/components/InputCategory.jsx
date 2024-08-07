@@ -1,6 +1,5 @@
 import { categories } from "../assets/data/categories";
 const sortedUniqueCategories = Array.from(new Set(categories)).sort();
-console.log(sortedUniqueCategories);
 
 export default function InputCategory({
     category,
