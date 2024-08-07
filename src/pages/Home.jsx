@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet";
 import { useState, useEffect } from "react";
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
-import * as utils from '../../utils';
+import QuestionCard from "../components/QuestionCard";
 
 export default function Home() {
     const [questions, setQuestions] = useState([]);
@@ -39,15 +39,7 @@ export default function Home() {
 
                 <div className="questions-wrapper">
                     {questions.map((question, index) => {
-                        return (
-                            <div key={index} className="question-wrapper">
-                                <h2>{question.title}</h2>
-                                <p>{question.description}</p>
-                                <div>{question.category}</div>
-                                <div>{question.username}</div>                                
-                                <div>{utils.formatDate(question.created)}</div>
-                            </div>
-                        )
+                        return <QuestionCard key={index} question={question} />
                     })}
                 </div>
             </main>
