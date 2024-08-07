@@ -1,21 +1,20 @@
 import { useState } from 'react';
 import { Helmet } from 'react-helmet';
-import InputEmailOrUsername from '../components/InputEmailOrUsername';
+import InputEmail from '../components/InputEmail';
 import InputPassword from '../components/InputPassword';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 
 export default function Login() {
-    const [emailOrUsername, setEmailOrUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [emailOrUsernameErrorMessage, setEmailOrUsernameErrorMessage] = useState("");
-    const [error, setError] = useState("");
+    const [emailErrorMessage, setEmailErrorMessage] = useState("");    
     const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+    const [error, setError] = useState("");
 
     function handleLogin() {
-        signInWithEmailAndPassword(auth, emailOrUsername, password)
-            .then((response) => {
-                console.log(response);
+        signInWithEmailAndPassword(auth, email, password)
+            .then(() => {
                 console.log("Logged in successfully!");
             })
             .catch((error) => {
@@ -39,13 +38,11 @@ export default function Login() {
                 <p>Login to your account to ask a question and get responses from other members.</p>
 
                 <form>
-                    <InputEmailOrUsername
-                        emailOrUsername={emailOrUsername}
-                        setEmailOrUsername={setEmailOrUsername}
-                        password={password}
-                        setPassword={setPassword}
-                        emailOrUsernameErrorMessage={emailOrUsernameErrorMessage}
-                        setEmailOrUsernameErrorMessage={setEmailOrUsernameErrorMessage}
+                    <InputEmail
+                        email={email}
+                        setEmail={setEmail}
+                        emailErrorMessage={emailErrorMessage}
+                        setEmailErrorMessage={setEmailErrorMessage}
                         setError={setError}
                     />
 
@@ -63,7 +60,7 @@ export default function Login() {
                         type="button"
                         value="Login"
                         onClick={handleLogin}
-                        disabled={!emailOrUsername || !password}
+                        disabled={!email || !password}
                     />
                 </form>
             </main>
