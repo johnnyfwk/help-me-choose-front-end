@@ -9,17 +9,16 @@ import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Footer from "./components/Footer";
-import LogoutButton from './components/LogoutButton';
 
 function App() {
     const { user, loading } = useAuth();
-    console.log(user)
+    console.log("User: ", user);
+    console.log("Loading? ", loading);
     
     return (
         <>
             <Logo />
             <Nav />
-            {user && <LogoutButton />}
             <Routes>
                 <Route
                     path="/"
@@ -28,17 +27,29 @@ function App() {
 
                 <Route
                     path="/sign-up"
-                    element={user ? <Home /> : <SignUp />}
+                    element={
+                        !user
+                            ? <SignUp />
+                            : <Navigate to="/" />
+                    }
                 />
 
                 <Route
                     path="/login"
-                    element={user ? <Home /> : <Login />}
+                    element={
+                        !user
+                            ? <Login />
+                            : <Navigate to="/" />
+                    }
                 />
 
                 <Route
                     path="/profile"
-                    element={user ? <Profile /> : <Navigate to="/login" />}
+                    element={
+                        user
+                            ? <Profile />
+                            : <Navigate to="/login" />
+                    }
                 />
 
                 <Route
@@ -49,6 +60,11 @@ function App() {
                 <Route
                     path="/contact"
                     element={<Contact />}
+                />
+
+                <Route
+                    path="*"
+                    element={<Home />}
                 />
             </Routes>
             <Footer />

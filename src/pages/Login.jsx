@@ -1,6 +1,29 @@
+import { useState } from 'react';
 import { Helmet } from 'react-helmet';
+import InputEmailOrUsername from '../components/InputEmailOrUsername';
+import InputPassword from '../components/InputPassword';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 export default function Login() {
+    const [emailOrUsername, setEmailOrUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [emailOrUsernameErrorMessage, setEmailOrUsernameErrorMessage] = useState("");
+    const [error, setError] = useState("");
+    const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+
+    function handleLogin() {
+        signInWithEmailAndPassword(auth, emailOrUsername, password)
+            .then((response) => {
+                console.log(response);
+                console.log("Logged in successfully!");
+            })
+            .catch((error) => {
+                console.log(error);
+                setError("Email or password is invalid.");
+            })
+    }
+
     return (
         <>
             <Helmet>
@@ -13,11 +36,36 @@ export default function Login() {
             <main>
                 <h1>Login</h1>
 
-                <p>This is a paragraph.</p>
+                <p>Login to your account to ask a question and get responses from other members.</p>
 
-                <h2>This is a sub-heading</h2>
+                <form>
+                    <InputEmailOrUsername
+                        emailOrUsername={emailOrUsername}
+                        setEmailOrUsername={setEmailOrUsername}
+                        password={password}
+                        setPassword={setPassword}
+                        emailOrUsernameErrorMessage={emailOrUsernameErrorMessage}
+                        setEmailOrUsernameErrorMessage={setEmailOrUsernameErrorMessage}
+                        setError={setError}
+                    />
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt tellus eu mattis gravida. Praesent et lacinia elit. Phasellus mauris orci, ultricies id ipsum quis, mollis aliquet diam. Curabitur sollicitudin, nisi vel rhoncus porta, ligula odio volutpat leo, vitae sodales dui justo non tortor. Pellentesque interdum diam ac sem condimentum efficitur. Cras dictum risus at porta vulputate. Nullam pulvinar, ante in congue vulputate, nisi dolor congue sapien, nec pellentesque ipsum dui nec tellus. Vivamus non purus est. Curabitur vitae gravida neque. Sed in massa at sem luctus mattis a eget ipsum. Nam lectus risus, placerat euismod elit eget, blandit faucibus metus. Aenean tristique dictum est, cursus ultrices sem blandit at. Mauris at eros auctor, congue lorem nec, convallis massa. Quisque feugiat eros vel quam convallis, eget malesuada risus cursus.</p>
+                    <InputPassword
+                        password={password}
+                        setPassword={setPassword}
+                        passwordErrorMessage={passwordErrorMessage}
+                        setPasswordErrorMessage={setPasswordErrorMessage}
+                        setError={setError}
+                    />
+
+                    <div className="error">{error}</div>
+
+                    <input
+                        type="button"
+                        value="Login"
+                        onClick={handleLogin}
+                        disabled={!emailOrUsername || !password}
+                    />
+                </form>
             </main>
         </>
     )

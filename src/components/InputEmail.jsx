@@ -2,11 +2,13 @@ export default function InputEmail({
     email,
     setEmail,
     emailErrorMessage,
-    setEmailErrorMessage
+    setEmailErrorMessage,
+    setError
 }) {
     function handleEmail(event) {
         setEmail(event.target.value);
         setEmailErrorMessage("");
+        setError("");
     }
 
     return (

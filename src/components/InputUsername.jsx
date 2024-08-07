@@ -2,11 +2,13 @@ export default function InputUsername({
     username,
     setUsername,
     usernameErrorMessage,
-    setUsernameErrorMessage
+    setUsernameErrorMessage,
+    setError
 }) {
     function handleUsername(event) {
         setUsername(event.target.value);
         setUsernameErrorMessage("");
+        setError("");
     }
 
     return (
@@ -23,6 +25,7 @@ export default function InputUsername({
                 onChange={handleUsername}
                 maxLength="20"
                 size="20"
+                required
             ></input>
 
             <div className="error">{usernameErrorMessage}</div>

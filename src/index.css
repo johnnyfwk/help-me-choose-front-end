@@ -29,6 +29,11 @@
     color: var(--error);
 }
 
+#logout-button:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
 #logo {
     background-color: cyan;
 }
