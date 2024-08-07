@@ -18,6 +18,8 @@ export default function SignUp() {
     const [password, setPassword] = useState("");
     const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
 
+    const [error, setError] = useState("");
+
     function handleCreateAccount() {
         const emailCheck = utils.validateEmail(email);
         setEmailErrorMessage(emailCheck.msg);
@@ -42,6 +44,7 @@ export default function SignUp() {
                 .catch((error) => {
                     console.log(error.code);
                     console.log(error.message);
+                    setError("Email is associated with an existing account.");
                 });
         } else {
             console.log("Account could not be created.");
@@ -68,6 +71,7 @@ export default function SignUp() {
                         setEmail={setEmail}
                         emailErrorMessage={emailErrorMessage}
                         setEmailErrorMessage={setEmailErrorMessage}
+                        setError={setError}
                     />
 
                     <InputUsername
@@ -75,6 +79,7 @@ export default function SignUp() {
                         setUsername={setUsername}
                         usernameErrorMessage={usernameErrorMessage}
                         setUsernameErrorMessage={setUsernameErrorMessage}
+                        setError={setError}
                     />
 
                     <InputPassword
@@ -82,7 +87,11 @@ export default function SignUp() {
                         setPassword={setPassword}
                         passwordErrorMessage={passwordErrorMessage}
                         setPasswordErrorMessage={setPasswordErrorMessage}
+                        error={error}
+                        setError={setError}
                     />
+
+                    <div className="error">{error}</div>
 
                     <input
                         type="button"

@@ -1,6 +1,9 @@
 import { Helmet } from 'react-helmet';
+import { useAuth } from '../AuthContext';
 
 export default function Profile() {
+    const { user, loading } = useAuth();
+
     return (
         <>
             <Helmet>
