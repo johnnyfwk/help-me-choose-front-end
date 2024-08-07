@@ -67,3 +67,13 @@ export function formatDate(timestamp) {
 
     return `${time} on ${formattedDate.replace(/,/g, '')}`;
 }
+
+export function sortDocs(collection) {
+    let questionsList = collection.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    questionsList = questionsList.sort((a, b) => {
+        const latestA = a.modified ? a.modified.seconds : a.created.seconds;
+        const latestB = b.modified ? b.modified.seconds : b.created.seconds;
+        return latestB - latestA;
+    });
+    return questionsList;
+}

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import * as utils from '../../utils';
 
 export default function QuestionCard({
@@ -5,10 +6,10 @@ export default function QuestionCard({
 }) {
     return (
         <div className="question-wrapper">
-            <h2>{question.title}</h2>
+            <Link to={`/question/${question.id}`}>{question.title}</Link>
             <p>{question.description}</p>
             <div>{question.category}</div>
-            <div>{question.username}</div>                                
+            <div>{question.posterUsername}</div>                                
             <div>{utils.formatDate(question.created)}</div>
         </div>
     )
