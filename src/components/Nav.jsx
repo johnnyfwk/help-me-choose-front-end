@@ -11,6 +11,7 @@ export default function Nav() {
             <Link to="/contact">Contact</Link>
             {user
                 ? <>
+                    <Link to="/post-a-question">Post a Question</Link>
                     <Link to="/profile">Profile</Link>
                     <span onClick={logout} id="logout-button">Logout</span>
                 </>                

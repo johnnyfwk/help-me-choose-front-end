@@ -5,6 +5,7 @@ import Nav from "./components/Nav";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
+import PostAQuestion from './pages/PostAQuestion';
 import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -13,7 +14,7 @@ import Footer from "./components/Footer";
 function App() {
     const { user, loading } = useAuth();
     console.log("User: ", user);
-    console.log("Loading? ", loading);
+    // console.log("Loading? ", loading);
     
     return (
         <>
@@ -40,6 +41,15 @@ function App() {
                         !user
                             ? <Login />
                             : <Navigate to="/" />
+                    }
+                />
+
+                <Route
+                    path="/post-a-question"
+                    element={
+                        user
+                            ? <PostAQuestion />
+                            : <Navigate to="/login" />
                     }
                 />
 
