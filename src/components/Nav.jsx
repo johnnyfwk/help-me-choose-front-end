@@ -1,8 +1,9 @@
 import { Link } from "react-router-dom";
 import { useAuth } from '../AuthContext';
 
-export default function Nav() {
-    const { user, loading } = useAuth();
+export default function Nav({
+    user
+}) {
     const { logout } = useAuth();
 
     return (

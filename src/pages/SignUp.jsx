@@ -4,9 +4,8 @@ import * as utils from '../../utils';
 import InputEmail from '../components/InputEmail';
 import InputUsername from '../components/InputUsername';
 import InputPassword from '../components/InputPassword';
-import { auth, db } from '../firebase';
+import { auth } from '../firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
 
 export default function SignUp() {
     const [email, setEmail] = useState("");
