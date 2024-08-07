@@ -5,7 +5,7 @@ import InputEmail from '../components/InputEmail';
 import InputUsername from '../components/InputUsername';
 import InputPassword from '../components/InputPassword';
 import { auth, db } from '../firebase';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 
 export default function SignUp() {
@@ -32,14 +32,18 @@ export default function SignUp() {
                 .then((userCredential) => {
                     const member = userCredential.user;
                     console.log(member);
-                    return setDoc(doc(db, 'users', member.uid), {
-                        username: username,
-                        email: member.email,
-                        createdAt: new Date()
+                    console.log('User account has been created.');
+                    // return setDoc(doc(db, 'users', member.uid), {
+                    //     username: username,
+                    //     email: member.email,
+                    //     createdAt: new Date()
+                    // });
+                    updateProfile(member, {
+                        displayName: username
                     });
                 })
                 .then(() => {
-                    console.log('User signed up and data saved in Firestore');
+                    console.log('User account has been updated.');
                 })
                 .catch((error) => {
                     console.log(error.code);
