@@ -31,13 +31,6 @@ export default function SignUp() {
             createUserWithEmailAndPassword(auth, email, password)
                 .then((userCredential) => {
                     const member = userCredential.user;
-                    console.log(member);
-                    console.log('User account has been created.');
-                    // return setDoc(doc(db, 'users', member.uid), {
-                    //     username: username,
-                    //     email: member.email,
-                    //     createdAt: new Date()
-                    // });
                     updateProfile(member, {
                         displayName: username
                     });
