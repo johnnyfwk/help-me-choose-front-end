@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import QuestionCard from "../components/QuestionCard";
+import * as utils from '../../utils';
 
 export default function Home() {
     const [questions, setQuestions] = useState([]);
@@ -10,12 +11,7 @@ export default function Home() {
     useEffect(() => {
         getDocs(collection(db, 'questions'))
             .then((response) => {               
-                let questionsList = response.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                questionsList = questionsList.sort((a, b) => {
-                    const latestA = a.modified ? a.modified.seconds : a.created.seconds;
-                    const latestB = b.modified ? b.modified.seconds : b.created.seconds;
-                    return latestB - latestA;
-                });
+                const questionsList = utils.sortDocs(response);
                 setQuestions(questionsList);
             })
             .catch((error) => {
@@ -37,11 +33,14 @@ export default function Home() {
 
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt tellus eu mattis gravida. Praesent et lacinia elit. Phasellus mauris orci, ultricies id ipsum quis, mollis aliquet diam. Curabitur sollicitudin, nisi vel rhoncus porta, ligula odio volutpat leo, vitae sodales dui justo non tortor.</p>
 
-                <div className="questions-wrapper">
-                    {questions.map((question, index) => {
-                        return <QuestionCard key={index} question={question} />
-                    })}
-                </div>
+                {questions.length > 0
+                    ? <div className="questions-wrapper">
+                        {questions.map((question, index) => {
+                            return <QuestionCard key={index} question={question} />
+                        })}
+                    </div>
+                    : <div>No questions to display.</div>
+                }
             </main>
         </>
     )

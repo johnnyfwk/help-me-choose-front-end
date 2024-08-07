@@ -5,6 +5,7 @@ import Nav from "./components/Nav";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
+import Question from './pages/Question';
 import PostAQuestion from './pages/PostAQuestion';
 import Profile from "./pages/Profile";
 import About from "./pages/About";
@@ -13,7 +14,7 @@ import Footer from "./components/Footer";
 
 function App() {
     const { user, loading } = useAuth();
-    console.log("User: ", user);
+    // console.log("User: ", user);
     // console.log("Loading? ", loading);
     
     return (
@@ -25,7 +26,9 @@ function App() {
             <Routes>
                 <Route
                     path="/"
-                    element={<Home />}
+                    element={
+                        <Home
+                    />}
                 />
 
                 <Route
@@ -43,6 +46,13 @@ function App() {
                         !user
                             ? <Login />
                             : <Navigate to="/" />
+                    }
+                />
+
+                <Route
+                    path="/question/:question_id"
+                    element={
+                        <Question />
                     }
                 />
 

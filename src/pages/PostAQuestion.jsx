@@ -25,12 +25,14 @@ export default function PostAQuestion({
             setError("Please enter at least two options.");
         } else {
             addDoc(collection(db, 'questions'), {
-                username: user.displayName,
+                posterId: user.uid,
+                posterUsername: user.displayName,
                 title: title.trim(),
                 description: description.trim(),
                 category,
                 options: filledOptions,
                 votes: Array(filledOptions.length).fill(0),
+                votedUsers: Array(0).fill(""),
                 created: serverTimestamp(),
                 modified: ""
             })
