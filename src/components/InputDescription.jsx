@@ -18,7 +18,7 @@ export default function InputDescription({
                 value={description}
                 onChange={handleDescription}
                 maxLength="2000"
-                placeholder="Enter details about your question"
+                placeholder="Enter details about your question."
                 required
             ></textarea>
         </div>
