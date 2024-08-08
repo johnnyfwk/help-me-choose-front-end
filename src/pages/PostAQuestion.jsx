@@ -25,8 +25,8 @@ export default function PostAQuestion({
             setError("Please enter at least two options.");
         } else {
             addDoc(collection(db, 'questions'), {
-                posterId: user.uid,
-                posterUsername: user.displayName,
+                ownerId: user.uid,
+                ownerUsername: user.displayName,
                 title: title.trim(),
                 description: description.trim(),
                 category,

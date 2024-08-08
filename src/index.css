@@ -31,6 +31,10 @@
     color: var(--error);
 }
 
+textarea {
+    width: 100%;
+}
+
 #logout-button:hover {
     cursor: pointer;
     text-decoration: underline;

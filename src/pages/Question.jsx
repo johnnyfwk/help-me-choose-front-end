@@ -1,9 +1,10 @@
 import { Helmet } from "react-helmet";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import InputComment from "../components/InputComment";
 import { useAuth } from "../AuthContext";
 import { db, auth } from '../firebase';
-import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, serverTimestamp, addDoc, collection } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import * as utils from '../../utils';
 
@@ -17,6 +18,10 @@ export default function Question() {
     const [error, setError] = useState(null);
     const [currentUser, setCurrentUser] = useState(null);
     const [userVote, setUserVote] = useState(null);
+
+    const [comment, setComment] = useState("");
+    const [comments, setComments] = useState([]);
+    const [commentError, setCommentError] = useState("");
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -90,6 +95,36 @@ export default function Question() {
             });
     }
 
+    function handlePostComment() {
+        // const commentTrimmed = comment.trim();
+        addDoc(collection(db, 'comments'), {
+            comment: comment.trim(),
+            commentOwnerId: user.uid,
+            commentOwnerUsername: user.displayName,
+            commentCreated: serverTimestamp(),
+            commentModified: "",
+            questionId: question_id,
+            questionOwnerId: question.ownerId,
+            questionOwnerUsername: question.ownerUsername,
+            questionTitle: question.title,
+            questionDescription: question.description,
+            questionCategory: question.category,
+            questionCreated: question.created,
+            questionModified: question.modified,
+        })
+        .then((response) => {
+            console.log("Comment posted successfully");
+            console.log(response);
+            setComment("");
+            setCommentError("");
+        })
+        .catch((error) => {
+            console.log(error);
+            console.error('Error posting comment: ', error);
+            setCommentError("Comment could not be posted.");
+        })
+    }
+
     if (isLoading) {
         return <p>Loading...</p>;
     }
@@ -108,31 +143,60 @@ export default function Question() {
             </Helmet>
 
             <main>
-                {question
-                    ? <>
-                        <h1>{question.title}</h1>
-                        <p>{question.description}</p>
-                        <div>{question.posterUsername}</div>
-                        <div>{question.category}</div>
-                        <div>{utils.formatDate(question.created)}</div>
-                        <div className="question-options-wrapper">
-                            {question.options.map((option, index) => {
-                                return (
-                                    <div key={index} className="question-option-wrapper">
-                                        <div key={index}>{option} - {question.votes[index]} votes</div>
-                                        {!currentUser || question.posterId === currentUser.uid
-                                            ? null
-                                            : <button
-                                                onClick={() => handleVote(index)}
-                                            >{userVote === index ? 'Voted' : 'Vote'}</button>
-                                        }
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </>
-                    : <div className="error">Question does not exist.</div>
+                <section>
+                    {question
+                        ? <>
+                            <h1>{question.title}</h1>
+                            <p>{question.description}</p>
+                            <div>{question.ownerUsername}</div>
+                            <div>{question.category}</div>
+                            <div>{utils.formatDate(question.created)}</div>
+                            <div className="question-options-wrapper">
+                                {question.options.map((option, index) => {
+                                    return (
+                                        <div key={index} className="question-option-wrapper">
+                                            <div key={index}>{option} - {question.votes[index]} votes</div>
+                                            {!currentUser || question.ownerId === currentUser.uid
+                                                ? null
+                                                : <button
+                                                    onClick={() => handleVote(index)}
+                                                >{userVote === index ? 'Voted' : 'Vote'}</button>
+                                            }
+                                        </div>
+                                    )
+                                })}
+                            </div>
+                        </>
+                        : <div className="error">Question does not exist.</div>
+                    }
+                </section>
+                
+                {currentUser
+                    ? <section>
+                        <h2>Add a Comment</h2>
+                        <p>Add a comment and help the poster make a choice.</p>
+
+                        <InputComment
+                            comment={comment}
+                            setComment={setComment}
+                        />
+
+                        <div className="error">{commentError}</div>
+
+                        <input
+                            type="button"
+                            value="Post Comment"
+                            onClick={handlePostComment}
+                            disabled={!comment}
+                        ></input>
+                    </section>
+                    : null
                 }
+                
+                <section>
+                    <h2>Comments</h2>
+                    <p>Here are some comments for the question.</p>
+                </section>
             </main>
         </>
     )

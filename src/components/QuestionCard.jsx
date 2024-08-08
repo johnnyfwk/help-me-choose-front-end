@@ -9,7 +9,7 @@ export default function QuestionCard({
             <Link to={`/question/${question.id}`}>{question.title}</Link>
             <p>{question.description}</p>
             <div>{question.category}</div>
-            <div>{question.posterUsername}</div>                                
+            <div>{question.ownerUsername}</div>                                
             <div>{utils.formatDate(question.created)}</div>
         </div>
     )
