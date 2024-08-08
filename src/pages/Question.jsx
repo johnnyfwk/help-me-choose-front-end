@@ -33,6 +33,8 @@ export default function Question({user}) {
     const [commentError, setCommentError] = useState("");
     const [commentsError, setCommentsError] = useState("");
 
+    const [isEditing, setIsEditing] = useState(false);
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user);
@@ -163,6 +165,68 @@ export default function Question({user}) {
         })
     }
 
+    function handleEditQuestion() {
+        setIsEditing(true);
+    }
+
+    function handleOptionChange(event, index) {
+        const updatedOptions = [...question.options];
+        updatedOptions[index] = event.target.value;
+        setQuestion(prevData => ({
+            ...prevData,
+            options: updatedOptions
+        }));
+    }
+
+    function handleCancelEditQuestion() {
+        setIsEditing(false);
+    }
+
+    function handleUpdateQuestion() {
+        if (!question || !currentUser) return;
+
+        const { options, votes, votedUsers } = question;
+
+        // Identify the indices of removed options
+        const newOptions = question.options.filter((option, index) => option.trim() !== "");
+        console.log("New Options: ", newOptions)
+        const removedIndices = question.options.reduce((acc, option, index) => {
+            if (!newOptions.includes(option)) {
+                acc.push(index);
+            }
+            return acc;
+        }, []);
+        console.log("removedIndices: ", removedIndices);
+
+        // Filter out the votes and votedUsers associated with removed options
+        const newVotes = votes.filter((_, index) => !removedIndices.includes(index));
+        const newVotedUsers = votedUsers.filter(vote => !removedIndices.includes(vote.optionIndex));
+
+        const newOptionsTrimmed = newOptions.map((option) => option.trim());
+
+        // Update the Firestore document with the new options, votes, and votedUsers
+        const docRef = doc(db, 'questions', question_id);
+        updateDoc(docRef, {
+            options: newOptionsTrimmed,
+            votes: newVotes,
+            votedUsers: newVotedUsers,
+            modified: serverTimestamp()
+        })
+        .then(() => {
+            setQuestion(prevData => ({
+                ...prevData,
+                options: newOptions,
+                votes: newVotes,
+                votedUsers: newVotedUsers,
+            }));
+            setIsEditing(false);
+        })
+        .catch((err) => {
+            setError(err.message);
+            console.error('Error updating question:', err);
+        });
+    }
+
     if (isLoading) {
         return <p>Loading...</p>;
     }
@@ -170,6 +234,8 @@ export default function Question({user}) {
     if (error) {
         return <p>Error: {error}</p>;
     }
+
+    console.log(question)
 
     return (
         <>
@@ -182,30 +248,54 @@ export default function Question({user}) {
 
             <main>
                 <section>
-                    {question
-                        ? <>
-                            <h1>{question.title}</h1>
-                            <p>{question.description}</p>
-                            <div>{question.ownerUsername}</div>
-                            <div>{question.category}</div>
-                            <div>{utils.formatDate(question.created)}</div>
-                            <div className="question-options-wrapper">
-                                {question.options.map((option, index) => {
-                                    return (
-                                        <div key={index} className="question-option-wrapper">
-                                            <div key={index}>{option} - {question.votes[index]} votes</div>
-                                            {!currentUser || question.ownerId === currentUser.uid
-                                                ? null
-                                                : <button
-                                                    onClick={() => handleVote(index)}
-                                                >{userVote === index ? 'Voted' : 'Vote'}</button>
-                                            }
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                        </>
-                        : <div className="error">Question does not exist.</div>
+                    <h1>{question.title}</h1>
+                    <p>{question.description}</p>
+                    <div>{question.ownerUsername}</div>
+                    <div>{question.category}</div>
+                    <div>{utils.formatDate(question.created)}</div>
+
+                    {isEditing
+                        ? question.options.map((option, index) => {
+                            return (
+                                <input
+                                    key={index}
+                                    type="text"
+                                    id={`option-${index}`}
+                                    name={`option-${index}`}
+                                    value={option}
+                                    onChange={(event) => handleOptionChange(event, index)}
+                                />
+                            )
+                        })
+                        : <div className="question-options-wrapper">
+                            {question.options.map((option, index) => {
+                                return (
+                                    <div key={index} className="question-option-wrapper">
+                                        <div key={index}>{option}</div>
+                                        <div>{question.votes[index]} votes</div>
+                                        {!currentUser || question.ownerId === currentUser.uid
+                                            ? null
+                                            : <button
+                                                onClick={() => handleVote(index)}
+                                            >{userVote === index ? 'Voted' : 'Vote'}</button>
+                                        }
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    }                    
+
+                    {user.uid === question.ownerId && !isEditing
+                        ? <button onClick={handleEditQuestion}>Edit</button>
+                        : null
+                    }
+
+                    {isEditing
+                        ? <div>
+                            <button onClick={handleCancelEditQuestion}>Cancel</button>
+                            <button onClick={handleUpdateQuestion}>Update</button>
+                        </div>
+                        : null
                     }
                 </section>
                 
