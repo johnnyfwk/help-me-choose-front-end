@@ -52,7 +52,7 @@ function App() {
                 <Route
                     path="/question/:question_id"
                     element={
-                        <Question />
+                        <Question user={user} />
                     }
                 />
 
@@ -69,7 +69,7 @@ function App() {
                     path="/profile"
                     element={
                         user
-                            ? <Profile user={user} />
+                            ? <Profile />
                             : <Navigate to="/login" />
                     }
                 />

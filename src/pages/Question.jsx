@@ -1,7 +1,6 @@
 import { Helmet } from "react-helmet";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useAuth } from "../AuthContext";
 import { db, auth } from '../firebase';
 import {
     doc,
@@ -20,9 +19,7 @@ import InputComment from "../components/InputComment";
 import CommentCard from "../components/CommentCard";
 import * as utils from '../../utils';
 
-export default function Question() {
-    const { user, loading } = useAuth();
-
+export default function Question({user}) {
     const {question_id} = useParams(null);
 
     const [question, setQuestion] = useState(null);
@@ -237,10 +234,10 @@ export default function Question() {
                 <section>
                     <h2>Comments</h2>
                     <div className="error">{commentsError}</div>
-                    {comments.length !== 0
+                    {comments.length > 0
                         ? <div className="comments-wrapper">
                             {comments.map((comment, index) => {
-                                return <CommentCard key={index} comment={comment} />
+                                return <CommentCard key={index} comment={comment} page="question" />
                             })}
                         </div>
                         : <div>There are no comments for this question.</div>
