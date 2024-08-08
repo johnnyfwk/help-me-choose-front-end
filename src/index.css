@@ -16,6 +16,8 @@
     --main-background: pink;
     --questions-wrapper-background: orange;
     --question-wrapper-background: rgb(232, 128, 0);
+    --comments-wrapper: rgb(230, 77, 230);
+    --comment-card-background-colour: violet;
 }
 
 * {
@@ -60,6 +62,16 @@ main {
 
 .question-wrapper {
     background-color: var(--question-wrapper-background);
+}
+
+.comments-wrapper {
+    background-color: var(--comments-wrapper);
+    display: grid;
+    gap: 20px;
+}
+
+.comment-card {
+    background-color: var(--comment-card-background-colour);
 }
 
 footer {
