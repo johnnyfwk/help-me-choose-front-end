@@ -68,29 +68,32 @@ export default function Profile() {
             </Helmet>
 
             <main>
-                <h1>{user.displayName}</h1>
+                <section>
+                    <h1>{user.displayName}</h1>
+                    <p>This is your profile page.</p>
 
-                <p>This is your profile page.</p>
-
-                <h2>Posts</h2>
-                {questions.length > 0
-                    ? <div className="questions-wrapper">
-                        {questions.map((question, index) => {
-                            return <QuestionCard key={index} question={question} page="profile" />
-                        })}
-                    </div>
-                    : <div>No questions to display.</div>
-                }
-
-                <h2>Comments</h2>
-                {comments.length > 0
-                        ? <div className="comments-wrapper">
-                            {comments.map((comment, index) => {
-                                return <CommentCard key={index} comment={comment} page="profile"/>
+                    <h2>Posts</h2>
+                    {questions.length > 0
+                        ? <div className="questions-wrapper">
+                            {questions.map((question, index) => {
+                                return <QuestionCard key={index} question={question} page="profile" />
                             })}
                         </div>
-                        : <div>There are no comments for this question.</div>
+                        : <div>No questions to display.</div>
                     }
+                </section>
+                
+                <section>
+                    <h2>Comments</h2>
+                    {comments.length > 0
+                            ? <div className="comments-wrapper">
+                                {comments.map((comment, index) => {
+                                    return <CommentCard key={index} comment={comment} page="profile"/>
+                                })}
+                            </div>
+                            : <div>There are no comments for this question.</div>
+                    }
+                </section>
             </main>
         </>
     )
