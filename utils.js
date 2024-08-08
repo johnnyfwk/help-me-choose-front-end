@@ -57,23 +57,25 @@ export function validatePassword(password) {
 }
 
 export function formatDate(timestamp) {
-    const date = timestamp.toDate();
+    if (timestamp) {
+        const date = timestamp.toDate();
 
-    const timeOptions = { hour: '2-digit', minute: '2-digit' };
-    const time = new Intl.DateTimeFormat('en-GB', timeOptions).format(date);
-
-    const dateOptions = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
-    const formattedDate = new Intl.DateTimeFormat('en-GB', dateOptions).format(date);
-
-    return `${time} on ${formattedDate.replace(/,/g, '')}`;
+        const timeOptions = { hour: '2-digit', minute: '2-digit' };
+        const time = new Intl.DateTimeFormat('en-GB', timeOptions).format(date);
+    
+        const dateOptions = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
+        const formattedDate = new Intl.DateTimeFormat('en-GB', dateOptions).format(date);
+    
+        return `${time} on ${formattedDate.replace(/,/g, '')}`;
+    }
 }
 
 export function sortDocs(collection) {
-    let questionsList = collection.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    questionsList = questionsList.sort((a, b) => {
+    let list = collection.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    list = list.sort((a, b) => {
         const latestA = a.modified ? a.modified.seconds : a.created.seconds;
         const latestB = b.modified ? b.modified.seconds : b.created.seconds;
         return latestB - latestA;
     });
-    return questionsList;
+    return list;
 }

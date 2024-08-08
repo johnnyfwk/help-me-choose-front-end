@@ -1,11 +1,23 @@
 import { Helmet } from "react-helmet";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import InputComment from "../components/InputComment";
 import { useAuth } from "../AuthContext";
 import { db, auth } from '../firebase';
-import { doc, getDoc, updateDoc, serverTimestamp, addDoc, collection } from 'firebase/firestore';
+import {
+    doc,
+    getDoc,
+    updateDoc,
+    serverTimestamp,
+    addDoc,
+    collection,
+    query,
+    where,
+    onSnapshot,
+    orderBy
+} from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import InputComment from "../components/InputComment";
+import CommentCard from "../components/CommentCard";
 import * as utils from '../../utils';
 
 export default function Question() {
@@ -22,13 +34,14 @@ export default function Question() {
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
     const [commentError, setCommentError] = useState("");
+    const [commentsError, setCommentsError] = useState("");
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user);
         });
 
-        const fetchDocument = () => {
+        const fetchQuestion = () => {
             const docRef = doc(db, 'questions', question_id);
             getDoc(docRef)
                 .then((docSnap) => {
@@ -39,22 +52,47 @@ export default function Question() {
                             setUserVote(data.votedUsers.find(vote => vote.userId === user.uid)?.optionIndex);
                         }
                     } else {
-                        console.log("Document doesn't exist.");
+                        console.log("Question doesn't exist.");
                     }
                 })
                 .catch((error) => {
                     console.log(error);
                     setError(error.message);
-                    console.error('Error fetching document:', error);
+                    console.error('Error fetching question:', error);
                 })
                 .finally(() => {
                     setIsLoading(false);
                 })
         };
 
-        fetchDocument();
+        const fetchComments = () => {
+            const q = query(
+                collection(db, 'comments'),
+                where('questionId', '==', question_id),
+                orderBy('commentCreated', 'desc')
+            );
 
-        return () => unsubscribe();
+            const unsubscribeComments = onSnapshot(q, (querySnapshot) => {
+                const matchingComments = [];
+                querySnapshot.forEach(doc => {
+                    matchingComments.push({ id: doc.id, ...doc.data() });
+                });
+                setComments(matchingComments);
+            }, (error) => {
+                console.error("Error fetching comments: ", error);
+                setCommentsError("Comments could not be fetched.");
+            });
+
+            return unsubscribeComments;
+        };
+
+        fetchQuestion();
+        const unsubscribeComments = fetchComments();
+
+        return () => {
+            unsubscribe();
+            unsubscribeComments();
+        };
     }, [question_id, user]);
 
     function handleVote(optionIndex) {
@@ -96,7 +134,6 @@ export default function Question() {
     }
 
     function handlePostComment() {
-        // const commentTrimmed = comment.trim();
         addDoc(collection(db, 'comments'), {
             comment: comment.trim(),
             commentOwnerId: user.uid,
@@ -117,6 +154,10 @@ export default function Question() {
             console.log(response);
             setComment("");
             setCommentError("");
+            const questionRef = doc(db, 'questions', question_id);
+            updateDoc(questionRef, {
+                modified: serverTimestamp()
+            })
         })
         .catch((error) => {
             console.log(error);
@@ -195,7 +236,15 @@ export default function Question() {
                 
                 <section>
                     <h2>Comments</h2>
-                    <p>Here are some comments for the question.</p>
+                    <div className="error">{commentsError}</div>
+                    {comments.length !== 0
+                        ? <div className="comments-wrapper">
+                            {comments.map((comment, index) => {
+                                return <CommentCard key={index} comment={comment} />
+                            })}
+                        </div>
+                        : <div>There are no comments for this question.</div>
+                    }
                 </section>
             </main>
         </>
