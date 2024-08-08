@@ -36,7 +36,7 @@ export default function Home() {
                 {questions.length > 0
                     ? <div className="questions-wrapper">
                         {questions.map((question, index) => {
-                            return <QuestionCard key={index} question={question} />
+                            return <QuestionCard key={index} question={question} page="home" />
                         })}
                     </div>
                     : <div>No questions to display.</div>

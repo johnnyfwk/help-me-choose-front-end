@@ -1,9 +1,63 @@
 import { Helmet } from 'react-helmet';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../AuthContext';
+import { db } from '../firebase';
+import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import QuestionCard from '../components/QuestionCard';
+import CommentCard from '../components/CommentCard';
 
-export default function Profile({
-    user
-}) {
+export default function Profile() {
+    const { user, loading } = useAuth();
+    const [questions, setQuestions] = useState([]);
+    const [comments, setComments] = useState([]);
+
+    useEffect(() => {
+        if (!loading && user) {
+            const fetchQuestions = () => {
+                const questionsQuery = query(
+                    collection(db, 'questions'),
+                    where('ownerId', '==', user.uid),
+                    orderBy('created', 'desc')
+                );
+                
+                getDocs(questionsQuery)
+                    .then((questionsSnapshot) => {
+                        const questionsData = questionsSnapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data(),
+                        }));
+                        setQuestions(questionsData);
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching questions: ", error);
+                    });
+            };
+
+            const fetchComments = () => {
+                const commentsQuery = query(
+                    collection(db, 'comments'),
+                    where('commentOwnerId', '==', user.uid),
+                    orderBy('commentCreated', 'desc')
+                );
+
+                getDocs(commentsQuery)
+                    .then((commentsSnapshot) => {
+                        const commentsData = commentsSnapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data(),
+                        }));
+                        setComments(commentsData);
+                    })
+                    .catch((error) => {
+                        console.error("Error fetching comments: ", error);
+                    });
+            };
+
+            fetchQuestions();
+            fetchComments();
+        }        
+    }, [])
+
     return (
         <>
             <Helmet>
@@ -18,9 +72,25 @@ export default function Profile({
 
                 <p>This is your profile page.</p>
 
-                <h2>This is a sub-heading</h2>
+                <h2>Posts</h2>
+                {questions.length > 0
+                    ? <div className="questions-wrapper">
+                        {questions.map((question, index) => {
+                            return <QuestionCard key={index} question={question} page="profile" />
+                        })}
+                    </div>
+                    : <div>No questions to display.</div>
+                }
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt tellus eu mattis gravida. Praesent et lacinia elit. Phasellus mauris orci, ultricies id ipsum quis, mollis aliquet diam. Curabitur sollicitudin, nisi vel rhoncus porta, ligula odio volutpat leo, vitae sodales dui justo non tortor. Pellentesque interdum diam ac sem condimentum efficitur. Cras dictum risus at porta vulputate. Nullam pulvinar, ante in congue vulputate, nisi dolor congue sapien, nec pellentesque ipsum dui nec tellus. Vivamus non purus est. Curabitur vitae gravida neque. Sed in massa at sem luctus mattis a eget ipsum. Nam lectus risus, placerat euismod elit eget, blandit faucibus metus. Aenean tristique dictum est, cursus ultrices sem blandit at. Mauris at eros auctor, congue lorem nec, convallis massa. Quisque feugiat eros vel quam convallis, eget malesuada risus cursus.</p>
+                <h2>Comments</h2>
+                {comments.length > 0
+                        ? <div className="comments-wrapper">
+                            {comments.map((comment, index) => {
+                                return <CommentCard key={index} comment={comment} page="profile"/>
+                            })}
+                        </div>
+                        : <div>There are no comments for this question.</div>
+                    }
             </main>
         </>
     )
