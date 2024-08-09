@@ -15,6 +15,9 @@ import {
     orderBy
 } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
+import InputTitle from "../components/InputTitle";
+import InputDescription from "../components/InputDescription";
+import InputCategory from "../components/InputCategory";
 import InputComment from "../components/InputComment";
 import CommentCard from "../components/CommentCard";
 import * as utils from '../../utils';
@@ -23,8 +26,12 @@ export default function Question({user}) {
     const {question_id} = useParams(null);
 
     const [question, setQuestion] = useState(null);
+    const [getQuestionError, setGetQuestionError] = useState(null);
+    const [updateQuestionError, setUpdateQuestionError] = useState(null);
+
+    const [originalQuestion, setOriginalQuestion] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
+    
     const [currentUser, setCurrentUser] = useState(null);
     const [userVote, setUserVote] = useState(null);
 
@@ -34,6 +41,8 @@ export default function Question({user}) {
     const [commentsError, setCommentsError] = useState("");
 
     const [isEditing, setIsEditing] = useState(false);
+    const [editTitleError, setEditTitleError] = useState("");
+    const [editDescriptionError, setEditDescriptionError] = useState("");
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -56,7 +65,7 @@ export default function Question({user}) {
                 })
                 .catch((error) => {
                     console.log(error);
-                    setError(error.message);
+                    setGetQuestionError(error.message);
                     console.error('Error fetching question:', error);
                 })
                 .finally(() => {
@@ -126,9 +135,9 @@ export default function Question({user}) {
                 }));
                 setUserVote(optionIndex);
             })
-            .catch((err) => {
-                setError(err.message);
-                console.error('Error updating votes:', err);
+            .catch((error) => {
+                setUpdateQuestionError(error.message);
+                console.error('Error updating votes:', error);
             });
     }
 
@@ -167,9 +176,39 @@ export default function Question({user}) {
 
     function handleEditQuestion() {
         setIsEditing(true);
+        setOriginalQuestion({ ...question });
     }
 
-    function handleOptionChange(event, index) {
+    function handleTitle(event) {
+        setEditTitleError("");
+        let updatedTitle = question.title;
+        updatedTitle = event.target.value;
+        setQuestion(prevData => ({
+            ...prevData,
+            title: updatedTitle
+        }))
+    }
+
+    function handleDescription(event) {
+        setEditDescriptionError("");
+        let updatedDescription = question.description;
+        updatedDescription = event.target.value;
+        setQuestion(prevData => ({
+            ...prevData,
+            description: updatedDescription
+        }))
+    }
+
+    function handleCategory(event) {
+        let updatedCategory = question.category;
+        updatedCategory = event.target.value;
+        setQuestion(prevData => ({
+            ...prevData,
+            category: updatedCategory
+        }))
+    }
+
+    function handleEditOption(event, index) {
         const updatedOptions = [...question.options];
         updatedOptions[index] = event.target.value;
         setQuestion(prevData => ({
@@ -180,50 +219,65 @@ export default function Question({user}) {
 
     function handleCancelEditQuestion() {
         setIsEditing(false);
+        setQuestion(originalQuestion);
     }
 
     function handleUpdateQuestion() {
         if (!question || !currentUser) return;
 
-        const { options, votes, votedUsers } = question;
+        const { title, description, category, options } = question;
+        console.log("Title: ", title);
+        console.log("Description: ", description);
+        console.log("Category: ", category);
+
+        const optionsCheck = options.filter((option) => option).map((opt) => opt.trim());
+
+        if (!title) {
+            setEditTitleError("Please enter a title for your question.");
+        }
+        if (!description) {
+            setEditDescriptionError("Please enter a description for your question.");
+        }
+        if (optionsCheck.length < 2) {
+            console.log("Please enter at least two options.")
+        }
 
         // Identify the indices of removed options
-        const newOptions = question.options.filter((option, index) => option.trim() !== "");
-        console.log("New Options: ", newOptions)
-        const removedIndices = question.options.reduce((acc, option, index) => {
-            if (!newOptions.includes(option)) {
-                acc.push(index);
-            }
-            return acc;
-        }, []);
-        console.log("removedIndices: ", removedIndices);
+        // const newOptions = question.options.filter((option) => option.trim() !== "");
+        // console.log("New Options: ", newOptions)
+        // const removedIndices = question.options.reduce((acc, option, index) => {
+        //     if (!newOptions.includes(option)) {
+        //         acc.push(index);
+        //     }
+        //     return acc;
+        // }, []);
+        // console.log("removedIndices: ", removedIndices);
 
         // Filter out the votes and votedUsers associated with removed options
-        const newVotes = votes.filter((_, index) => !removedIndices.includes(index));
-        const newVotedUsers = votedUsers.filter(vote => !removedIndices.includes(vote.optionIndex));
-
-        const newOptionsTrimmed = newOptions.map((option) => option.trim());
+        // const newVotes = votes.filter((_, index) => !removedIndices.includes(index));
+        // const newVotedUsers = votedUsers.filter(vote => !removedIndices.includes(vote.optionIndex));
+        // const newOptionsTrimmed = newOptions.map((option) => option.trim());
 
         // Update the Firestore document with the new options, votes, and votedUsers
         const docRef = doc(db, 'questions', question_id);
         updateDoc(docRef, {
-            options: newOptionsTrimmed,
-            votes: newVotes,
-            votedUsers: newVotedUsers,
+            title: title,
+            description: description,
+            category: category,
             modified: serverTimestamp()
         })
         .then(() => {
             setQuestion(prevData => ({
                 ...prevData,
-                options: newOptions,
-                votes: newVotes,
-                votedUsers: newVotedUsers,
+                title: title,
+                description: description,
+                category: category,
             }));
             setIsEditing(false);
         })
-        .catch((err) => {
-            setError(err.message);
-            console.error('Error updating question:', err);
+        .catch((error) => {
+            setUpdateQuestionError(error.message);
+            console.error('Error updating question:', error);
         });
     }
 
@@ -231,11 +285,9 @@ export default function Question({user}) {
         return <p>Loading...</p>;
     }
 
-    if (error) {
-        return <p>Error: {error}</p>;
+    if (getQuestionError) {
+        return <p>Error: {getQuestionError}</p>;
     }
-
-    console.log(question)
 
     return (
         <>
@@ -248,11 +300,46 @@ export default function Question({user}) {
 
             <main>
                 <section>
-                    <h1>{question.title}</h1>
-                    <p>{question.description}</p>
-                    <div>{question.ownerUsername}</div>
-                    <div>{question.category}</div>
-                    <div>{utils.formatDate(question.created)}</div>
+                    {isEditing
+                        ? <div>
+                            <InputTitle
+                                title={question.title}
+                                handleTitle={handleTitle}
+                            />
+                            <div className="error">{editTitleError}</div>
+                        </div>                        
+                        : <h1>{question.title}</h1>
+                    }
+
+                    {isEditing
+                        ? <div>
+                            <InputDescription
+                                description={question.description}
+                                handleDescription={handleDescription}
+                            />
+                            <div className="error">{editDescriptionError}</div>
+                        </div>
+                        : <p>{question.description}</p>
+                    }
+
+                    {isEditing
+                        ? <div>
+                            <InputCategory
+                                category={question.category}
+                                handleCategory={handleCategory}
+                            />
+                        </div>
+                        : <div>{question.category}</div>
+                    }              
+                
+                    {isEditing
+                        ? null
+                        : <>
+                            <div>{question.ownerUsername}</div>
+                            <div>{utils.formatDate(question.created)}</div>
+                        </>
+                    }
+                    
 
                     {isEditing
                         ? question.options.map((option, index) => {
@@ -260,10 +347,11 @@ export default function Question({user}) {
                                 <input
                                     key={index}
                                     type="text"
-                                    id={`option-${index}`}
-                                    name={`option-${index}`}
+                                    id={`edit-option-${index}`}
+                                    name={`edit-option-${index}`}
                                     value={option}
-                                    onChange={(event) => handleOptionChange(event, index)}
+                                    onChange={(event) => handleEditOption(event, index)}
+                                    placeholder={`Option ${index + 1}`}
                                 />
                             )
                         })
@@ -293,7 +381,9 @@ export default function Question({user}) {
                     {isEditing
                         ? <div>
                             <button onClick={handleCancelEditQuestion}>Cancel</button>
-                            <button onClick={handleUpdateQuestion}>Update</button>
+                            <button
+                                onClick={handleUpdateQuestion}
+                            >Update</button>
                         </div>
                         : null
                     }

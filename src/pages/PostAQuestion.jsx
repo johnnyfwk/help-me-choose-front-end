@@ -52,6 +52,18 @@ export default function PostAQuestion({
         }
     }
 
+    function handleTitle(event) {
+        setTitle(event.target.value);
+    }
+
+    function handleDescription(event) {
+        setDescription(event.target.value);
+    }
+
+    function handleCategory(event) {
+        setCategory(event.target.value);
+    }
+
     return (
         <>
             <Helmet>
@@ -68,17 +80,17 @@ export default function PostAQuestion({
                 <form>
                     <InputTitle
                         title={title}
-                        setTitle={setTitle}
+                        handleTitle={handleTitle}
                     />
 
                     <InputDescription
                         description={description}
-                        setDescription={setDescription}
+                        handleDescription={handleDescription}
                     />
 
                     <InputCategory
                         category={category}
-                        setCategory={setCategory}
+                        handleCategory={handleCategory}
                     />
 
                     <div className="error">{error}</div>
