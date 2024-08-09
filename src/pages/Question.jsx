@@ -56,9 +56,6 @@ export default function Question({user}) {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
                         setQuestion(data);
-                        if (user) {
-                            setUserVote(data.votedUsers.find(vote => vote.userId === user.uid)?.optionIndex);
-                        }
                     } else {
                         console.log("Question doesn't exist.");
                     }
@@ -303,33 +300,33 @@ export default function Question({user}) {
                     {isEditing
                         ? <div>
                             <InputTitle
-                                title={question.title}
+                                title={question.questionTitle}
                                 handleTitle={handleTitle}
                             />
                             <div className="error">{editTitleError}</div>
                         </div>                        
-                        : <h1>{question.title}</h1>
+                        : <h1>{question.questionTitle}</h1>
                     }
 
                     {isEditing
                         ? <div>
                             <InputDescription
-                                description={question.description}
+                                description={question.questionDescription}
                                 handleDescription={handleDescription}
                             />
                             <div className="error">{editDescriptionError}</div>
                         </div>
-                        : <p>{question.description}</p>
+                        : <p>{question.questionDescription}</p>
                     }
 
                     {isEditing
                         ? <div>
                             <InputCategory
-                                category={question.category}
+                                category={question.questionCategory}
                                 handleCategory={handleCategory}
                             />
                         </div>
-                        : <div>{question.category}</div>
+                        : <div>{question.questionCategory}</div>
                     }              
                 
                     {isEditing
@@ -340,7 +337,6 @@ export default function Question({user}) {
                         </>
                     }
                     
-
                     {isEditing
                         ? question.options.map((option, index) => {
                             return (
@@ -356,11 +352,11 @@ export default function Question({user}) {
                             )
                         })
                         : <div className="question-options-wrapper">
-                            {question.options.map((option, index) => {
+                            {question.questionOptionsAndVoters.map((optionAndVoters, index) => {
                                 return (
                                     <div key={index} className="question-option-wrapper">
-                                        <div key={index}>{option}</div>
-                                        <div>{question.votes[index]} votes</div>
+                                        <div key={index}>{optionAndVoters.name}</div>
+                                        <div>{optionAndVoters.voters.length} votes</div>
                                         {!currentUser || question.questionOwnerId === currentUser.uid
                                             ? null
                                             : <button
@@ -373,10 +369,10 @@ export default function Question({user}) {
                         </div>
                     }                    
 
-                    {user.uid === question.questionOwnerId && !isEditing
+                    {/* {user.uid === question.questionOwnerId && !isEditing
                         ? <button onClick={handleEditQuestion}>Edit</button>
                         : null
-                    }
+                    } */}
 
                     {isEditing
                         ? <div>
