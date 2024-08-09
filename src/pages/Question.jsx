@@ -258,7 +258,7 @@ export default function Question({user}) {
         // const newVotedUsers = votedUsers.filter(vote => !removedIndices.includes(vote.optionIndex));
         // const newOptionsTrimmed = newOptions.map((option) => option.trim());
 
-        // Update the Firestore document with the new options, votes, and votedUsers
+        // Update the Firestore document with updated question
         const docRef = doc(db, 'questions', question_id);
         updateDoc(docRef, {
             title: title,
