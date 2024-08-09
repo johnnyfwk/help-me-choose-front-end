@@ -10,9 +10,10 @@ export default function Home() {
 
     useEffect(() => {
         getDocs(collection(db, 'questions'))
-            .then((response) => {               
-                const questionsList = utils.sortDocs(response);
-                setQuestions(questionsList);
+            .then((response) => {              
+                const questionsList = utils.extractDocData(response);
+                const questionsSorted = utils.sortQuestions(questionsList);
+                setQuestions(questionsSorted);
             })
             .catch((error) => {
                 console.log(error);
@@ -31,7 +32,7 @@ export default function Home() {
             <main>
                 <h1>Let others help you make a choice</h1>
 
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt tellus eu mattis gravida. Praesent et lacinia elit. Phasellus mauris orci, ultricies id ipsum quis, mollis aliquet diam. Curabitur sollicitudin, nisi vel rhoncus porta, ligula odio volutpat leo, vitae sodales dui justo non tortor.</p>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt tellus eu mattis gravida. Praesent et lacinia elit. Phasellus mauris orci, ultricies id ipsum quis, mollis aliquet diam. Curabitur sollicitudin, nisi vel rhoncus porta, ligula odio volutpat leo, vitae sodales dui justo non tortor.</p>          
 
                 {questions.length > 0
                     ? <div className="questions-wrapper">
