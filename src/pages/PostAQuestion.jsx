@@ -30,15 +30,8 @@ export default function PostAQuestion({
             optionsAndVoters.push(optionObject);
         })
 
-        console.log("Question owner ID: ", user.uid);
-        console.log("Question owner username: ", user.displayName);
         const titleTrimmed = title.trim();
-        console.log("Title: ", titleTrimmed);
         const descriptionTrimmed = description.trim();
-        console.log("Description: ", descriptionTrimmed);
-        console.log("Category: ", category);
-        console.log("Options: ", optionsAndVoters);
-
 
         if (filledOptions.length < 2) {
             setOptionsError("Please enter at least two options.");
@@ -82,6 +75,13 @@ export default function PostAQuestion({
         setCategory(event.target.value);
     }
 
+    function handleOptions(index, value) {
+        const newOptions = [...options];
+        newOptions[index] = value;
+        setOptions(newOptions);
+        setOptionsError("");
+    }
+
     return (
         <>
             <Helmet>
@@ -117,9 +117,9 @@ export default function PostAQuestion({
 
                     <InputOptions
                         options={options}
-                        setOptions={setOptions}
-                        setOptionsError={setOptionsError}
+                        handleOptions={handleOptions}
                     />
+                    
 
                     <input
                         type="button"
