@@ -16,6 +16,8 @@
     --main-background: pink;
     --questions-wrapper-background: orange;
     --question-wrapper-background: rgb(232, 128, 0);
+    --question-options-wrapper-background: rgb(0, 167, 167);
+    --question-option-wrapper-background: cyan;
     --comments-wrapper: rgb(230, 77, 230);
     --comment-card-background-colour: violet;
 }
@@ -62,6 +64,16 @@ main {
 
 .question-wrapper {
     background-color: var(--question-wrapper-background);
+}
+
+.question-options-wrapper {
+    background-color: var(--question-options-wrapper-background);
+    display: grid;
+    gap: 20px;
+}
+
+.question-option-wrapper {
+    background-color: var(--question-option-wrapper-background);
 }
 
 .comments-wrapper {

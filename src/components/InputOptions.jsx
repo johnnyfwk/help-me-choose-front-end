@@ -1,15 +1,7 @@
 export default function InputOptions({
     options,
-    setOptions,
-    setOptionsError
+    handleOptions,
 }) {
-    function handleOptions(index, value) {
-        const newOptions = [...options];
-        newOptions[index] = value;
-        setOptions(newOptions);
-        setOptionsError("");
-    }
-
     return (
         <div id="input-options">
             {options.map((option, index) => {
@@ -22,7 +14,7 @@ export default function InputOptions({
                         value={option}
                         onChange={(event) => handleOptions(index, event.target.value)}
                         placeholder={`Option ${index + 1}`}
-                        required
+                        className="input-option"
                     />
                 )
             })}
