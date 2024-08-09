@@ -24,10 +24,9 @@ export default function InputPassword({
                 value={password}
                 onChange={handlePassword}
                 maxLength="128"
+                placeholder="Password"
                 required
             ></input>
-
-            <div className="error">{passwordErrorMessage}</div>
         </div>
     )
 }

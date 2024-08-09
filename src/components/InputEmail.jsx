@@ -1,7 +1,6 @@
 export default function InputEmail({
     email,
     setEmail,
-    emailErrorMessage,
     setEmailErrorMessage,
     setError
 }) {
@@ -24,10 +23,9 @@ export default function InputEmail({
                 value={email}
                 onChange={handleEmail}
                 maxLength="254"
+                placeholder="Email"
                 required
             ></input>
-
-            <div className="error">{emailErrorMessage}</div>
         </div>
     )
 }
