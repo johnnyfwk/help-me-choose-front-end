@@ -1,13 +1,13 @@
 export default function InputOptions({
     options,
     setOptions,
-    setError
+    setOptionsError
 }) {
     function handleOptions(index, value) {
         const newOptions = [...options];
         newOptions[index] = value;
         setOptions(newOptions);
-        setError("");
+        setOptionsError("");
     }
 
     return (
@@ -15,7 +15,6 @@ export default function InputOptions({
             {options.map((option, index) => {
                 return (
                     <div key={index}>
-                        {/* <label htmlFor={`option-${index}`}>Option {index + 1}:</label> */}
                         <input
                             type="text"
                             id={`option-${index}`}

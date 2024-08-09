@@ -14,40 +14,58 @@ export default function PostAQuestion({
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("");
-    const [options, setOptions] = useState(["", "", ""]);
-    const [error, setError] = useState("");
+    const [options, setOptions] = useState(["", "", "", "", ""]);
+    const [optionsError, setOptionsError] = useState("");
+    const [postQuestionError, setPostQuestionError] = useState("");
 
     const navigate = useNavigate();
 
     function handlePostQuestion() {
-        const filledOptions = options.filter(option => option !== '').map(opt => opt.trim());
+        const filledOptions = options.filter((option) => option).map((opt) => opt.trim());
+        const optionsAndVoters = [];
+        filledOptions.map((option) => {
+            const optionObject = {};
+            optionObject.name = option;
+            optionObject.voters = [];
+            optionsAndVoters.push(optionObject);
+        })
+
+        console.log("Question owner ID: ", user.uid);
+        console.log("Question owner username: ", user.displayName);
+        const titleTrimmed = title.trim();
+        console.log("Title: ", titleTrimmed);
+        const descriptionTrimmed = description.trim();
+        console.log("Description: ", descriptionTrimmed);
+        console.log("Category: ", category);
+        console.log("Options: ", optionsAndVoters);
+
+
         if (filledOptions.length < 2) {
-            setError("Please enter at least two options.");
+            setOptionsError("Please enter at least two options.");
         } else {
+            console.log("Question will be posted.")
             addDoc(collection(db, 'questions'), {
-                ownerId: user.uid,
-                ownerUsername: user.displayName,
-                title: title.trim(),
-                description: description.trim(),
-                category,
-                options: filledOptions,
-                votes: Array(filledOptions.length).fill(0),
-                votedUsers: Array(0).fill(""),
-                created: serverTimestamp(),
-                modified: ""
+                questionOwnerId: user.uid,
+                questionOwnerUsername: user.displayName,
+                questionTitle: titleTrimmed,
+                questionDescription: descriptionTrimmed,
+                questionCategory: category,
+                questionOptionsAndVoters: optionsAndVoters,
+                questionCreated: serverTimestamp(),
+                questionModified: ""
             })
             .then((response) => {
                 console.log(response);
                 setTitle("");
                 setDescription("");
                 setCategory("");
-                setOptions(["", "", ""]);
+                setOptions(["", "", "", "", ""]);
                 navigate('/');
             })
             .catch((error) => {
                 console.log(error);
                 console.error('Error posting question: ', error);
-                setError("Question could not be posted.");
+                setPostQuestionError("Question could not be posted.");
             })
         }
     }
@@ -75,7 +93,9 @@ export default function PostAQuestion({
 
             <main>
                 <h1>Post a Question</h1>
-                <p>Post a question and get responses from other members.</p>
+                <p>Post a question and let other members vote on your options.</p>
+
+                <div className="error">{postQuestionError}</div>
 
                 <form>
                     <InputTitle
@@ -93,19 +113,19 @@ export default function PostAQuestion({
                         handleCategory={handleCategory}
                     />
 
-                    <div className="error">{error}</div>
+                    <div className="error">{optionsError}</div>
 
                     <InputOptions
                         options={options}
                         setOptions={setOptions}
-                        setError={setError}
+                        setOptionsError={setOptionsError}
                     />
 
                     <input
                         type="button"
                         value="Post Question"
                         onClick={handlePostQuestion}
-                        disabled={!title || !description || !category || options.length < 2}
+                        disabled={!title || !description || !category}
                     ></input>
                 </form>
             </main>

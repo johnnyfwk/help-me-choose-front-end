@@ -16,7 +16,7 @@ export default function Profile() {
             const fetchQuestions = () => {
                 const questionsQuery = query(
                     collection(db, 'questions'),
-                    where('ownerId', '==', user.uid),
+                    where('questionOwnerId', '==', user.uid),
                     orderBy('created', 'desc')
                 );
                 

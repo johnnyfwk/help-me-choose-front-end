@@ -7,14 +7,14 @@ export default function QuestionCard({
 }) {
     return (
         <div className="question-wrapper">
-            <Link to={`/question/${question.id}`}>{question.title}</Link>
-            <p>{question.description}</p>
-            <div>{question.category}</div>
+            <Link to={`/question/${question.id}`}>{question.questionTitle}</Link>
+            <p>{question.questionDescription}</p>
+            <div>{question.questionCategory}</div>
             {page === "home"
-                ? <div>{question.ownerUsername}</div>   
+                ? <div>{question.questionOwnerUsername}</div>   
                 : null
             }                 
-            <div>{utils.formatDate(question.created)}</div>
+            <div>{utils.formatDate(question.questionCreated)}</div>
         </div>
     )
 }

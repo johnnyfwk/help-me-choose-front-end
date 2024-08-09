@@ -70,12 +70,17 @@ export function formatDate(timestamp) {
     }
 }
 
-export function sortDocs(collection) {
+export function extractDocData(collection) {
     let list = collection.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    list = list.sort((a, b) => {
-        const latestA = a.modified ? a.modified.seconds : a.created.seconds;
-        const latestB = b.modified ? b.modified.seconds : b.created.seconds;
+    return list;
+}
+
+export function sortQuestions(questions) {
+    const questionsSorted = questions.sort((a, b) => {
+        console.log(a, b)
+        const latestA = a.questionModified ? a.questionModified.seconds : a.questionCreated.seconds;
+        const latestB = b.questionModified ? b.questionModified.seconds : b.questionCreated.seconds;
         return latestB - latestA;
     });
-    return list;
+    return questionsSorted;
 }

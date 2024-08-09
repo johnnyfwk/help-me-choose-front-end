@@ -149,8 +149,8 @@ export default function Question({user}) {
             commentCreated: serverTimestamp(),
             commentModified: "",
             questionId: question_id,
-            questionOwnerId: question.ownerId,
-            questionOwnerUsername: question.ownerUsername,
+            questionOwnerId: question.questionOwnerId,
+            questionOwnerUsername: question.questionOwnerUsername,
             questionTitle: question.title,
             questionDescription: question.description,
             questionCategory: question.category,
@@ -335,7 +335,7 @@ export default function Question({user}) {
                     {isEditing
                         ? null
                         : <>
-                            <div>{question.ownerUsername}</div>
+                            <div>{question.questionOwnerUsername}</div>
                             <div>{utils.formatDate(question.created)}</div>
                         </>
                     }
@@ -361,7 +361,7 @@ export default function Question({user}) {
                                     <div key={index} className="question-option-wrapper">
                                         <div key={index}>{option}</div>
                                         <div>{question.votes[index]} votes</div>
-                                        {!currentUser || question.ownerId === currentUser.uid
+                                        {!currentUser || question.questionOwnerId === currentUser.uid
                                             ? null
                                             : <button
                                                 onClick={() => handleVote(index)}
@@ -373,7 +373,7 @@ export default function Question({user}) {
                         </div>
                     }                    
 
-                    {user.uid === question.ownerId && !isEditing
+                    {user.uid === question.questionOwnerId && !isEditing
                         ? <button onClick={handleEditQuestion}>Edit</button>
                         : null
                     }
