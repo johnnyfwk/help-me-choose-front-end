@@ -77,7 +77,6 @@ export function extractDocData(collection) {
 
 export function sortQuestions(questions) {
     const questionsSorted = questions.sort((a, b) => {
-        console.log(a, b)
         const latestA = a.questionModified ? a.questionModified.seconds : a.questionCreated.seconds;
         const latestB = b.questionModified ? b.questionModified.seconds : b.questionCreated.seconds;
         return latestB - latestA;

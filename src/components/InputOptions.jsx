@@ -14,17 +14,16 @@ export default function InputOptions({
         <div id="input-options">
             {options.map((option, index) => {
                 return (
-                    <div key={index}>
-                        <input
-                            type="text"
-                            id={`option-${index}`}
-                            name={`option-${index}`}
-                            value={option}
-                            onChange={(event) => handleOptions(index, event.target.value)}
-                            placeholder={`Option ${index + 1}`}
-                            required
-                        />
-                    </div>
+                    <input
+                        key={index}
+                        type="text"
+                        id={`option-${index}`}
+                        name={`option-${index}`}
+                        value={option}
+                        onChange={(event) => handleOptions(index, event.target.value)}
+                        placeholder={`Option ${index + 1}`}
+                        required
+                    />
                 )
             })}
         </div>
