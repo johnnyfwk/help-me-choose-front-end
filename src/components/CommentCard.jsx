@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import * as utils from '../../utils';
 
 export default function CommentCard({comment, page}) {
+    console.log("Comment:", comment)
     return (
         <div className="comment-card">
             {page === "profile"

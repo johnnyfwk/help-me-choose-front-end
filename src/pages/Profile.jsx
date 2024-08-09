@@ -10,6 +10,7 @@ export default function Profile() {
     const { user, loading } = useAuth();
     const [questions, setQuestions] = useState([]);
     const [comments, setComments] = useState([]);
+    const [getQuestionsError, setGetQuestionsError] = useState("");
 
     useEffect(() => {
         if (!loading && user) {
@@ -17,7 +18,7 @@ export default function Profile() {
                 const questionsQuery = query(
                     collection(db, 'questions'),
                     where('questionOwnerId', '==', user.uid),
-                    orderBy('created', 'desc')
+                    orderBy('questionCreated', 'desc')
                 );
                 
                 getDocs(questionsQuery)
@@ -27,9 +28,11 @@ export default function Profile() {
                             ...doc.data(),
                         }));
                         setQuestions(questionsData);
+                        setGetQuestionsError("");
                     })
                     .catch((error) => {
                         console.error("Error fetching questions: ", error);
+                        setGetQuestionsError("Questions could not be retrieved.");
                     });
             };
 
@@ -72,26 +75,27 @@ export default function Profile() {
                     <h1>{user.displayName}</h1>
                     <p>This is your profile page.</p>
 
-                    <h2>Posts</h2>
+                    <h2>Questions</h2>
+                    <div className="error">{getQuestionsError}</div>
                     {questions.length > 0
                         ? <div className="questions-wrapper">
                             {questions.map((question, index) => {
                                 return <QuestionCard key={index} question={question} page="profile" />
                             })}
                         </div>
-                        : <div>No questions to display.</div>
+                        : <div>You haven't posted any questions.</div>
                     }
                 </section>
                 
                 <section>
                     <h2>Comments</h2>
                     {comments.length > 0
-                            ? <div className="comments-wrapper">
-                                {comments.map((comment, index) => {
-                                    return <CommentCard key={index} comment={comment} page="profile"/>
-                                })}
-                            </div>
-                            : <div>There are no comments for this question.</div>
+                        ? <div className="comments-wrapper">
+                            {comments.map((comment, index) => {
+                                return <CommentCard key={index} comment={comment} page="profile"/>
+                            })}
+                        </div>
+                        : <div>You haven't posted any comments on any questions.</div>
                     }
                 </section>
             </main>

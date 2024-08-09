@@ -162,11 +162,11 @@ export default function Question({user}) {
             questionId: question_id,
             questionOwnerId: question.questionOwnerId,
             questionOwnerUsername: question.questionOwnerUsername,
-            questionTitle: question.title,
-            questionDescription: question.description,
-            questionCategory: question.category,
-            questionCreated: question.created,
-            questionModified: question.modified,
+            questionTitle: question.questionTitle,
+            questionDescription: question.questionDescription,
+            questionCategory: question.questionCategory,
+            questionCreated: question.questionCreated,
+            questionModified: question.questionModified,
         })
         .then((response) => {
             console.log("Comment posted successfully");
