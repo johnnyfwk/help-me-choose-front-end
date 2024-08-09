@@ -28,6 +28,7 @@ export default function Question({user}) {
     const [question, setQuestion] = useState(null);
     const [getQuestionError, setGetQuestionError] = useState(null);
     const [updateQuestionError, setUpdateQuestionError] = useState(null);
+    const [updateVoteError, setUpdateVoteError] = useState(null);
 
     const [originalQuestion, setOriginalQuestion] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -56,6 +57,12 @@ export default function Question({user}) {
                     if (docSnap.exists()) {
                         const data = docSnap.data();
                         setQuestion(data);
+                        if (user) {
+                            const foundIndex = data.questionOptionsAndVoters.findIndex(option => 
+                                option.voters.includes(user.uid)
+                            );
+                            setUserVote(foundIndex !== -1 ? foundIndex : null);
+                        }
                     } else {
                         console.log("Question doesn't exist.");
                     }
@@ -103,37 +110,44 @@ export default function Question({user}) {
     function handleVote(optionIndex) {
         if (!question || !currentUser) return;
 
-        const { votes, votedUsers } = question;
+        console.log("Logged in User ID: ", user.uid)
+        console.log("Question: ", question);
 
-        const previousVote = votedUsers.find(vote => vote.userId === currentUser.uid);
-
-        const newVotes = [...votes];
-        if (previousVote) {
-            newVotes[previousVote.optionIndex] -= 1;
-        }
-
-        newVotes[optionIndex] += 1;
-
-        const updatedVotedUsers = votedUsers.filter(vote => vote.userId !== currentUser.uid);
-        updatedVotedUsers.push({ userId: currentUser.uid, username: currentUser.displayName, optionIndex });
+        const updatedOptionsAndVoters = question.questionOptionsAndVoters.map((optionAndVoters, index) => {
+            const newVoters = [...optionAndVoters.voters];
+    
+            if (newVoters.includes(currentUser.uid)) {
+                const voterIndex = newVoters.indexOf(currentUser.uid);
+                if (voterIndex > -1) {
+                    newVoters.splice(voterIndex, 1);
+                }
+            }
+    
+            if (index === optionIndex) {
+                newVoters.push(currentUser.uid);
+            }
+    
+            return {
+                ...optionAndVoters,
+                voters: newVoters
+            };
+        });
 
         const docRef = doc(db, 'questions', question_id);
 
         updateDoc(docRef, {
-            votes: newVotes,
-            votedUsers: updatedVotedUsers,
-            modified: serverTimestamp()
+            questionOptionsAndVoters: updatedOptionsAndVoters,
+            questionModified: serverTimestamp()
         })
             .then(() => {
                 setQuestion(prevData => ({
                     ...prevData,
-                    votes: newVotes,
-                    votedUsers: updatedVotedUsers
+                    questionOptionsAndVoters: updatedOptionsAndVoters,
                 }));
                 setUserVote(optionIndex);
             })
             .catch((error) => {
-                setUpdateQuestionError(error.message);
+                setUpdateVoteError(error.message);
                 console.error('Error updating votes:', error);
             });
     }
@@ -238,22 +252,6 @@ export default function Question({user}) {
         if (optionsCheck.length < 2) {
             console.log("Please enter at least two options.")
         }
-
-        // Identify the indices of removed options
-        // const newOptions = question.options.filter((option) => option.trim() !== "");
-        // console.log("New Options: ", newOptions)
-        // const removedIndices = question.options.reduce((acc, option, index) => {
-        //     if (!newOptions.includes(option)) {
-        //         acc.push(index);
-        //     }
-        //     return acc;
-        // }, []);
-        // console.log("removedIndices: ", removedIndices);
-
-        // Filter out the votes and votedUsers associated with removed options
-        // const newVotes = votes.filter((_, index) => !removedIndices.includes(index));
-        // const newVotedUsers = votedUsers.filter(vote => !removedIndices.includes(vote.optionIndex));
-        // const newOptionsTrimmed = newOptions.map((option) => option.trim());
 
         // Update the Firestore document with updated question
         const docRef = doc(db, 'questions', question_id);
@@ -361,6 +359,7 @@ export default function Question({user}) {
                                             ? null
                                             : <button
                                                 onClick={() => handleVote(index)}
+                                                disabled={userVote === index}
                                             >{userVote === index ? 'Voted' : 'Vote'}</button>
                                         }
                                     </div>
