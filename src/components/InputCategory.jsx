@@ -3,12 +3,8 @@ const sortedUniqueCategories = Array.from(new Set(categories)).sort();
 
 export default function InputCategory({
     category,
-    setCategory
+    handleCategory
 }) {
-    function handleCategory(event) {
-        setCategory(event.target.value);
-    }
-
     return (
         <div id="input-category">
             <label htmlFor="category"></label>

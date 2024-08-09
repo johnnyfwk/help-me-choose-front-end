@@ -1,17 +1,9 @@
 export default function InputDescription({
     description,
-    setDescription
+    handleDescription
 }) {
-    function handleDescription(event) {
-        setDescription(event.target.value);
-    }
-
     return (
         <div id="input-description">
-            <label
-                htmlFor="description"
-            ></label>
-
             <textarea
                 id="description"
                 name="description"
