@@ -5,6 +5,7 @@ import { db } from '../firebase';
 import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
 import QuestionCard from '../components/QuestionCard';
 import CommentCard from '../components/CommentCard';
+import * as utils from '../../utils';
 
 export default function Profile() {
     const { user, loading } = useAuth();
@@ -27,7 +28,8 @@ export default function Profile() {
                             id: doc.id,
                             ...doc.data(),
                         }));
-                        setQuestions(questionsData);
+                        const questionsOrdered = utils.sortQuestions(questionsData);
+                        setQuestions(questionsOrdered);
                         setGetQuestionsError("");
                     })
                     .catch((error) => {

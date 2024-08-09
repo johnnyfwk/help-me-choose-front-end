@@ -112,9 +112,6 @@ export default function Question({user}) {
     function handleVote(optionIndex) {
         if (!question || !currentUser) return;
 
-        console.log("Logged in User ID: ", user.uid)
-        console.log("Question: ", question);
-
         const updatedQuestionOptionsAndVoters = question.questionOptionsAndVoters.map((optionAndVoters, index) => {
             const newVoters = [...optionAndVoters.voters];
     
@@ -171,13 +168,11 @@ export default function Question({user}) {
             questionModified: question.questionModified,
         })
         .then((response) => {
-            console.log("Comment posted successfully");
-            console.log(response);
             setComment("");
             setCommentError("");
             const questionRef = doc(db, 'questions', question_id);
             updateDoc(questionRef, {
-                modified: serverTimestamp()
+                questionModified: serverTimestamp()
             })
         })
         .catch((error) => {
@@ -232,11 +227,8 @@ export default function Question({user}) {
     }
 
     function handleAddOption() {
-        console.log("Question", question);
         const newQuestion = JSON.parse(JSON.stringify(question));
-        
         newQuestion.questionOptionsAndVoters.push({name: "", voters: []});
-        console.log("newQuestion", newQuestion);
         setQuestion(newQuestion);
     }
 
@@ -248,8 +240,6 @@ export default function Question({user}) {
 
     function handleUpdateQuestion() {
         if (!question || !currentUser) return;
-
-        console.log(originalQuestion);
 
         const { questionTitle, questionDescription, questionCategory, questionOptionsAndVoters } = question;
 
@@ -270,7 +260,6 @@ export default function Question({user}) {
             return;
         }
         if (questionOptionsAndVotersTrimmed.length < 2) {
-            console.log("questionOptionsAndVotersTrimmed", questionOptionsAndVotersTrimmed)
             setEditOptionsError("Please enter at least two options.");
         } else {
             const docRef = doc(db, 'questions', question_id);
