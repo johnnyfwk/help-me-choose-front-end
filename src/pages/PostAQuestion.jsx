@@ -36,7 +36,6 @@ export default function PostAQuestion({
         if (filledOptions.length < 2) {
             setOptionsError("Please enter at least two options.");
         } else {
-            console.log("Question will be posted.")
             addDoc(collection(db, 'questions'), {
                 questionOwnerId: user.uid,
                 questionOwnerUsername: user.displayName,
@@ -48,7 +47,6 @@ export default function PostAQuestion({
                 questionModified: ""
             })
             .then((response) => {
-                console.log(response);
                 setTitle("");
                 setDescription("");
                 setCategory("");
