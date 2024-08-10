@@ -291,6 +291,18 @@ export default function Question({user}) {
         }
     }
 
+    function handleComment(event) {
+        setComment(event.target.value);
+    }
+
+    function updateComment(updatedComment) {
+        setComments(prevComments =>
+            prevComments.map(comment =>
+                comment.id === updatedComment.id ? updatedComment : comment
+            )
+        );
+    }
+
     if (isLoading) {
         return <p>Loading...</p>;
     }
@@ -405,7 +417,7 @@ export default function Question({user}) {
 
                         <InputComment
                             comment={comment}
-                            setComment={setComment}
+                            handleComment={handleComment}
                         />
 
                         <div className="error">{commentError}</div>
@@ -426,7 +438,15 @@ export default function Question({user}) {
                     {comments.length > 0
                         ? <div className="comments-wrapper">
                             {comments.map((comment, index) => {
-                                return <CommentCard key={index} comment={comment} page="question" />
+                                return (
+                                    <CommentCard
+                                        key={index}
+                                        comment={comment}
+                                        page="question"
+                                        user={user}
+                                        updateComment={updateComment}
+                                    />
+                                )
                             })}
                         </div>
                         : <div>There are no comments for this question.</div>
