@@ -13,15 +13,24 @@ export default function CommentCard({
     commentObject,
     page,
     user,
-    updateComment
+    updateComment,
+    comment,
+    setComment,
+    isEditingQuestion,
+    setIsEditingQuestion
 }) {
     const [isEditingComment, setIsEditingComment] = useState(false);
     const [originalComment, setOriginalComment] = useState("");
-    const commentBoxRef = useRef(null);
+
+    useEffect(() => {
+        setIsEditingComment(false);
+    }, [comment, isEditingQuestion])
 
     function handleEditCommentButton() {
         setIsEditingComment(true);
         setOriginalComment(commentObject.comment);
+        setComment("");
+        setIsEditingQuestion(false);
     }
 
     function handleCancelEditComment() {
