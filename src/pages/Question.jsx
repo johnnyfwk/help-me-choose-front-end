@@ -42,7 +42,7 @@ export default function Question({user}) {
     const [commentError, setCommentError] = useState("");
     const [commentsError, setCommentsError] = useState("");
 
-    const [isEditing, setIsEditing] = useState(false);
+    const [isEditingQuestion, setIsEditingQuestion] = useState(false);
     const [editTitleError, setEditTitleError] = useState("");
     const [editDescriptionError, setEditDescriptionError] = useState("");
     const [editOptionsError, setEditOptionsError] = useState("");
@@ -183,9 +183,10 @@ export default function Question({user}) {
     }
 
     function handleEditQuestion() {
-        setIsEditing(true);
+        setIsEditingQuestion(true);
         setOriginalQuestion(JSON.parse(JSON.stringify(question)));
         setEditOptionsError("");
+        setComment("");
     }
 
     function handleTitle(event) {
@@ -233,7 +234,7 @@ export default function Question({user}) {
     }
 
     function handleCancelEditQuestion() {
-        setIsEditing(false);
+        setIsEditingQuestion(false);
         setQuestion(originalQuestion);
         setEditOptionsError("");
     }
@@ -278,7 +279,7 @@ export default function Question({user}) {
                     questionCategory,
                     questionOptionsAndVoters: questionOptionsAndVotersTrimmed
                 }));
-                setIsEditing(false);
+                setIsEditingQuestion(false);
                 setEditTitleError("");
                 setEditDescriptionError("");
                 setEditOptionsError("");
@@ -292,6 +293,7 @@ export default function Question({user}) {
     }
 
     function handleComment(event) {
+        setIsEditingQuestion(false);
         setComment(event.target.value);
     }
 
@@ -322,7 +324,7 @@ export default function Question({user}) {
 
             <main>
                 <section>
-                    {isEditing
+                    {isEditingQuestion
                         ? <div>
                             <div className="error">{editTitleError}</div>
                             <InputTitle
@@ -333,7 +335,7 @@ export default function Question({user}) {
                         : <h1>{question.questionTitle}</h1>
                     }
 
-                    {isEditing
+                    {isEditingQuestion
                         ? <div>
                             <div className="error">{editDescriptionError}</div>
                             <InputDescription
@@ -344,7 +346,7 @@ export default function Question({user}) {
                         : <p>{question.questionDescription}</p>
                     }
 
-                    {isEditing
+                    {isEditingQuestion
                         ? <div>
                             <InputCategory
                                 category={question.questionCategory}
@@ -354,7 +356,7 @@ export default function Question({user}) {
                         : <div>{question.questionCategory}</div>
                     }              
                 
-                    {isEditing
+                    {isEditingQuestion
                         ? null
                         : <>
                             <div>{question.questionOwnerUsername}</div>
@@ -363,8 +365,9 @@ export default function Question({user}) {
                     }
                     
                     <div className="error">{editOptionsError}</div>
+                    <div className="error">{updateVoteError}</div>
 
-                    {isEditing
+                    {isEditingQuestion
                         ? <div>
                             <InputOptions
                                 options={question.questionOptionsAndVoters.map((option) => option.name)}
@@ -392,14 +395,16 @@ export default function Question({user}) {
                                 )
                             })}
                         </div>
-                    }                    
+                    }
 
-                    {user && user.uid === question.questionOwnerId && !isEditing
+                    <div className="error">{updateQuestionError}</div>   
+
+                    {user && user.uid === question.questionOwnerId && !isEditingQuestion
                         ? <button onClick={handleEditQuestion}>Edit</button>
                         : null
                     }
 
-                    {isEditing
+                    {isEditingQuestion
                         ? <div>
                             <button onClick={handleCancelEditQuestion}>Cancel</button>
                             <button
@@ -437,11 +442,11 @@ export default function Question({user}) {
                     <div className="error">{commentsError}</div>
                     {comments.length > 0
                         ? <div className="comments-wrapper">
-                            {comments.map((comment, index) => {
+                            {comments.map((commentObject, index) => {
                                 return (
                                     <CommentCard
                                         key={index}
-                                        comment={comment}
+                                        commentObject={commentObject}
                                         page="question"
                                         user={user}
                                         updateComment={updateComment}

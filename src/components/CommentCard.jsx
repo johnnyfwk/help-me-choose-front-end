@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import * as utils from '../../utils';
 import InputComment from './InputComment';
@@ -10,17 +10,18 @@ import {
 } from 'firebase/firestore';
 
 export default function CommentCard({
-    comment,
+    commentObject,
     page,
     user,
     updateComment
 }) {
     const [isEditingComment, setIsEditingComment] = useState(false);
     const [originalComment, setOriginalComment] = useState("");
+    const commentBoxRef = useRef(null);
 
     function handleEditCommentButton() {
         setIsEditingComment(true);
-        setOriginalComment(comment.comment);
+        setOriginalComment(commentObject.comment);
     }
 
     function handleCancelEditComment() {
@@ -28,17 +29,13 @@ export default function CommentCard({
     }
 
     function handleUpdateComment() {
-        const docRef = doc(db, 'comments', comment.id);
-        console.log("comment ID:", comment.id)
-        console.log("handleComment:", originalComment)
+        const docRef = doc(db, 'comments', commentObject.id);
         updateDoc(docRef, {
             comment: originalComment,
             commentModified: serverTimestamp()
         })
-        .then((response) => {
-            console.log(response);
-            console.log("Comment has been updated.");
-            const updatedComment = {...comment, comment: originalComment};
+        .then(() => {
+            const updatedComment = {...commentObject, comment: originalComment};
             updateComment(updatedComment);
             setIsEditingComment(false);
         })
@@ -53,30 +50,29 @@ export default function CommentCard({
 
     function handleEditComment(event) {
         let updatedComment = event.target.value;
-        console.log(updatedComment);
         setOriginalComment(updatedComment);
     }
 
     return (
         <div className="comment-card">
             {page === "profile"
-                ? <Link to={`/question/${comment.questionId}`}>{comment.questionTitle}</Link>
+                ? <Link to={`/question/${commentObject.questionId}`}>{commentObject.questionTitle}</Link>
                 : null
             }
 
             {page === "question"
-                ? <div>{comment.commentOwnerUsername}</div>
+                ? <div>{commentObject.commentOwnerUsername}</div>
                 : null
             }
 
             {isEditingComment
                 ? <InputComment comment={originalComment} handleComment={handleEditComment} />
-                : <div>{comment.comment}</div>
+                : <div>{commentObject.comment}</div>
             }
 
-            <div>{utils.formatDate(comment.commentCreated)}</div>
+            <div>{utils.formatDate(commentObject.commentCreated)}</div>
             
-            {user && comment.commentOwnerId === user.uid && !isEditingComment
+            {user && commentObject.commentOwnerId === user.uid && !isEditingComment
                 ? <button onClick={handleEditCommentButton}>Edit</button>
                 : null
             }
