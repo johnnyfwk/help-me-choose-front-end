@@ -1,11 +1,7 @@
 export default function InputComment({
     comment,
-    setComment
+    handleComment
 }) {
-    function handleComment(event) {
-        setComment(event.target.value);
-    }
-
     return (
         <div id="input-comment">
             <textarea

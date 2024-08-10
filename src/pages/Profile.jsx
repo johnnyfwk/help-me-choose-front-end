@@ -63,6 +63,14 @@ export default function Profile() {
         }        
     }, [])
 
+    function updateComment(updatedComment) {
+        setComments(prevComments =>
+            prevComments.map(comment =>
+                comment.id === updatedComment.id ? updatedComment : comment
+            )
+        );
+    }
+
     return (
         <>
             <Helmet>
@@ -94,7 +102,15 @@ export default function Profile() {
                     {comments.length > 0
                         ? <div className="comments-wrapper">
                             {comments.map((comment, index) => {
-                                return <CommentCard key={index} comment={comment} page="profile"/>
+                                return (
+                                    <CommentCard
+                                        key={index}
+                                        comment={comment}
+                                        page="profile"
+                                        user={user}
+                                        updateComment={updateComment}
+                                    />
+                                )
                             })}
                         </div>
                         : <div>You haven't posted any comments on any questions.</div>
