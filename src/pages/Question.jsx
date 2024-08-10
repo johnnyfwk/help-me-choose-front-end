@@ -450,6 +450,10 @@ export default function Question({user}) {
                                         page="question"
                                         user={user}
                                         updateComment={updateComment}
+                                        comment={comment}
+                                        setComment={setComment}
+                                        isEditingQuestion={isEditingQuestion}
+                                        setIsEditingQuestion={setIsEditingQuestion}
                                     />
                                 )
                             })}
