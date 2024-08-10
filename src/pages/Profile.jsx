@@ -101,11 +101,11 @@ export default function Profile() {
                     <h2>Comments</h2>
                     {comments.length > 0
                         ? <div className="comments-wrapper">
-                            {comments.map((comment, index) => {
+                            {comments.map((commentObject, index) => {
                                 return (
                                     <CommentCard
                                         key={index}
-                                        comment={comment}
+                                        commentObject={commentObject}
                                         page="profile"
                                         user={user}
                                         updateComment={updateComment}
