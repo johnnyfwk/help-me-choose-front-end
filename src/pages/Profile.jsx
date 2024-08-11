@@ -16,6 +16,8 @@ export default function Profile() {
     const [comment, setComment] = useState("");
     const [isEditingQuestion, setIsEditingQuestion] = useState(false);
 
+    const [editingCommentId, setEditingCommentId] = useState(null);
+
     useEffect(() => {
         if (!loading && user) {
             const fetchQuestions = () => {
@@ -116,6 +118,8 @@ export default function Profile() {
                                         setComment={setComment}
                                         isEditingQuestion={isEditingQuestion}
                                         setIsEditingQuestion={setIsEditingQuestion}
+                                        editingCommentId={editingCommentId}
+                                        setEditingCommentId={setEditingCommentId}
                                     />
                                 )
                             })}
