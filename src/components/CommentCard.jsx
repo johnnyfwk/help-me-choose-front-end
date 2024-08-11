@@ -17,20 +17,29 @@ export default function CommentCard({
     comment,
     setComment,
     isEditingQuestion,
-    setIsEditingQuestion
+    setIsEditingQuestion,
+    editingCommentId,
+    setEditingCommentId
 }) {
     const [isEditingComment, setIsEditingComment] = useState(false);
     const [originalComment, setOriginalComment] = useState("");
 
     useEffect(() => {
-        setIsEditingComment(false);
-    }, [comment, isEditingQuestion])
+        if (isEditingQuestion || comment) {
+            setIsEditingComment(false);
+        } else if (editingCommentId === commentObject.id) {
+            setIsEditingComment(true);
+        } else {
+            setIsEditingComment(false);
+        }
+    }, [comment, isEditingQuestion, editingCommentId])
 
     function handleEditCommentButton() {
+        setEditingCommentId(commentObject.id)
         setIsEditingComment(true);
         setOriginalComment(commentObject.comment);
-        setComment("");
         setIsEditingQuestion(false);
+        setComment("");
     }
 
     function handleCancelEditComment() {
@@ -81,8 +90,12 @@ export default function CommentCard({
 
             <div>{utils.formatDate(commentObject.commentCreated)}</div>
             
-            {user && commentObject.commentOwnerId === user.uid && !isEditingComment
-                ? <button onClick={handleEditCommentButton}>Edit</button>
+            {user &&
+            commentObject.commentOwnerId === user.uid &&
+            !isEditingComment
+                ? <button
+                    onClick={handleEditCommentButton}
+                >Edit</button>
                 : null
             }
             {isEditingComment

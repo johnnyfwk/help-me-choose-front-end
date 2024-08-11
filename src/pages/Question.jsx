@@ -47,6 +47,8 @@ export default function Question({user}) {
     const [editDescriptionError, setEditDescriptionError] = useState("");
     const [editOptionsError, setEditOptionsError] = useState("");
 
+    const [editingCommentId, setEditingCommentId] = useState(null);
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user);
@@ -454,6 +456,8 @@ export default function Question({user}) {
                                         setComment={setComment}
                                         isEditingQuestion={isEditingQuestion}
                                         setIsEditingQuestion={setIsEditingQuestion}
+                                        editingCommentId={editingCommentId}
+                                        setEditingCommentId={setEditingCommentId}
                                     />
                                 )
                             })}
