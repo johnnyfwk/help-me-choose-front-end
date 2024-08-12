@@ -12,8 +12,9 @@
 
     --success: green;
     --error: red;
+    --confirm: orange;
 
-    --main-background: pink;
+    --main-background: rgb(255, 227, 231);
     --questions-wrapper-background: orange;
     --question-wrapper-background: rgb(232, 128, 0);
     --question-options-wrapper-background: rgb(0, 167, 167);
@@ -33,6 +34,10 @@
 
 .error {
     color: var(--error);
+}
+
+.confirm {
+    color: var(--confirm);
 }
 
 textarea {

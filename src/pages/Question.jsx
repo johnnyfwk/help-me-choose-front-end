@@ -1,10 +1,11 @@
 import { Helmet } from "react-helmet";
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { db, auth } from '../firebase';
 import {
     doc,
     getDoc,
+    getDocs,
     updateDoc,
     serverTimestamp,
     addDoc,
@@ -12,7 +13,8 @@ import {
     query,
     where,
     onSnapshot,
-    orderBy
+    orderBy,
+    deleteDoc
 } from 'firebase/firestore';
 import { onAuthStateChanged } from 'firebase/auth';
 import InputTitle from "../components/InputTitle";
@@ -43,11 +45,14 @@ export default function Question({user}) {
     const [commentsError, setCommentsError] = useState("");
 
     const [isEditingQuestion, setIsEditingQuestion] = useState(false);
+    const [editingCommentId, setEditingCommentId] = useState(null);
     const [editTitleError, setEditTitleError] = useState("");
     const [editDescriptionError, setEditDescriptionError] = useState("");
     const [editOptionsError, setEditOptionsError] = useState("");
 
-    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [isConfirmDeleteQuestionVisible, setIsConfirmDeleteQuestionVisible] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -302,9 +307,51 @@ export default function Question({user}) {
     function updateComment(updatedComment) {
         setComments(prevComments =>
             prevComments.map(comment =>
-                comment.id === updatedComment.id ? updatedComment : comment
+                comment.id === updatedComment.id
+                    ? updatedComment
+                    : comment
             )
         );
+    }
+
+    function handleDeleteQuestion() {
+        setIsEditingQuestion(false);
+        setIsConfirmDeleteQuestionVisible(true);
+    }
+
+    function handleDeleteQuestionNo() {
+        console.log("Delete: No")
+        setIsConfirmDeleteQuestionVisible(false);
+    }
+
+    function handleDeleteQuestionYes() {
+        setIsConfirmDeleteQuestionVisible(false);
+
+        const questionRef = doc(db, 'questions', question_id);
+        const commentsQuery = query(
+            collection(db, 'comments'),
+            where('questionId', '==', question_id)
+        );
+
+        getDocs(commentsQuery)
+            .then((commentsSnapshot) => {
+                const deleteCommentPromises = commentsSnapshot.docs.map((commentDoc) => {
+                    return deleteDoc(commentDoc.ref);
+                });
+                return Promise.all(deleteCommentPromises);
+            })
+            .then((response) => {
+                console.log(response);
+                return deleteDoc(questionRef);
+            })
+            .then((response) => {
+                console.log(response);
+                console.log('Question and its comments have been deleted successfully.');
+                navigate('/');
+            })
+            .catch((error) => {
+                console.error('Error deleting question and comments:', error);
+            });
     }
 
     if (isLoading) {
@@ -401,7 +448,10 @@ export default function Question({user}) {
 
                     <div className="error">{updateQuestionError}</div>   
 
-                    {user && user.uid === question.questionOwnerId && !isEditingQuestion
+                    {user &&
+                    user.uid === question.questionOwnerId &&
+                    !isEditingQuestion &&
+                    !isConfirmDeleteQuestionVisible
                         ? <button onClick={handleEditQuestion}>Edit</button>
                         : null
                     }
@@ -409,9 +459,17 @@ export default function Question({user}) {
                     {isEditingQuestion
                         ? <div>
                             <button onClick={handleCancelEditQuestion}>Cancel</button>
-                            <button
-                                onClick={handleUpdateQuestion}
-                            >Update</button>
+                            <button onClick={handleUpdateQuestion}>Update</button>
+                            <button onClick={handleDeleteQuestion}>Delete</button>
+                        </div>
+                        : null
+                    }
+
+                    {isConfirmDeleteQuestionVisible
+                        ? <div>
+                            <div className="confirm">Delete question? All votes and comments will also be deleted and can't be recovered.</div>
+                            <button onClick={handleDeleteQuestionNo}>No</button>
+                            <button onClick={handleDeleteQuestionYes}>Yes</button>
                         </div>
                         : null
                     }
