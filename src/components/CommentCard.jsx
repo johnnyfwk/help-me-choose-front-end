@@ -28,11 +28,10 @@ export default function CommentCard({
     const [isConfirmDeleteCommentVisible, setIsConfirmDeleteCommentVisible] = useState(false);
 
     useEffect(() => {
-        if (isEditingQuestion || comment) {
+        if (comment || isEditingQuestion) {
             setIsEditingComment(false);
-        } else if (editingCommentId === commentObject.id) {
-            setIsEditingComment(true);
-        } else {
+        }
+        if (editingCommentId !== commentObject.id) {
             setIsEditingComment(false);
         }
     }, [comment, isEditingQuestion, editingCommentId])
@@ -128,21 +127,16 @@ export default function CommentCard({
                 >Edit</button>
                 : null
             }
+            
             {isEditingComment
-                ? <button onClick={handleCancelEditComment}>Cancel</button>
+                ? <div>
+                    <button onClick={handleCancelEditComment}>Cancel</button>
+                    <button onClick={handleUpdateComment} disabled={!originalComment}>Update</button>
+                    <button onClick={handleDeleteComment}>Delete</button>
+                </div>
                 : null
             }
-            {isEditingComment
-                ? <button
-                    onClick={handleUpdateComment}
-                    disabled={!originalComment}
-                >Update</button>
-                : null
-            }
-            {isEditingComment
-                ? <button onClick={handleDeleteComment}>Delete</button>
-                : null
-            }
+
             {isConfirmDeleteCommentVisible
                 ? <div>
                     <div>Delete comment?</div>
