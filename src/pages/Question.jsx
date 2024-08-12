@@ -458,6 +458,7 @@ export default function Question({user}) {
                                         setIsEditingQuestion={setIsEditingQuestion}
                                         editingCommentId={editingCommentId}
                                         setEditingCommentId={setEditingCommentId}
+                                        setComments={setComments}
                                     />
                                 )
                             })}
