@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import * as utils from '../../utils';
 import InputComment from './InputComment';
@@ -7,6 +7,7 @@ import {
     doc,
     updateDoc,
     serverTimestamp,
+    deleteDoc
 } from 'firebase/firestore';
 
 export default function CommentCard({
@@ -19,10 +20,12 @@ export default function CommentCard({
     isEditingQuestion,
     setIsEditingQuestion,
     editingCommentId,
-    setEditingCommentId
+    setEditingCommentId,
+    setComments
 }) {
     const [isEditingComment, setIsEditingComment] = useState(false);
     const [originalComment, setOriginalComment] = useState("");
+    const [isConfirmDeleteCommentVisible, setIsConfirmDeleteCommentVisible] = useState(false);
 
     useEffect(() => {
         if (isEditingQuestion || comment) {
@@ -64,11 +67,34 @@ export default function CommentCard({
 
     function handleDeleteComment() {
         setIsEditingComment(false);
+        setIsConfirmDeleteCommentVisible(true);
     }
 
     function handleEditComment(event) {
         let updatedComment = event.target.value;
         setOriginalComment(updatedComment);
+    }
+
+    function handleDeleteCommentNo() {
+        setIsConfirmDeleteCommentVisible(false);
+    }
+
+    function handleDeleteCommentYes() {
+        setIsConfirmDeleteCommentVisible(false);
+        deleteDoc(doc(db, "comments", editingCommentId))
+            .then(() => {
+                setComments((currentComments) => {
+                    const updatedComments = currentComments.filter((comment) => {
+                        return comment.id !== editingCommentId;
+                    })
+                    return updatedComments;
+                })
+                console.log("Comment has been deleted!");
+            })
+            .catch((error) => {
+                console.log(error);
+                console.log("Comment could not be deleted.");
+            })
     }
 
     return (
@@ -84,7 +110,10 @@ export default function CommentCard({
             }
 
             {isEditingComment
-                ? <InputComment comment={originalComment} handleComment={handleEditComment} />
+                ? <InputComment
+                    comment={originalComment}
+                    handleComment={handleEditComment}
+                />
                 : <div>{commentObject.comment}</div>
             }
 
@@ -92,7 +121,8 @@ export default function CommentCard({
             
             {user &&
             commentObject.commentOwnerId === user.uid &&
-            !isEditingComment
+            !isEditingComment &&
+            !isConfirmDeleteCommentVisible
                 ? <button
                     onClick={handleEditCommentButton}
                 >Edit</button>
@@ -111,6 +141,14 @@ export default function CommentCard({
             }
             {isEditingComment
                 ? <button onClick={handleDeleteComment}>Delete</button>
+                : null
+            }
+            {isConfirmDeleteCommentVisible
+                ? <div>
+                    <div>Delete comment?</div>
+                    <button onClick={handleDeleteCommentNo}>No</button>
+                    <button onClick={handleDeleteCommentYes}>Yes</button>
+                </div>                
                 : null
             }
         </div>

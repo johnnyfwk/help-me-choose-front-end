@@ -120,6 +120,7 @@ export default function Profile() {
                                         setIsEditingQuestion={setIsEditingQuestion}
                                         editingCommentId={editingCommentId}
                                         setEditingCommentId={setEditingCommentId}
+                                        setComments={setComments}
                                     />
                                 )
                             })}
