@@ -14,9 +14,11 @@ export default function Profile() {
     const [getQuestionsError, setGetQuestionsError] = useState("");
 
     const [comment, setComment] = useState("");
+    const [editingCommentId, setEditingCommentId] = useState(null);
     const [isEditingQuestion, setIsEditingQuestion] = useState(false);
 
-    const [editingCommentId, setEditingCommentId] = useState(null);
+    const [isEditingProfile, setIsEditingProfile] = useState(false);
+    const [isConfirmDeleteProfileVisible, setIsConfirmDeleteProfileVisible] = useState(false);
 
     useEffect(() => {
         if (!loading && user) {
@@ -76,6 +78,41 @@ export default function Profile() {
         );
     }
 
+    function handleEditProfile() {
+        setIsEditingProfile(true);
+    }
+
+    function handleCancelEditProfile() {
+        setIsEditingProfile(false);
+    }
+
+    function handleUpdateProfile() {
+        setIsEditingProfile(false);
+    }
+
+    function handleDeleteProfile() {
+        setIsEditingProfile(false);
+        setIsConfirmDeleteProfileVisible(true);
+    }
+
+    function handleDeleteProfileNo() {
+        setIsConfirmDeleteProfileVisible(false);
+    }
+
+    function handleDeleteProfileYes() {
+        const commentsQuery = query(
+            collection(db, 'comments'),
+            where('commentOwnerId', '==', user.uid)
+        );
+
+        const questionsQuery = query(
+            collection(db, 'questions'),
+            where('questionOwnerId', '==', user.uid)
+        );
+    }
+
+    console.log(user.uid)
+
     return (
         <>
             <Helmet>
@@ -89,6 +126,29 @@ export default function Profile() {
                 <section>
                     <h1>{user.displayName}</h1>
                     <p>This is your profile page.</p>
+
+                    {!isEditingProfile && !isConfirmDeleteProfileVisible
+                        ? <button onClick={handleEditProfile}>Edit</button>
+                        : null
+                    }
+                    
+                    {isEditingProfile
+                        ? <div>
+                            <button onClick={handleCancelEditProfile}>Cancel</button>
+                            <button onClick={handleUpdateProfile}>Update</button>
+                            <button onClick={handleDeleteProfile}>Delete</button>
+                        </div>
+                        : null
+                    }
+
+                    {isConfirmDeleteProfileVisible
+                        ? <div>
+                            <div className="confirm">Delete profile? Your account, questions, and comments will be permanently deleted.</div>
+                            <button onClick={handleDeleteProfileNo}>No</button>
+                            <button onClick={handleDeleteProfileYes}>Yes</button>
+                        </div>
+                        : null
+                    }
 
                     <h2>Questions</h2>
                     <div className="error">{getQuestionsError}</div>
