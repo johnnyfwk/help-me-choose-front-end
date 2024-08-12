@@ -42,6 +42,8 @@ export default function SignUp() {
         const passwordCheck = utils.validatePassword(password);
         setPasswordErrorMessage(passwordCheck.msg);
 
+        let userId;
+
         if (usernameCheck.isValid && passwordCheck.isValid && emailCheck.isValid) {
             getDocs(collection(db, 'displayNames'))
                 .then((response) => {
@@ -56,15 +58,17 @@ export default function SignUp() {
                     }
                 })
                 .then((userCredential) => {
-                    console.log(userCredential);
+                    userId = userCredential.user.uid;
                     const member = userCredential.user;
                     return updateProfile(member, {
                         displayName: username
                     });
                 })
-                .then(() => {
+                .then((response) => {
+                    console.log(response)
                     return addDoc(collection(db, 'displayNames'), {
-                        displayName: username
+                        displayName: username,
+                        userId
                     });
                 })
                 .then((response) => {
@@ -80,7 +84,6 @@ export default function SignUp() {
                     } else {
                         setError(error.message);
                     }
-                    
                 });
         } else {
             console.log("Account could not be created.");
