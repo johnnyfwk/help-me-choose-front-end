@@ -27,7 +27,6 @@ export default function SignUp() {
         getDocs(collection(db, 'displayNames'))
             .then((response) => {              
                 const usernamesList = utils.extractDocData(response);
-                console.log(usernamesList);
                 setRegisteredUsernames(usernamesList);
             })
             .catch((error) => {
@@ -44,9 +43,20 @@ export default function SignUp() {
         setPasswordErrorMessage(passwordCheck.msg);
 
         if (usernameCheck.isValid && passwordCheck.isValid && emailCheck.isValid) {
-            createUserWithEmailAndPassword(auth, email, password)
+            getDocs(collection(db, 'displayNames'))
+                .then((response) => {
+                    const usernamesList = utils.extractDocData(response);
+                    const lowercaseUsernames = usernamesList.map((username) => username.displayName.toLowerCase());
+                    if (lowercaseUsernames.includes(username.toLowerCase())) {
+                        console.log("Username is NOT available");
+                        setIsUsernameAvailable(false);
+                        return;
+                    } else {
+                        return createUserWithEmailAndPassword(auth, email, password);
+                    }
+                })
                 .then((userCredential) => {
-                    console.log(username)
+                    console.log(userCredential);
                     const member = userCredential.user;
                     return updateProfile(member, {
                         displayName: username
@@ -63,11 +73,18 @@ export default function SignUp() {
                 })
                 .catch((error) => {
                     console.log(error.code);
-                    console.log(error.message);
-                    setError("There was an error creating the account.");
+                    if (error.code === "auth/email-already-in-use") {
+                        setError("Email is already in use.");
+                    } else if (error.code === undefined) {
+                        setError("Username has been taken.");
+                    } else {
+                        setError(error.message);
+                    }
+                    
                 });
         } else {
             console.log("Account could not be created.");
+            setError("Account could not be created.");
         }
     }
 
@@ -87,6 +104,7 @@ export default function SignUp() {
                 <div className="error">{emailErrorMessage}</div>
                 <div className="error">{usernameErrorMessage}</div>
                 <div className="error">{passwordErrorMessage}</div>
+                <div className="error">{error}</div>
 
                 <form>
                     <InputEmail
@@ -114,13 +132,11 @@ export default function SignUp() {
                         setError={setError}
                     />
 
-                    <div className="error">{error}</div>
-
                     <input
                         type="button"
                         value="Create Account"
                         onClick={handleCreateAccount}
-                        disabled={!username || !password || !email || !isUsernameAvailable}
+                        disabled={!username || !password || !email}
                     />
                 </form>
 
