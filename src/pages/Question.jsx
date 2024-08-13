@@ -78,7 +78,7 @@ export default function Question({user}) {
                 })
                 .catch((error) => {
                     console.log(error);
-                    setGetQuestionError(error.message);
+                    setGetQuestionError("Could not get question.");
                     console.error('Error fetching question:', error);
                 })
                 .finally(() => {
@@ -359,7 +359,7 @@ export default function Question({user}) {
     }
 
     if (getQuestionError) {
-        return <p>Error: {getQuestionError}</p>;
+        return <p>{getQuestionError}</p>;
     }
 
     return (
