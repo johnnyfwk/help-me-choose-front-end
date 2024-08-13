@@ -1,14 +1,19 @@
 import { Helmet } from 'react-helmet';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { db } from '../firebase';
-import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, deleteDoc } from 'firebase/firestore';
+import { getAuth, deleteUser } from "firebase/auth";
 import QuestionCard from '../components/QuestionCard';
 import CommentCard from '../components/CommentCard';
 import * as utils from '../../utils';
 
 export default function Profile() {
     const { user, loading } = useAuth();
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
     const [questions, setQuestions] = useState([]);
     const [comments, setComments] = useState([]);
     const [getQuestionsError, setGetQuestionsError] = useState("");
@@ -19,6 +24,8 @@ export default function Profile() {
 
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [isConfirmDeleteProfileVisible, setIsConfirmDeleteProfileVisible] = useState(false);
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!loading && user) {
@@ -100,18 +107,59 @@ export default function Profile() {
     }
 
     function handleDeleteProfileYes() {
-        const commentsQuery = query(
-            collection(db, 'comments'),
-            where('commentOwnerId', '==', user.uid)
+        const displayNamesQuery = query(
+            collection(db, 'displayNames'),
+            where('userId', '==', user.uid)
         );
 
         const questionsQuery = query(
             collection(db, 'questions'),
             where('questionOwnerId', '==', user.uid)
         );
-    }
 
-    console.log(user.uid)
+        const commentsQuery = query(
+            collection(db, 'comments'),
+            where('commentOwnerId', '==', user.uid)
+        );
+
+        getDocs(commentsQuery)
+            .then((commentsSnapshot) => {
+                const deleteCommentPromises = commentsSnapshot.docs.map((commentDoc) => {
+                    return deleteDoc(commentDoc.ref);
+                });
+                return Promise.all(deleteCommentPromises);
+            })
+            .then((response) => {
+                return getDocs(questionsQuery);
+            })
+            .then((questionsSnapshot) => {
+                console.log("Questions retrieved successfully.");
+                const deleteQuestiondsPromises = questionsSnapshot.docs.map((questionDoc) => {
+                    return deleteDoc(questionDoc.ref);
+                });
+                return Promise.all(deleteQuestiondsPromises);
+            })
+            .then((response) => {
+                return getDocs(displayNamesQuery);
+            })
+            .then((displayNamesSnapshot) => {
+                console.log("Display names retrieved successfully.");
+                const deleteDisplayNamesPromises = displayNamesSnapshot.docs.map((displayNameDoc) => {
+                    return deleteDoc(displayNameDoc.ref);
+                });
+                return Promise.all(deleteDisplayNamesPromises);
+            })
+            .then((response) => {
+                return deleteUser(currentUser);
+            })
+            .then(() => {
+                navigate('/');
+            })
+            .catch((error) => {
+                console.error("Error deleting user:", error);
+            });
+        
+    }
 
     return (
         <>
