@@ -1,7 +1,5 @@
 export function validateEmail(email) {
-    // const emailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9_-]+)*@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
-    const emailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9_-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/
-;
+    const emailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9_-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
 
     if (!emailRegex.test(email)) {
         return {
@@ -16,8 +14,12 @@ export function validateEmail(email) {
     }
 }
 
-export function validateUsername(username) {
+export function validateUsername(username, registeredUsernames) {
     const usernameRegex = /^[a-zA-Z0-9]*$/;
+
+    const registeredDisplayNames = registeredUsernames.map((registeredUsername) => {
+        return registeredUsername.displayName.toLowerCase();
+    });
 
     if (!usernameRegex.test(username)) {
         return {
@@ -29,6 +31,11 @@ export function validateUsername(username) {
             isValid: false,
             msg: "Username must be at least 3 characters long."
         };
+    } else if (registeredDisplayNames.includes(username.toLowerCase())) {
+        return {
+            isValid: false,
+            msg: "Username is not available."
+        }
     } else {
         return {
             isValid: true,
@@ -54,6 +61,20 @@ export function validatePassword(password) {
             msg: ""
         };
     }
+}
+
+export function validateProfileImageUrl(url) {
+    return fetch(url, { method: 'HEAD' })
+        .then((response) => {
+            return response.ok && response.headers.get('content-type').startsWith('image/');
+        })
+        .then((response) => {
+            return response;
+        })
+        .catch((error) => {
+            console.log(error);
+            return false;
+        });
 }
 
 export function formatDate(timestamp) {

@@ -1,13 +1,14 @@
 import { Helmet } from 'react-helmet';
 import { useState, useEffect } from 'react';
-import * as utils from '../../utils';
-import InputEmail from '../components/InputEmail';
-import InputUsername from '../components/InputUsername';
-import InputPassword from '../components/InputPassword';
 import { auth } from '../firebase';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { db } from '../firebase';
 import { collection, getDocs, addDoc } from 'firebase/firestore';
+import * as utils from '../../utils';
+import InputEmail from '../components/InputEmail';
+import InputUsername from '../components/InputUsername';
+import InputPassword from '../components/InputPassword';
+import InputProfileImage from '../components/InputProfileImage';
 
 export default function SignUp() {
     const [email, setEmail] = useState("");
@@ -20,6 +21,9 @@ export default function SignUp() {
 
     const [password, setPassword] = useState("");
     const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
+
+    const [profileImageUrl, setProfileImageUrl] = useState("");
+    const [profileImageUrlErrorMessage, setProfileImageUrlErrorMessage] = useState("");
 
     const [error, setError] = useState("");
 
@@ -34,61 +38,83 @@ export default function SignUp() {
             })
     }, [])
 
+    function handleProfileImageUrl(event) {
+        setProfileImageUrl(event.target.value);
+        setProfileImageUrlErrorMessage("");
+        setError("");
+    }
+
+    function handleUsername(event) {
+        setUsername(event.target.value);
+        setUsernameErrorMessage("");
+        setError("");
+    }
+
     function handleCreateAccount() {
         const emailCheck = utils.validateEmail(email);
-        setEmailErrorMessage(emailCheck.msg);
-        const usernameCheck = utils.validateUsername(username);
-        setUsernameErrorMessage(usernameCheck.msg);
+        if (!emailCheck.isValid) {
+            setEmailErrorMessage(emailCheck.msg);
+            return;
+        }
+
+        const usernameCheck = utils.validateUsername(username, registeredUsernames);
+        if (!usernameCheck.isValid) {
+            setUsernameErrorMessage(usernameCheck.msg);
+            return;
+        }
+
         const passwordCheck = utils.validatePassword(password);
-        setPasswordErrorMessage(passwordCheck.msg);
+        if (!passwordCheck.isValid) {
+            setPasswordErrorMessage(passwordCheck.msg);
+            return;
+        }
+
+        const validateProfileImage = profileImageUrl
+            ? utils.validateProfileImageUrl(profileImageUrl)
+            : Promise.resolve(true);
+
+        validateProfileImage
+            .then((response) => {
+                if (response) {
+                    return getDocs(collection(db, 'displayNames'))
+                } else {
+                    setProfileImageUrlErrorMessage("Profile image URL is not valid.");
+                    return;
+                }                
+            })
+            .then((response) => {
+                const usernamesList = utils.extractDocData(response);
+                const lowercaseUsernames = usernamesList.map((username) => username.displayName.toLowerCase());
+                if (lowercaseUsernames.includes(username.toLowerCase())) {
+                    console.log("Username is NOT available");
+                    setIsUsernameAvailable(false);
+                    return;
+                } else {
+                    return createUserWithEmailAndPassword(auth, email, password);
+                }
+            })
+            .then((userCredential) => {
+                userId = userCredential.user.uid;
+                const member = userCredential.user;
+                return updateProfile(member, {
+                    displayName: username,
+                    photoURL: profileImageUrl
+                });
+            })
+            .then(() => {
+                return addDoc(collection(db, 'displayNames'), {
+                    displayName: username,
+                    userId
+                });
+            })
+            .then(() => {
+                console.log('User account has been created and display name added to Firestore.');
+            })
+            .catch((error) => {
+                console.log(error);
+            });
 
         let userId;
-
-        if (usernameCheck.isValid && passwordCheck.isValid && emailCheck.isValid) {
-            getDocs(collection(db, 'displayNames'))
-                .then((response) => {
-                    const usernamesList = utils.extractDocData(response);
-                    const lowercaseUsernames = usernamesList.map((username) => username.displayName.toLowerCase());
-                    if (lowercaseUsernames.includes(username.toLowerCase())) {
-                        console.log("Username is NOT available");
-                        setIsUsernameAvailable(false);
-                        return;
-                    } else {
-                        return createUserWithEmailAndPassword(auth, email, password);
-                    }
-                })
-                .then((userCredential) => {
-                    userId = userCredential.user.uid;
-                    const member = userCredential.user;
-                    return updateProfile(member, {
-                        displayName: username
-                    });
-                })
-                .then((response) => {
-                    console.log(response)
-                    return addDoc(collection(db, 'displayNames'), {
-                        displayName: username,
-                        userId
-                    });
-                })
-                .then((response) => {
-                    console.log(response);
-                    console.log('User account has been created and display name added to Firestore.');
-                })
-                .catch((error) => {
-                    console.log(error.code);
-                    if (error.code === "auth/email-already-in-use") {
-                        setError("Email is already in use.");
-                    } else if (error.code === undefined) {
-                        setError("Username has been taken.");
-                    } else {
-                        setError(error.message);
-                    }
-                });
-        } else {
-            console.log("Account could not be created.");
-            setError("Account could not be created.");
-        }
     }
 
     return (
@@ -104,11 +130,9 @@ export default function SignUp() {
                 <h1>Sign Up</h1>
                 <p>Create an account to post questions and get answers from other users.</p>
 
-                <div className="error">{emailErrorMessage}</div>
-                <div className="error">{usernameErrorMessage}</div>
-                <div className="error">{passwordErrorMessage}</div>
                 <div className="error">{error}</div>
-
+                <div className="error">{emailErrorMessage}</div>
+                
                 <form>
                     <InputEmail
                         email={email}
@@ -117,15 +141,14 @@ export default function SignUp() {
                         setError={setError}
                     />
 
+                    <div className="error">{usernameErrorMessage}</div>                  
+
                     <InputUsername
                         username={username}
-                        setUsername={setUsername}
-                        setUsernameErrorMessage={setUsernameErrorMessage}
-                        setError={setError}
-                        registeredUsernames={registeredUsernames}
-                        isUsernameAvailable={isUsernameAvailable}
-                        setIsUsernameAvailable={setIsUsernameAvailable}
+                        handleUsername={handleUsername}
                     />
+
+                    <div className="error">{passwordErrorMessage}</div>
 
                     <InputPassword
                         password={password}
@@ -133,6 +156,13 @@ export default function SignUp() {
                         setPasswordErrorMessage={setPasswordErrorMessage}
                         error={error}
                         setError={setError}
+                    />
+
+                    <div className="error">{profileImageUrlErrorMessage}</div>
+
+                    <InputProfileImage
+                        profileImageUrl={profileImageUrl}
+                        handleProfileImageUrl={handleProfileImageUrl}
                     />
 
                     <input
