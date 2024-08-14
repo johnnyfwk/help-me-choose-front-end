@@ -11,6 +11,7 @@ import * as utils from '../../utils';
 
 export default function Profile() {
     const { user, loading } = useAuth();
+    console.log("User:", user)
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
@@ -133,7 +134,6 @@ export default function Profile() {
                 return getDocs(questionsQuery);
             })
             .then((questionsSnapshot) => {
-                console.log("Questions retrieved successfully.");
                 const deleteQuestiondsPromises = questionsSnapshot.docs.map((questionDoc) => {
                     return deleteDoc(questionDoc.ref);
                 });
@@ -143,7 +143,6 @@ export default function Profile() {
                 return getDocs(displayNamesQuery);
             })
             .then((displayNamesSnapshot) => {
-                console.log("Display names retrieved successfully.");
                 const deleteDisplayNamesPromises = displayNamesSnapshot.docs.map((displayNameDoc) => {
                     return deleteDoc(displayNameDoc.ref);
                 });
