@@ -5,7 +5,7 @@ export default function InputProfileImage({
     return (
         <div>
             <label
-                htmlFor="password"
+                htmlFor="profile-image-url"
             >Profile Image URL (optional)</label>
 
             <input

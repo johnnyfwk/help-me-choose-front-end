@@ -16,7 +16,6 @@ export default function SignUp() {
 
     const [username, setUsername] = useState("");
     const [registeredUsernames, setRegisteredUsernames] = useState([]);
-    const [isUsernameAvailable, setIsUsernameAvailable] = useState(null);
     const [usernameErrorMessage, setUsernameErrorMessage] = useState("");
 
     const [password, setPassword] = useState("");
@@ -70,7 +69,7 @@ export default function SignUp() {
         }
 
         const validateProfileImage = profileImageUrl
-            ? utils.validateProfileImageUrl(profileImageUrl)
+            ? utils.validateImageUrl(profileImageUrl)
             : Promise.resolve(true);
 
         validateProfileImage
@@ -87,7 +86,6 @@ export default function SignUp() {
                 const lowercaseUsernames = usernamesList.map((username) => username.displayName.toLowerCase());
                 if (lowercaseUsernames.includes(username.toLowerCase())) {
                     console.log("Username is NOT available");
-                    setIsUsernameAvailable(false);
                     return;
                 } else {
                     return createUserWithEmailAndPassword(auth, email, password);
