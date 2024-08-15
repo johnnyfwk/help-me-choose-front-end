@@ -63,7 +63,7 @@ export function validatePassword(password) {
     }
 }
 
-export function validateProfileImageUrl(url) {
+export function validateImageUrl(url) {
     return fetch(url, { method: 'HEAD' })
         .then((response) => {
             return response.ok && response.headers.get('content-type').startsWith('image/');

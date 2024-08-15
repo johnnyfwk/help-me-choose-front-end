@@ -81,6 +81,11 @@ main {
     background-color: var(--question-option-wrapper-background);
 }
 
+#input-options {
+    display: grid;
+    gap: 20px;
+}
+
 .comments-wrapper {
     background-color: var(--comments-wrapper);
     display: grid;

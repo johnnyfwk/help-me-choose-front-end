@@ -1,21 +1,40 @@
 export default function InputOptions({
     options,
-    handleOptions,
+    handleOptionNames,
+    handleOptionImages,
+    optionImageUrlError
 }) {
     return (
         <div id="input-options">
             {options.map((option, index) => {
                 return (
-                    <input
-                        key={index}
-                        type="text"
-                        id={`option-${index}`}
-                        name={`option-${index}`}
-                        value={option}
-                        onChange={(event) => handleOptions(index, event.target.value)}
-                        placeholder={`Option ${index + 1}`}
-                        className="input-option"
-                    />
+                    <div key={index}>
+                        <input                            
+                            type="text"
+                            id={`option-${index}-name`}
+                            name={`option-${index}-name`}
+                            value={option.name}
+                            onChange={(event) => handleOptionNames(index, event.target.value)}
+                            placeholder={`Option ${index + 1}`}
+                            className="input-option"
+                        />
+
+                        <input
+                            type="text"
+                            id={`option-${index}-image-url`}
+                            name={`option-${index}-image-url`}
+                            value={option.name ? option.imageUrl : ""}
+                            onChange={(event) => handleOptionImages(index, event.target.value)}
+                            maxLength="2083"
+                            placeholder={`Option ${index + 1} image URL`}
+                            disabled={!options[index].name}
+                        ></input>
+
+                        {optionImageUrlError.imageUrls.includes(option.imageUrl.trim())
+                            ? <div className="error">{optionImageUrlError.msg}</div>
+                            : null
+                        }
+                    </div>
                 )
             })}
         </div>
