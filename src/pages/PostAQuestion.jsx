@@ -72,7 +72,6 @@ export default function PostAQuestion({
             trimmedOption.votes = [...option.votes];
             return trimmedOption;
         });
-        console.log("newOptions", newOptions);
 
         const invalidImageUrls = [];
 
@@ -80,7 +79,6 @@ export default function PostAQuestion({
             if (option.imageUrl) {
                 return utils.validateImageUrl(option.imageUrl)
                     .then((response) => {
-                        console.log("Response", response);
                         if (!response) {
                             invalidImageUrls.push(option.imageUrl);
                         }
@@ -93,11 +91,14 @@ export default function PostAQuestion({
                 return Promise.resolve();
             }
         });
-        console.log("validateImageUrls", validateImageUrls)
 
         Promise.all(validateImageUrls)
-            .then((response) => {
-                console.log(response);
+            .then(() => {
+                if (newOptions.length < 2) {
+                    setOptionsError("Please enter at least two options.");
+                    return;
+                }
+                
                 if (invalidImageUrls.length > 0) {
                     setOptionImageUrlError({
                         imageUrls: invalidImageUrls,
@@ -106,105 +107,28 @@ export default function PostAQuestion({
                     return;
                 }
 
-                if (newOptions.length < 2) {
-                    setOptionsError("Please enter at least two options.");
-                    console.log("Options won't be stored.");
-                    return;
-                }
-
-                console.log("questionOwnerId:", user.uid);
-                console.log("questionOwnerUsername:", user.displayName)
-                console.log(":", )
-                console.log(":", )
-                console.log(":", )
-                console.log(":", )
-                console.log(":", )
-                console.log(":", )
-                console.log(":", )
-                console.log(":", )
-                console.log(":", )
-                console.log(":", )
-                console.log(":", )
+                addDoc(collection(db, 'questions'), {
+                    questionOwnerId: user.uid,
+                    questionOwnerUsername: user.displayName,
+                    questionTitle: title.trim(),
+                    questionDescription: description.trim(),
+                    questionCategory: category,
+                    questionOptions: newOptions,
+                    questionCreated: serverTimestamp(),
+                    questionModified: "",
+                })
+                .then(() => {
+                    setTitle("");
+                    setDescription("");
+                    setCategory("");
+                    setOptions(Array(5).fill({ name: "", imageUrl: "", votes: [] }));
+                    navigate('/');
+                })
+                .catch((error) => {
+                    console.error('Error posting question:', error);
+                    setPostQuestionError("Question could not be posted.");
+                });
             })
-
-        // Check if Image URL is valid
-        // const newOptionImageUrlError = {
-        //     imageUrls: [],
-        //     msg: "Image URL is not valid"
-        // };        
-
-        // const allOptionImageUrls = [];
-        
-        // newOptions.forEach((option) => {
-        //     const trimmedOptionImageUrl = option.imageUrl.trim();
-        //     utils.validateImageUrl(trimmedOptionImageUrl)
-        //         .then((response) => {
-        //             console.log("response", response);
-        //             if (!response) {
-        //                 newOptionImageUrlError.imageUrls.push(trimmedOptionImageUrl);
-        //                 setOptionImageUrlError(newOptionImageUrlError);
-        //             }
-        //             allOptionImageUrls.push(response);
-        //         })
-        //         .catch((error) => {
-        //             console.log(error);
-        //             allOptionImageUrls.push(false);
-        //         })
-        // });
-        // console.log("allOptionImageUrls", allOptionImageUrls);
-
-        // newOptions.forEach((option) => {            
-        //     const trimmedOptionImageUrl = option.imageUrl.trim();
-        //     if (trimmedOptionImageUrl) {
-        //         utils.validateImageUrl(trimmedOptionImageUrl)
-        //             .then((response) => {
-        //                 if (!response) {
-        //                     newOptionImageUrlError.imageUrls.push(trimmedOptionImageUrl);
-        //                     setOptionImageUrlError(newOptionImageUrlError);
-        //                     return;
-        //                 }
-        //             })
-        //             .catch((error) => {
-        //                 console.log(error);
-        //                 return;
-        //             })
-        //     } else {
-        //         console.log("No image URL to test");
-        //     }
-        // })
-        // Check if Image URL is valid
-
-
-        if (newOptions.length < 2) {
-            setOptionsError("Please enter at least two options.");
-            console.log("Options won't be stored.")
-        } else {
-            console.log("Options will be stored.")
-        }
-        // else {
-        //     addDoc(collection(db, 'questions'), {
-        //         questionOwnerId: user.uid,
-        //         questionOwnerUsername: user.displayName,
-        //         questionTitle: titleTrimmed,
-        //         questionDescription: descriptionTrimmed,
-        //         questionCategory: category,
-        //         questionOptionsAndVoters: optionsAndVoters,
-        //         questionCreated: serverTimestamp(),
-        //         questionModified: ""
-        //     })
-        //     .then((response) => {
-        //         setTitle("");
-        //         setDescription("");
-        //         setCategory("");
-        //         setOptions(["", "", "", "", ""]);
-        //         navigate('/');
-        //     })
-        //     .catch((error) => {
-        //         console.log(error);
-        //         console.error('Error posting question: ', error);
-        //         setPostQuestionError("Question could not be posted.");
-        //     })
-        // }
     }
 
     return (
@@ -247,7 +171,6 @@ export default function PostAQuestion({
                         optionImageUrlError={optionImageUrlError}
                     />
                     
-
                     <input
                         type="button"
                         value="Post Question"
