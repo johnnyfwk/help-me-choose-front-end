@@ -37,7 +37,7 @@ export default function Question({user}) {
     const [isLoading, setIsLoading] = useState(true);
     
     const [currentUser, setCurrentUser] = useState(null);
-    const [userVote, setUserVote] = useState(null);
+    const [userVote, setUserVote] = useState("");
 
     const [comment, setComment] = useState("");
     const [comments, setComments] = useState([]);
@@ -51,6 +51,8 @@ export default function Question({user}) {
     const [editOptionsError, setEditOptionsError] = useState("");
 
     const [isConfirmDeleteQuestionVisible, setIsConfirmDeleteQuestionVisible] = useState(false);
+
+    const [optionImageUrlError, setOptionImageUrlError] = useState({imageUrls: [], msg: "Image URL is not valid"});
 
     const navigate = useNavigate();
 
@@ -67,10 +69,8 @@ export default function Question({user}) {
                         const data = docSnap.data();
                         setQuestion(data);
                         if (user) {
-                            const foundIndex = data.questionOptionsAndVoters.findIndex(option => 
-                                option.voters.includes(user.uid)
-                            );
-                            setUserVote(foundIndex !== -1 ? foundIndex : null);
+                            const usersVote = data.questionOptions.find((option) => option.votes.includes(user.uid));
+                            setUserVote(usersVote ? usersVote.name : "");
                         }
                     } else {
                         console.log("Question doesn't exist.");
@@ -116,41 +116,32 @@ export default function Question({user}) {
         };
     }, [question_id, user]);
 
-    function handleVote(optionIndex) {
+    function handleVote(vote) {
         if (!question || !currentUser) return;
 
-        const updatedQuestionOptionsAndVoters = question.questionOptionsAndVoters.map((optionAndVoters, index) => {
-            const newVoters = [...optionAndVoters.voters];
-    
-            if (newVoters.includes(currentUser.uid)) {
-                const voterIndex = newVoters.indexOf(currentUser.uid);
-                if (voterIndex > -1) {
-                    newVoters.splice(voterIndex, 1);
-                }
+        const updatedQuestionOptions = question.questionOptions.map((option) => {
+            const updatedOption = { ...option };
+            if (updatedOption.votes.includes(user.uid)) {
+                updatedOption.votes = updatedOption.votes.filter(uid => uid !== user.uid);
             }
-    
-            if (index === optionIndex) {
-                newVoters.push(currentUser.uid);
+            if (vote === updatedOption.name) {
+                updatedOption.votes = [...updatedOption.votes, user.uid];
             }
-    
-            return {
-                ...optionAndVoters,
-                voters: newVoters
-            };
+            return updatedOption;
         });
 
         const docRef = doc(db, 'questions', question_id);
 
         updateDoc(docRef, {
-            questionOptionsAndVoters: updatedQuestionOptionsAndVoters,
+            questionOptions: updatedQuestionOptions,
             questionModified: serverTimestamp()
         })
             .then(() => {
-                setQuestion(prevData => ({
-                    ...prevData,
-                    questionOptionsAndVoters: updatedQuestionOptionsAndVoters,
+                setQuestion((prevQuestion) => ({
+                    ...prevQuestion,
+                    questionOptions: updatedQuestionOptions,
                 }));
-                setUserVote(optionIndex);
+                setUserVote(vote);
             })
             .catch((error) => {
                 setUpdateVoteError(error.message);
@@ -226,17 +217,17 @@ export default function Question({user}) {
     }
 
     function handleOptions(index, value) {
-        const updatedQuestionOptionsAndVoters = [...question.questionOptionsAndVoters];
-        updatedQuestionOptionsAndVoters[index].name = value;
+        const updatedQuestionOptions = [...question.questionOptions];
+        updatedQuestionOptions[index].name = value;
         setQuestion(prevData => ({
             ...prevData,
-            questionOptionsAndVoters: updatedQuestionOptionsAndVoters
+            questionOptions: updatedQuestionOptions
         }));
     }
 
     function handleAddOption() {
         const newQuestion = JSON.parse(JSON.stringify(question));
-        newQuestion.questionOptionsAndVoters.push({name: "", voters: []});
+        newQuestion.questionOptions.push({name: "", voters: []});
         setQuestion(newQuestion);
     }
 
@@ -249,9 +240,9 @@ export default function Question({user}) {
     function handleUpdateQuestion() {
         if (!question || !currentUser) return;
 
-        const { questionTitle, questionDescription, questionCategory, questionOptionsAndVoters } = question;
+        const { questionTitle, questionDescription, questionCategory, questionOptions } = question;
 
-        const filledQuestionOptionsAndVoters = questionOptionsAndVoters.filter((option) => option.name);
+        const filledQuestionOptionsAndVoters = questionOptions.filter((option) => option.name);
         const questionOptionsAndVotersTrimmed = filledQuestionOptionsAndVoters.map((option) => {
             const newOption = {};
             newOption.name = option.name.trim();
@@ -275,7 +266,7 @@ export default function Question({user}) {
                 questionTitle: questionTitle.trim(),
                 questionDescription: questionDescription.trim(),
                 questionCategory,
-                questionOptionsAndVoters: questionOptionsAndVotersTrimmed,
+                questionOptions: questionOptionsAndVotersTrimmed,
                 questionModified: serverTimestamp()
             })
             .then(() => {
@@ -284,7 +275,7 @@ export default function Question({user}) {
                     questionTitle: questionTitle.trim(),
                     questionDescription: questionDescription.trim(),
                     questionCategory,
-                    questionOptionsAndVoters: questionOptionsAndVotersTrimmed
+                    questionOptions: questionOptionsAndVotersTrimmed
                 }));
                 setIsEditingQuestion(false);
                 setEditTitleError("");
@@ -419,26 +410,26 @@ export default function Question({user}) {
                     {isEditingQuestion
                         ? <div>
                             <InputOptions
-                                options={question.questionOptionsAndVoters.map((option) => option.name)}
+                                options={question.questionOptions.map((option) => option.name)}
                                 handleOptions={handleOptions}
                             />
-                            {question.questionOptionsAndVoters.length < 5
+                            {question.questionOptions.length < 5
                                 ? <button onClick={handleAddOption}>Add Option</button>
                                 : null
                             }
                         </div>
                         : <div className="question-options-wrapper">
-                            {question.questionOptionsAndVoters.map((optionAndVoters, index) => {
+                            {question.questionOptions.map((option, index) => {
                                 return (
                                     <div key={index} className="question-option-wrapper">
-                                        <div key={index}>{optionAndVoters.name}</div>
-                                        <div>{optionAndVoters.voters.length} votes</div>
+                                        <div key={index}>{option.name}</div>
+                                        <div>{option.votes.length} votes</div>
                                         {!currentUser || question.questionOwnerId === currentUser.uid
                                             ? null
                                             : <button
-                                                onClick={() => handleVote(index)}
-                                                disabled={userVote === index}
-                                            >{userVote === index ? 'Voted' : 'Vote'}</button>
+                                                onClick={() => handleVote(option.name)}
+                                                disabled={userVote === option.name}
+                                            >{userVote === option.name ? 'Voted' : 'Vote'}</button>
                                         }
                                     </div>
                                 )
