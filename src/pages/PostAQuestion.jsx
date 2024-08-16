@@ -108,6 +108,7 @@ export default function PostAQuestion({user}) {
                 addDoc(collection(db, 'questions'), {
                     questionOwnerId: user.uid,
                     questionOwnerUsername: user.displayName,
+                    questionOwnerImageUrl: user.photoURL,
                     questionTitle: title.trim(),
                     questionDescription: description.trim(),
                     questionCategory: category,

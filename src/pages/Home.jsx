@@ -35,7 +35,7 @@ export default function Home() {
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt tellus eu mattis gravida. Praesent et lacinia elit. Phasellus mauris orci, ultricies id ipsum quis, mollis aliquet diam. Curabitur sollicitudin, nisi vel rhoncus porta, ligula odio volutpat leo, vitae sodales dui justo non tortor.</p>          
 
                 {questions.length > 0
-                    ? <div className="questions-wrapper">
+                    ? <div className="question-cards-wrapper">
                         {questions.map((question, index) => {
                             return <QuestionCard key={index} question={question} page="home" />
                         })}

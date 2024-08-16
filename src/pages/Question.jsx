@@ -396,8 +396,6 @@ export default function Question({user}) {
         return <p>{getQuestionError}</p>;
     }
 
-    console.log("Question:", question)
-
     return (
         <>
             <Helmet>
@@ -472,7 +470,7 @@ export default function Question({user}) {
                                         <div key={index}>{option.name}</div>
 
                                         {option.imageUrl
-                                            ? <img src={option.imageUrl} alt={option.name}/>
+                                            ? <img src={option.imageUrl} alt={option.name} className="question-option-image"/>
                                             : null
                                         }
                                         
