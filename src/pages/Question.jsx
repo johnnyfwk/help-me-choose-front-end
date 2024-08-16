@@ -57,6 +57,8 @@ export default function Question({user}) {
 
     const navigate = useNavigate();
 
+    console.log("Question:", question)
+
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user);
@@ -442,6 +444,13 @@ export default function Question({user}) {
                     {isEditingQuestion
                         ? null
                         : <>
+                            <div className="question-owner-image-wrapper">
+                                <img
+                                    src={question.questionOwnerImageUrl}
+                                    alt={`Profile image of ${question.questionOwnerUsername}`}
+                                    className="question-owner-image"
+                                />
+                            </div>                            
                             <div>{question.questionOwnerUsername}</div>
                             <div>{utils.formatDate(question.created)}</div>
                         </>

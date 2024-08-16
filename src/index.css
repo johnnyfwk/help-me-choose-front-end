@@ -25,6 +25,7 @@
     --max-height-image: 400px;
 
     --profile-image-dimensions: 200px;
+    --question-owner-image: 50px;
     --question-card-user-image-dimensions: 50px;
 }
 
@@ -99,6 +100,19 @@ main {
 
 
 /************************ QUESTION PAGE ************************/
+.question-owner-image-wrapper {
+    width: 100%;
+    max-width: var(--question-owner-image);
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    overflow: hidden;  
+}
+
+.question-owner-image {
+    height: 100%;
+    object-fit: cover;  
+}
+
 .question-options-wrapper {
     background-color: var(--question-options-wrapper-background);
     display: grid;
