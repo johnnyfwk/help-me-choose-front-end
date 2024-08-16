@@ -396,6 +396,8 @@ export default function Question({user}) {
         return <p>{getQuestionError}</p>;
     }
 
+    console.log("Question:", question)
+
     return (
         <>
             <Helmet>
@@ -468,7 +470,14 @@ export default function Question({user}) {
                                 return (
                                     <div key={index} className="question-option-wrapper">
                                         <div key={index}>{option.name}</div>
+
+                                        {option.imageUrl
+                                            ? <img src={option.imageUrl} alt={option.name}/>
+                                            : null
+                                        }
+                                        
                                         <div>{option.votes.length} votes</div>
+
                                         {!currentUser || question.questionOwnerId === currentUser.uid
                                             ? null
                                             : <button
