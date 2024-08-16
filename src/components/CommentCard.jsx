@@ -96,6 +96,29 @@ export default function CommentCard({
             })
     }
 
+    function handleLikeComment() {
+        const updatedCommentObject = structuredClone(commentObject);
+        if (!updatedCommentObject.commentLikes.includes(user.uid)) {
+            updatedCommentObject.commentLikes.push(user.uid);
+            updatedCommentObject.commentModified = serverTimestamp();
+        } else {
+            const updatedLikes = updatedCommentObject.commentLikes.filter((userId) => userId !== user.uid);
+            updatedCommentObject.commentLikes = updatedLikes;
+        }
+
+        const docRef = doc(db, 'comments', commentObject.id);
+        updateDoc(docRef, {
+            commentLikes: updatedCommentObject.commentLikes,
+            commentModified: serverTimestamp()
+        })
+        .then(() => {
+            updateComment(updatedCommentObject);
+        })
+        .catch((error) => {
+            console.log(error.message);
+        });
+    }
+
     return (
         <div className="comment-card">
             {page === "question"
@@ -127,6 +150,11 @@ export default function CommentCard({
                     handleComment={handleEditComment}
                 />
                 : <div>{commentObject.comment}</div>
+            }
+
+            {user && page === "question" && user.uid !== commentObject.commentOwnerId
+                ? <div onClick={handleLikeComment} className="like-comment">&#128077; {commentObject.commentLikes.length}</div>
+                : null
             }
 
             <div>{utils.formatDate(commentObject.commentCreated)}</div>

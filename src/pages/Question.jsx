@@ -156,6 +156,7 @@ export default function Question({user}) {
             commentOwnerId: user.uid,
             commentOwnerUsername: user.displayName,
             commentOwnerImageUrl: user.photoURL,
+            commentLikes: [],
             commentCreated: serverTimestamp(),
             commentModified: "",
             questionId: question_id,
