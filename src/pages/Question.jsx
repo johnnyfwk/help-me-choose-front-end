@@ -26,16 +26,16 @@ import CommentCard from "../components/CommentCard";
 import * as utils from '../../utils';
 
 export default function Question({user}) {
+    const [isLoading, setIsLoading] = useState(true);
+
     const {question_id} = useParams(null);
 
     const [question, setQuestion] = useState(null);
+    const [originalQuestion, setOriginalQuestion] = useState(null);
     const [getQuestionError, setGetQuestionError] = useState(null);
     const [updateQuestionError, setUpdateQuestionError] = useState(null);
     const [updateVoteError, setUpdateVoteError] = useState(null);
 
-    const [originalQuestion, setOriginalQuestion] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    
     const [currentUser, setCurrentUser] = useState(null);
     const [userVote, setUserVote] = useState("");
 
@@ -52,6 +52,7 @@ export default function Question({user}) {
 
     const [isConfirmDeleteQuestionVisible, setIsConfirmDeleteQuestionVisible] = useState(false);
 
+    const [optionsError, setOptionsError] = useState("");
     const [optionImageUrlError, setOptionImageUrlError] = useState({imageUrls: [], msg: "Image URL is not valid"});
 
     const navigate = useNavigate();
@@ -182,7 +183,7 @@ export default function Question({user}) {
 
     function handleEditQuestion() {
         setIsEditingQuestion(true);
-        setOriginalQuestion(JSON.parse(JSON.stringify(question)));
+        setOriginalQuestion(structuredClone(question));
         setEditOptionsError("");
         setComment("");
     }
@@ -216,19 +217,26 @@ export default function Question({user}) {
         }))
     }
 
-    function handleOptions(index, value) {
-        const updatedQuestionOptions = [...question.questionOptions];
-        updatedQuestionOptions[index].name = value;
-        setQuestion(prevData => ({
-            ...prevData,
-            questionOptions: updatedQuestionOptions
-        }));
+    function handleOptionNames(index, value) {
+        const questionCopy = structuredClone(question);
+        questionCopy.questionOptions[index].name = value;
+        setQuestion(questionCopy);
+        setOptionsError("");
+    }
+
+    function handleOptionImages(index, value) {
+        const questionCopy = structuredClone(question);
+        questionCopy.questionOptions[index].imageUrl = value;
+        setQuestion(questionCopy);
+        setOptionsError("");
     }
 
     function handleAddOption() {
-        const newQuestion = JSON.parse(JSON.stringify(question));
-        newQuestion.questionOptions.push({name: "", voters: []});
-        setQuestion(newQuestion);
+        const questionCopy = structuredClone(question);
+        questionCopy.questionOptions.push(
+            {name: "", imageUrl: "", votes: []}
+        );
+        setQuestion(questionCopy);
     }
 
     function handleCancelEditQuestion() {
@@ -240,13 +248,17 @@ export default function Question({user}) {
     function handleUpdateQuestion() {
         if (!question || !currentUser) return;
 
-        const { questionTitle, questionDescription, questionCategory, questionOptions } = question;
+        setEditOptionsError("");
 
-        const filledQuestionOptionsAndVoters = questionOptions.filter((option) => option.name);
-        const questionOptionsAndVotersTrimmed = filledQuestionOptionsAndVoters.map((option) => {
+        const { questionTitle, questionDescription, questionCategory } = question;
+
+        const updatedOptions = question.questionOptions.filter((option) => option.name);
+        
+        const updatedOptionsTrimmed = updatedOptions.map((option) => {
             const newOption = {};
             newOption.name = option.name.trim();
-            newOption.voters = [...option.voters];
+            newOption.imageUrl = option.imageUrl.trim();
+            newOption.votes = [...option.votes];
             return newOption;
         })
 
@@ -258,36 +270,67 @@ export default function Question({user}) {
             setEditDescriptionError("Please enter a description for your question.");
             return;
         }
-        if (questionOptionsAndVotersTrimmed.length < 2) {
+        if (updatedOptionsTrimmed.length < 2) {
             setEditOptionsError("Please enter at least two options.");
-        } else {
-            const docRef = doc(db, 'questions', question_id);
-            updateDoc(docRef, {
-                questionTitle: questionTitle.trim(),
-                questionDescription: questionDescription.trim(),
-                questionCategory,
-                questionOptions: questionOptionsAndVotersTrimmed,
-                questionModified: serverTimestamp()
-            })
+            return;
+        }
+
+        const invalidImageUrls = [];
+
+        const validateImageUrls = updatedOptionsTrimmed.map((option) => {
+            if (option.imageUrl) {
+                return utils.validateImageUrl(option.imageUrl)
+                    .then((response) => {
+                        if (!response) {
+                            invalidImageUrls.push(option.imageUrl);
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        invalidImageUrls.push(option.imageUrl);
+                    })
+            } else {
+                return Promise.resolve();
+            }
+        });
+
+        Promise.all(validateImageUrls)
             .then(() => {
-                setQuestion(prevData => ({
-                    ...prevData,
+                if (invalidImageUrls.length > 0) {
+                    setOptionImageUrlError({
+                        imageUrls: invalidImageUrls,
+                        msg: "Image URL is not valid."
+                    });
+                    return;
+                }
+
+                const docRef = doc(db, 'questions', question_id);
+                updateDoc(docRef, {
                     questionTitle: questionTitle.trim(),
                     questionDescription: questionDescription.trim(),
                     questionCategory,
-                    questionOptions: questionOptionsAndVotersTrimmed
-                }));
-                setIsEditingQuestion(false);
-                setEditTitleError("");
-                setEditDescriptionError("");
-                setEditOptionsError("");
-                setUpdateQuestionError("");
+                    questionOptions: updatedOptionsTrimmed,
+                    questionModified: serverTimestamp()
+                })
+                .then(() => {
+                    setQuestion(prevQuestion => ({
+                        ...prevQuestion,
+                        questionTitle: questionTitle.trim(),
+                        questionDescription: questionDescription.trim(),
+                        questionCategory,
+                        questionOptions: updatedOptionsTrimmed
+                    }));
+                    setIsEditingQuestion(false);
+                    setEditTitleError("");
+                    setEditDescriptionError("");
+                    setEditOptionsError("");
+                    setUpdateQuestionError("");
+                })
+                .catch((error) => {
+                    setUpdateQuestionError(error.message);
+                    console.error('Error updating question:', error);
+                });
             })
-            .catch((error) => {
-                setUpdateQuestionError(error.message);
-                console.error('Error updating question:', error);
-            });
-        }
     }
 
     function handleComment(event) {
@@ -410,8 +453,10 @@ export default function Question({user}) {
                     {isEditingQuestion
                         ? <div>
                             <InputOptions
-                                options={question.questionOptions.map((option) => option.name)}
-                                handleOptions={handleOptions}
+                                options={question.questionOptions}
+                                handleOptionNames={handleOptionNames}
+                                handleOptionImages={handleOptionImages}
+                                optionImageUrlError={optionImageUrlError}
                             />
                             {question.questionOptions.length < 5
                                 ? <button onClick={handleAddOption}>Add Option</button>

@@ -11,7 +11,6 @@ import * as utils from '../../utils';
 
 export default function Profile() {
     const { user, loading } = useAuth();
-    console.log("User:", user)
     const auth = getAuth();
     const currentUser = auth.currentUser;
 
