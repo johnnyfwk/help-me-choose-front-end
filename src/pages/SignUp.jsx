@@ -116,7 +116,7 @@ export default function SignUp() {
                 console.log(error);
             });
 
-        let userId;
+        // let userId;
     }
 
     return (
