@@ -158,8 +158,6 @@ export default function Profile() {
             });
     }
 
-    console.log("User:", user)
-
     return (
         <>
             <Helmet>

@@ -27,6 +27,7 @@
     --profile-image-dimensions: 200px;
     --question-owner-image: 50px;
     --question-card-user-image-dimensions: 50px;
+    --comment-card-user-image-dimensions: 50px;
 }
 
 * {
@@ -122,8 +123,20 @@ main {
 .question-option-wrapper {
     background-color: var(--question-option-wrapper-background);
 }
-/************************ QUESTION PAGE ************************/
 
+.comment-card-user-image-wrapper {
+    width: 100%;
+    max-width: var(--comment-card-user-image-dimensions);
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    overflow: hidden;  
+}
+
+.comment-card-user-image {
+    height: 100%;
+    object-fit: cover;  
+}
+/************************ QUESTION PAGE ************************/
 
 
 #input-options {
