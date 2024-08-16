@@ -211,8 +211,6 @@ export default function Profile() {
                     
                     <h1>{userProfile[0].displayName}</h1>
 
-                    <p>This is your profile page.</p>
-
                     <div className="error">{deleteAccountError}</div>
 
                     {user.uid === userProfile[0].userId && !isEditingProfile && !isConfirmDeleteProfileVisible
