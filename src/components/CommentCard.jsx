@@ -98,6 +98,17 @@ export default function CommentCard({
 
     return (
         <div className="comment-card">
+            {page === "question"
+                ? <div className="comment-card-user-image-wrapper">
+                    <img
+                        src={commentObject.commentOwnerImageUrl}
+                        alt={`Profile image of ${commentObject.commentOwnerUsername}`}
+                        className="comment-card-user-image"
+                    />
+                </div>
+                : null
+            }
+            
             {page === "profile"
                 ? <Link to={`/question/${commentObject.questionId}`}>{commentObject.questionTitle}</Link>
                 : null

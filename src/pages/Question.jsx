@@ -57,8 +57,6 @@ export default function Question({user}) {
 
     const navigate = useNavigate();
 
-    console.log("Question:", question)
-
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (user) => {
             setCurrentUser(user);
@@ -157,6 +155,7 @@ export default function Question({user}) {
             comment: comment.trim(),
             commentOwnerId: user.uid,
             commentOwnerUsername: user.displayName,
+            commentOwnerImageUrl: user.photoURL,
             commentCreated: serverTimestamp(),
             commentModified: "",
             questionId: question_id,
