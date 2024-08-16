@@ -13,7 +13,7 @@ export default function Nav({
             {user
                 ? <>
                     <Link to="/post-a-question">Post a Question</Link>
-                    <Link to="/profile">Profile</Link>
+                    <Link to={`/profile/${user.uid}`}>Profile</Link>
                     <span onClick={logout} id="logout-button">Logout</span>
                 </>                
                 : <>

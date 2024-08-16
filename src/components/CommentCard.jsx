@@ -99,13 +99,15 @@ export default function CommentCard({
     return (
         <div className="comment-card">
             {page === "question"
-                ? <div className="comment-card-user-image-wrapper">
-                    <img
-                        src={commentObject.commentOwnerImageUrl}
-                        alt={`Profile image of ${commentObject.commentOwnerUsername}`}
-                        className="comment-card-user-image"
-                    />
-                </div>
+                ? <Link to={`/profile/${commentObject.commentOwnerId}`}>
+                    <div className="comment-card-user-image-wrapper">
+                        <img
+                            src={commentObject.commentOwnerImageUrl}
+                            alt={`Profile image of ${commentObject.commentOwnerUsername}`}
+                            className="comment-card-user-image"
+                        />
+                    </div>
+                </Link>
                 : null
             }
             
@@ -115,7 +117,7 @@ export default function CommentCard({
             }
 
             {page === "question"
-                ? <div>{commentObject.commentOwnerUsername}</div>
+                ? <Link to={`/profile/${commentObject.commentOwnerId}`}>{commentObject.commentOwnerUsername}</Link>
                 : null
             }
 

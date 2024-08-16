@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet";
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import { db, auth } from '../firebase';
 import {
     doc,
@@ -402,7 +402,7 @@ export default function Question({user}) {
             <Helmet>
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://helpmechoose.uk/question/post" />
-                <title>Question • HelpMeChoose.uk</title>                
+                <title>{question.questionTitle} • HelpMeChoose.uk</title>                
                 <meta name="description" content="Question description." />
             </Helmet>
 
@@ -443,15 +443,17 @@ export default function Question({user}) {
                     {isEditingQuestion
                         ? null
                         : <>
-                            <div className="question-owner-image-wrapper">
-                                <img
-                                    src={question.questionOwnerImageUrl}
-                                    alt={`Profile image of ${question.questionOwnerUsername}`}
-                                    className="question-owner-image"
-                                />
-                            </div>                            
-                            <div>{question.questionOwnerUsername}</div>
-                            <div>{utils.formatDate(question.created)}</div>
+                            <Link to={`/profile/${question.questionOwnerId}`}>
+                                <div className="question-owner-image-wrapper">
+                                    <img
+                                        src={question.questionOwnerImageUrl}
+                                        alt={`Profile image of ${question.questionOwnerUsername}`}
+                                        className="question-owner-image"
+                                    />
+                                </div>
+                            </Link>                                     
+                            <Link to={`/profile/${question.questionOwnerId}`}>{question.questionOwnerUsername}</Link>
+                            <div>{utils.formatDate(question.questionCreated)}</div>
                         </>
                     }
                     

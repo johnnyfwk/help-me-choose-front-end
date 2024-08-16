@@ -64,7 +64,7 @@ function App() {
                 />
 
                 <Route
-                    path="/profile"
+                    path="/profile/:user_id"
                     element={
                         user
                             ? <Profile />

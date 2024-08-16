@@ -78,17 +78,30 @@ export function validateImageUrl(url) {
 }
 
 export function formatDate(timestamp) {
-    if (timestamp) {
-        const date = timestamp.toDate();
+    let date;
 
-        const timeOptions = { hour: '2-digit', minute: '2-digit' };
-        const time = new Intl.DateTimeFormat('en-GB', timeOptions).format(date);
-    
-        const dateOptions = { weekday: 'short', day: '2-digit', month: 'short', year: 'numeric' };
-        const formattedDate = new Intl.DateTimeFormat('en-GB', dateOptions).format(date);
-    
-        return `${time} on ${formattedDate.replace(/,/g, '')}`;
+    if (timestamp instanceof Date) {
+        date = timestamp;
+    } 
+
+    else if (timestamp && typeof timestamp.toDate === 'function') {
+        date = timestamp.toDate();
+    } 
+
+    else if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+        date = new Date(timestamp);
+    } else {
+        return 'Invalid date';
     }
+
+    const formatter = new Intl.DateTimeFormat('en-UK', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
+
+    return formatter.format(date);
 }
 
 export function extractDocData(collection) {

@@ -28,7 +28,7 @@ export default function SignUp() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        getDocs(collection(db, 'displayNames'))
+        getDocs(collection(db, 'users'))
             .then((response) => {              
                 const usernamesList = utils.extractDocData(response);
                 setRegisteredUsernames(usernamesList);
@@ -78,7 +78,7 @@ export default function SignUp() {
         validateProfileImage
             .then((response) => {
                 if (response) {
-                    return getDocs(collection(db, 'displayNames'))
+                    return getDocs(collection(db, 'users'))
                 } else {
                     setProfileImageUrlErrorMessage("Profile image URL is not valid.");
                     return;
@@ -103,9 +103,10 @@ export default function SignUp() {
                 });
             })
             .then(() => {
-                return addDoc(collection(db, 'displayNames'), {
+                return addDoc(collection(db, 'users'), {
+                    userId,
                     displayName: username,
-                    userId
+                    photoURL: profileImageUrlTrimmed || defaultImageUrl
                 });
             })
             .then(() => {

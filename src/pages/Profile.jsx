@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { db } from '../firebase';
 import { collection, query, where, getDocs, orderBy, deleteDoc } from 'firebase/firestore';
@@ -11,8 +11,14 @@ import * as utils from '../../utils';
 
 export default function Profile() {
     const { user, loading } = useAuth();
+
+    const {user_id} = useParams(null);
+
     const auth = getAuth();
     const currentUser = auth.currentUser;
+
+    const [userProfile, setUserProfile] = useState(null);
+    const [getUserProfileError, setGetUserProfileError] = useState("");
 
     const [questions, setQuestions] = useState([]);
     const [comments, setComments] = useState([]);
@@ -24,58 +30,80 @@ export default function Profile() {
 
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [isConfirmDeleteProfileVisible, setIsConfirmDeleteProfileVisible] = useState(false);
+    const [deleteAccountError, setDeleteAccountError] = useState("");
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!loading && user) {
-            const fetchQuestions = () => {
-                const questionsQuery = query(
-                    collection(db, 'questions'),
-                    where('questionOwnerId', '==', user.uid),
-                    orderBy('questionCreated', 'desc')
-                );
-                
-                getDocs(questionsQuery)
-                    .then((questionsSnapshot) => {
-                        const questionsData = questionsSnapshot.docs.map(doc => ({
-                            id: doc.id,
-                            ...doc.data(),
-                        }));
-                        const questionsOrdered = utils.sortQuestions(questionsData);
-                        setQuestions(questionsOrdered);
-                        setGetQuestionsError("");
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching questions: ", error);
-                        setGetQuestionsError("Questions could not be retrieved.");
-                    });
-            };
+        const fetchUserProfile = () => {
+            const userQuery = query(
+                collection(db, 'users'),
+                where('userId', '==', user_id)
+            );
 
-            const fetchComments = () => {
-                const commentsQuery = query(
-                    collection(db, 'comments'),
-                    where('commentOwnerId', '==', user.uid),
-                    orderBy('commentCreated', 'desc')
-                );
+            getDocs(userQuery)
+                .then((userSnapshot) => {
+                    const userData = userSnapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    }));
+                    setUserProfile(userData);
+                    setGetUserProfileError("");
+                })
+                .catch((error) => {
+                    console.error("Error fetching user profile: ", error);
+                    setGetUserProfileError("User profile could not be retrieved.");
+                });
+        };
 
-                getDocs(commentsQuery)
-                    .then((commentsSnapshot) => {
-                        const commentsData = commentsSnapshot.docs.map(doc => ({
-                            id: doc.id,
-                            ...doc.data(),
-                        }));
-                        setComments(commentsData);
-                    })
-                    .catch((error) => {
-                        console.error("Error fetching comments: ", error);
-                    });
-            };
+        const fetchQuestions = () => {
+            const questionsQuery = query(
+                collection(db, 'questions'),
+                where('questionOwnerId', '==', user_id),
+                orderBy('questionCreated', 'desc')
+            );
 
-            fetchQuestions();
-            fetchComments();
-        }        
-    }, [])
+            getDocs(questionsQuery)
+                .then((questionsSnapshot) => {
+                    const questionsData = questionsSnapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    }));
+                    const questionsOrdered = utils.sortQuestions(questionsData);
+                    setQuestions(questionsOrdered);
+                    setGetQuestionsError("");
+                })
+                .catch((error) => {
+                    console.error("Error fetching questions: ", error);
+                    setGetQuestionsError("Questions could not be retrieved.");
+                });
+        };
+
+        const fetchComments = () => {
+            const commentsQuery = query(
+                collection(db, 'comments'),
+                where('commentOwnerId', '==', user_id),
+                orderBy('commentCreated', 'desc')
+            );
+
+            getDocs(commentsQuery)
+                .then((commentsSnapshot) => {
+                    const commentsData = commentsSnapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    }));
+                    setComments(commentsData);
+                })
+                .catch((error) => {
+                    console.error("Error fetching comments: ", error);
+                    setDeleteAccountError("Account could not be deleted.");
+                });
+        };
+
+        fetchUserProfile();
+        fetchQuestions();
+        fetchComments();    
+    }, [user_id])
 
     function updateComment(updatedComment) {
         setComments(prevComments =>
@@ -107,8 +135,8 @@ export default function Profile() {
     }
 
     function handleDeleteProfileYes() {
-        const displayNamesQuery = query(
-            collection(db, 'displayNames'),
+        const usersQuery = query(
+            collection(db, 'users'),
             where('userId', '==', user.uid)
         );
 
@@ -139,13 +167,13 @@ export default function Profile() {
                 return Promise.all(deleteQuestiondsPromises);
             })
             .then((response) => {
-                return getDocs(displayNamesQuery);
+                return getDocs(usersQuery);
             })
-            .then((displayNamesSnapshot) => {
-                const deleteDisplayNamesPromises = displayNamesSnapshot.docs.map((displayNameDoc) => {
-                    return deleteDoc(displayNameDoc.ref);
+            .then((usersSnapshot) => {
+                const deleteUsersPromises = usersSnapshot.docs.map((userDoc) => {
+                    return deleteDoc(userDoc.ref);
                 });
-                return Promise.all(deleteDisplayNamesPromises);
+                return Promise.all(deleteUsersPromises);
             })
             .then((response) => {
                 return deleteUser(currentUser);
@@ -158,26 +186,36 @@ export default function Profile() {
             });
     }
 
+    if (!userProfile) {
+        return null;
+    }
+
+    if (getUserProfileError) {
+        return <div className="error">{getUserProfileError}</div>
+    }
+
     return (
         <>
             <Helmet>
                 <meta name="robots" content="noindex, nofollow" />
                 <link rel="canonical" href="https://helpmechoose.uk/" />
-                <title>Profile • HelpMeChoose.uk</title>                
+                <title>Profile: {userProfile[0].displayName} • HelpMeChoose.uk</title>                
                 <meta name="description" content="User's profile on HelpMeChoose.uk." />
             </Helmet>
 
             <main>
                 <section>
                     <div id="profile-image-wrapper">
-                        <img src={user.photoURL} alt={`Profile image of ${user.displayName}`} id="profile-image"/>
+                        <img src={userProfile[0].photoURL} alt={`Profile image of ${userProfile[0].displayName}`} id="profile-image"/>
                     </div>
                     
-                    <h1>{user.displayName}</h1>
+                    <h1>{userProfile[0].displayName}</h1>
 
                     <p>This is your profile page.</p>
 
-                    {!isEditingProfile && !isConfirmDeleteProfileVisible
+                    <div className="error">{deleteAccountError}</div>
+
+                    {user.uid === userProfile[0].userId && !isEditingProfile && !isConfirmDeleteProfileVisible
                         ? <button onClick={handleEditProfile}>Edit</button>
                         : null
                     }
@@ -235,7 +273,7 @@ export default function Profile() {
                                 )
                             })}
                         </div>
-                        : <div>You haven't posted any comments on any questions.</div>
+                        : <div>You haven't posted any comments.</div>
                     }
                 </section>
             </main>
