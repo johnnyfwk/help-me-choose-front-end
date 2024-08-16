@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { db } from '../firebase';
-import { collection, query, where, getDocs, orderBy, deleteDoc } from 'firebase/firestore';
+import { updateProfile } from 'firebase/auth';
+import { collection, query, where, getDocs, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { getAuth, deleteUser } from "firebase/auth";
 import QuestionCard from '../components/QuestionCard';
 import CommentCard from '../components/CommentCard';
+import InputProfileImage from '../components/InputProfileImage';
 import * as utils from '../../utils';
 
 export default function Profile() {
@@ -28,14 +30,18 @@ export default function Profile() {
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [isEditingQuestion, setIsEditingQuestion] = useState(false);
 
-    const [isEditingProfile, setIsEditingProfile] = useState(false);
+    const [isEditingProfileImage, setIsEditingProfileImage] = useState(false);
+    const [originalProfileImageUrl, setOriginalProfileImageUrl] = useState("");
+    const [profileImageUrl, setProfileImageUrl] = useState("");
+    const [profileImageUrlErrorMessage, setProfileImageUrlErrorMessage] = useState("");
+
     const [isConfirmDeleteProfileVisible, setIsConfirmDeleteProfileVisible] = useState(false);
     const [deleteAccountError, setDeleteAccountError] = useState("");
 
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchUserProfile = () => {
+        const fetchUser = () => {
             const userQuery = query(
                 collection(db, 'users'),
                 where('userId', '==', user_id)
@@ -100,7 +106,7 @@ export default function Profile() {
                 });
         };
 
-        fetchUserProfile();
+        fetchUser();
         fetchQuestions();
         fetchComments();    
     }, [user_id])
@@ -113,28 +119,95 @@ export default function Profile() {
         );
     }
 
-    function handleEditProfile() {
-        setIsEditingProfile(true);
+    function handleChangeProfileImage() {
+        setIsEditingProfileImage(true);
+        setOriginalProfileImageUrl(userProfile[0].photoURL);
+        setProfileImageUrl(userProfile[0].photoURL);
     }
 
-    function handleCancelEditProfile() {
-        setIsEditingProfile(false);
+    function handleCancelChangeProfileImage() {
+        setIsEditingProfileImage(false);
     }
 
-    function handleUpdateProfile() {
-        setIsEditingProfile(false);
+    function handleUpdateProfileImage() {
+        const profileImageUrlTrimmed = profileImageUrl.trim();
+
+        const validateProfileImage = profileImageUrlTrimmed
+            ? utils.validateImageUrl(profileImageUrlTrimmed)
+            : Promise.resolve(true);
+
+        validateProfileImage
+            .then((isValid) => {
+                if (!isValid) {
+                    setProfileImageUrlErrorMessage("Profile image URL is not valid.");
+                    throw new Error("Profile image URL is not valid.");                    
+                }
+                return updateProfile(currentUser, {photoURL: profileImageUrlTrimmed})
+            })
+            .then(() => {
+                const questionsRef = collection(db, "questions");
+                const q = query(questionsRef, where("questionOwnerId", "==", user.uid));
+                return getDocs(q);
+            })
+            .then((querySnapshot) => {
+                console.log("querySnapshot:", querySnapshot);
+                const batchUpdates = [];
+                querySnapshot.forEach((docSnapshot) => {
+                    const docRef = doc(db, "questions", docSnapshot.id);    
+                    const updatePromise = updateDoc(docRef, {
+                        questionOwnerImageUrl: profileImageUrlTrimmed,
+                    });    
+                    batchUpdates.push(updatePromise);
+                });
+            })
+            .then(() => {
+                const questionsRef = collection(db, "comments");
+                const q = query(questionsRef, where("commentOwnerId", "==", user.uid));
+                return getDocs(q);
+            })
+            .then((querySnapshot) => {
+                console.log("querySnapshot:", querySnapshot);
+                const batchUpdates = [];
+                querySnapshot.forEach((docSnapshot) => {
+                    const docRef = doc(db, "comments", docSnapshot.id);    
+                    const updatePromise = updateDoc(docRef, {
+                        commentOwnerImageUrl: profileImageUrlTrimmed,
+                    });    
+                    batchUpdates.push(updatePromise);
+                });
+            })
+            .then((response) => {
+                const docRef = doc(db, 'users', userProfile[0].id);
+                return updateDoc(docRef, {
+                    photoURL: profileImageUrlTrimmed
+                })
+            })
+            .then((response) => {
+                setUserProfile((prevUserProfile) => [
+                    { ...prevUserProfile[0], photoURL: profileImageUrlTrimmed },
+                ]);
+                setIsEditingProfileImage(false);
+            })
+            .catch((error) => {
+                console.log(error);
+            })
     }
 
-    function handleDeleteProfile() {
-        setIsEditingProfile(false);
+    function handleProfileImageUrl(event) {
+        setProfileImageUrl(event.target.value);
+        setProfileImageUrlErrorMessage("");
+    }
+
+    function handleDeleteAccount() {
+        setIsEditingProfileImage(false);
         setIsConfirmDeleteProfileVisible(true);
     }
 
-    function handleDeleteProfileNo() {
+    function handleDeleteAccountNo() {
         setIsConfirmDeleteProfileVisible(false);
     }
 
-    function handleDeleteProfileYes() {
+    function handleDeleteAccountYes() {
         const usersQuery = query(
             collection(db, 'users'),
             where('userId', '==', user.uid)
@@ -212,17 +285,30 @@ export default function Profile() {
                     <h1>{userProfile[0].displayName}</h1>
 
                     <div className="error">{deleteAccountError}</div>
+                    <div className="error">{profileImageUrlErrorMessage}</div>
 
-                    {user.uid === userProfile[0].userId && !isEditingProfile && !isConfirmDeleteProfileVisible
-                        ? <button onClick={handleEditProfile}>Edit</button>
+                    {isEditingProfileImage
+                        ? <InputProfileImage
+                            profileImageUrl={profileImageUrl}
+                            handleProfileImageUrl={handleProfileImageUrl}
+                        />
+                        : null
+                    }
+
+                    {user.uid === userProfile[0].userId && !isEditingProfileImage && !isConfirmDeleteProfileVisible
+                        ? <div>
+                            <button onClick={handleChangeProfileImage}>Change Profile Image</button>
+                            <button onClick={handleDeleteAccount}>Delete Account</button>
+                        </div>
+                        
                         : null
                     }
                     
-                    {isEditingProfile
+                    {isEditingProfileImage
                         ? <div>
-                            <button onClick={handleCancelEditProfile}>Cancel</button>
-                            <button onClick={handleUpdateProfile}>Update</button>
-                            <button onClick={handleDeleteProfile}>Delete</button>
+                            <button onClick={handleCancelChangeProfileImage}>Cancel</button>
+                            <button onClick={handleUpdateProfileImage}>Update</button>
+                            
                         </div>
                         : null
                     }
@@ -230,8 +316,8 @@ export default function Profile() {
                     {isConfirmDeleteProfileVisible
                         ? <div>
                             <div className="confirm">Delete profile? Your account, questions, and comments will be permanently deleted.</div>
-                            <button onClick={handleDeleteProfileNo}>No</button>
-                            <button onClick={handleDeleteProfileYes}>Yes</button>
+                            <button onClick={handleDeleteAccountNo}>No</button>
+                            <button onClick={handleDeleteAccountYes}>Yes</button>
                         </div>
                         : null
                     }

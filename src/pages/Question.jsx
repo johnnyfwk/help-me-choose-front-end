@@ -16,7 +16,7 @@ import {
     orderBy,
     deleteDoc
 } from 'firebase/firestore';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, getAuth } from 'firebase/auth';
 import InputTitle from "../components/InputTitle";
 import InputDescription from "../components/InputDescription";
 import InputCategory from "../components/InputCategory";

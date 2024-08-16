@@ -3,10 +3,14 @@ import { useState, useEffect } from "react";
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import QuestionCard from "../components/QuestionCard";
+import { getAuth } from "firebase/auth";
 import * as utils from '../../utils';
 
 export default function Home() {
     const [questions, setQuestions] = useState([]);
+
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
 
     useEffect(() => {
         getDocs(collection(db, 'questions'))
