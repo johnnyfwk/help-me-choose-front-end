@@ -22,7 +22,10 @@
     --comments-wrapper: rgb(230, 77, 230);
     --comment-card-background-colour: violet;
 
+    --max-height-image: 400px;
+
     --profile-image-dimensions: 200px;
+    --question-card-user-image-dimensions: 50px;
 }
 
 * {
@@ -67,16 +70,35 @@ main {
     background-color: var(--main-background);
 }
 
-.questions-wrapper {
+
+/************************ HOMEPAGE ************************/
+.question-cards-wrapper {
     background-color: var(--questions-wrapper-background);
     display: grid;
     gap: 20px;
 }
 
-.question-wrapper {
+.question-card-wrapper {
     background-color: var(--question-wrapper-background);
 }
 
+.question-card-user-image-wrapper {
+    width: 100%;
+    max-width: var(--question-card-user-image-dimensions);
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    overflow: hidden; 
+}
+
+.question-card-user-image {
+    height: 100%;
+    object-fit: cover;  
+}
+/************************ HOMEPAGE ************************/
+
+
+
+/************************ QUESTION PAGE ************************/
 .question-options-wrapper {
     background-color: var(--question-options-wrapper-background);
     display: grid;
@@ -86,6 +108,9 @@ main {
 .question-option-wrapper {
     background-color: var(--question-option-wrapper-background);
 }
+/************************ QUESTION PAGE ************************/
+
+
 
 #input-options {
     display: grid;
@@ -104,7 +129,7 @@ main {
 
 #profile-image-wrapper {
     width: 100%;
-    max-width: 200px;
+    max-width: var(--profile-image-dimensions);
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     overflow: hidden;  

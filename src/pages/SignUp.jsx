@@ -21,6 +21,7 @@ export default function SignUp() {
     const [password, setPassword] = useState("");
     const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
 
+    const defaultImageUrl = '/images/default-profile-image.png';
     const [profileImageUrl, setProfileImageUrl] = useState("");
     const [profileImageUrlErrorMessage, setProfileImageUrlErrorMessage] = useState("");
 
@@ -68,8 +69,10 @@ export default function SignUp() {
             return;
         }
 
-        const validateProfileImage = profileImageUrl
-            ? utils.validateImageUrl(profileImageUrl)
+        const profileImageUrlTrimmed = profileImageUrl.trim();
+
+        const validateProfileImage = profileImageUrlTrimmed
+            ? utils.validateImageUrl(profileImageUrlTrimmed)
             : Promise.resolve(true);
 
         validateProfileImage
@@ -96,7 +99,7 @@ export default function SignUp() {
                 const member = userCredential.user;
                 return updateProfile(member, {
                     displayName: username,
-                    photoURL: profileImageUrl
+                    photoURL: profileImageUrlTrimmed || defaultImageUrl
                 });
             })
             .then(() => {
