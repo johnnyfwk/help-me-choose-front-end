@@ -156,8 +156,9 @@ export default function Profile() {
             .catch((error) => {
                 console.error("Error deleting user:", error);
             });
-        
     }
+
+    console.log("User:", user)
 
     return (
         <>
@@ -170,7 +171,12 @@ export default function Profile() {
 
             <main>
                 <section>
+                    <div id="profile-image-wrapper">
+                        <img src={user.photoURL} alt={`Profile image of ${user.displayName}`} id="profile-image"/>
+                    </div>
+                    
                     <h1>{user.displayName}</h1>
+
                     <p>This is your profile page.</p>
 
                     {!isEditingProfile && !isConfirmDeleteProfileVisible

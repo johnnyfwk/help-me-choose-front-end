@@ -21,6 +21,8 @@
     --question-option-wrapper-background: cyan;
     --comments-wrapper: rgb(230, 77, 230);
     --comment-card-background-colour: violet;
+
+    --profile-image-dimensions: 200px;
 }
 
 * {
@@ -98,6 +100,19 @@ main {
 
 .comment-card {
     background-color: var(--comment-card-background-colour);
+}
+
+#profile-image-wrapper {
+    width: 100%;
+    max-width: 200px;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    overflow: hidden;  
+}
+
+#profile-image {
+    height: 100%;
+    object-fit: cover;  
 }
 
 footer {
