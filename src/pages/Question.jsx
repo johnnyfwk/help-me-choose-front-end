@@ -560,27 +560,6 @@ export default function Question({user}) {
                         : null
                 }
                 
-                {/* {user.emailVerified
-                    ? <section>
-                        <h2>Comments</h2>
-
-                        <InputComment
-                            comment={comment}
-                            handleComment={handleComment}
-                        />
-
-                        <div className="error">{commentError}</div>
-
-                        <input
-                            type="button"
-                            value="Post Comment"
-                            onClick={handlePostComment}
-                            disabled={!comment}
-                        ></input>
-                    </section>
-                    : null
-                } */}
-                
                 <section>
                     <div className="error">{commentsError}</div>
                     {comments.length > 0

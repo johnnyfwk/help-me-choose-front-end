@@ -1,7 +1,6 @@
 import { Helmet } from 'react-helmet';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuth } from '../AuthContext';
 import { db } from '../firebase';
 import { updateProfile } from 'firebase/auth';
 import { collection, query, where, getDocs, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
@@ -12,11 +11,12 @@ import InputProfileImage from '../components/InputProfileImage';
 import InputPassword from '../components/InputPassword';
 import * as utils from '../../utils';
 
-export default function Profile() {
-    const { user, loading } = useAuth();
+export default function Profile({user}) {
     // console.log("User:", user)
 
     const {profile_id} = useParams(null);
+
+    const navigate = useNavigate();
 
     const [userProfile, setUserProfile] = useState(null);
     const [getUserProfileError, setGetUserProfileError] = useState("");
@@ -44,8 +44,6 @@ export default function Profile() {
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [deleteAccountError, setDeleteAccountError] = useState("");
 
-    const navigate = useNavigate();
-
     useEffect(() => {
         const fetchUser = () => {
             const userQuery = query(
@@ -72,7 +70,7 @@ export default function Profile() {
             const questionsQuery = query(
                 collection(db, 'questions'),
                 where('questionOwnerId', '==', profile_id),
-                orderBy('questionCreated', 'desc')
+                orderBy('questionModified', 'desc')
             );
 
             getDocs(questionsQuery)
@@ -81,8 +79,8 @@ export default function Profile() {
                         id: doc.id,
                         ...doc.data(),
                     }));
-                    const questionsOrdered = utils.sortQuestions(questionsData);
-                    setQuestions(questionsOrdered);
+                    // const questionsOrdered = utils.sortQuestions(questionsData);
+                    setQuestions(questionsData);
                     setGetQuestionsError("");
                 })
                 .catch((error) => {

@@ -110,3 +110,23 @@ export function sortQuestions(questions) {
     });
     return questionsSorted;
 }
+
+export function convertToSlug(name) {
+    return name
+        .toLowerCase()
+        .trim()
+        .replace(/&/g, 'and')
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+}
+
+export function convertSlugToCategory(slug) {
+    if (slug === null) {
+        return "";
+    }
+    return slug
+        .replace(/-/g, ' ')
+        .replace(/\band\b/g, '&')
+        .replace(/\b\w/g, char => char.toUpperCase());
+}
