@@ -73,6 +73,10 @@ main {
 }
 
 
+#reset-password {
+    cursor: pointer;
+}
+
 /************************ HOMEPAGE ************************/
 .question-cards-wrapper {
     background-color: var(--questions-wrapper-background);

@@ -36,6 +36,10 @@ export default function Login() {
             })
     }
 
+    function handleResetPassword() {
+
+    }
+
     return (
         <>
             <Helmet>
@@ -74,6 +78,8 @@ export default function Login() {
                         disabled={!email || !password}
                     />
                 </form>
+
+                <Link to="/reset-password">Reset Password</Link>
             </main>
         </>
     )
