@@ -5,19 +5,18 @@ import { useAuth } from '../AuthContext';
 import { db } from '../firebase';
 import { updateProfile } from 'firebase/auth';
 import { collection, query, where, getDocs, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { getAuth, deleteUser, sendEmailVerification } from "firebase/auth";
+import { deleteUser, sendEmailVerification, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "firebase/auth";
 import QuestionCard from '../components/QuestionCard';
 import CommentCard from '../components/CommentCard';
 import InputProfileImage from '../components/InputProfileImage';
+import InputPassword from '../components/InputPassword';
 import * as utils from '../../utils';
 
 export default function Profile() {
     const { user, loading } = useAuth();
+    // console.log("User:", user)
 
-    const {user_id} = useParams(null);
-
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
+    const {profile_id} = useParams(null);
 
     const [userProfile, setUserProfile] = useState(null);
     const [getUserProfileError, setGetUserProfileError] = useState("");
@@ -33,11 +32,16 @@ export default function Profile() {
     const [isEditingProfileImage, setIsEditingProfileImage] = useState(false);
     const [originalProfileImageUrl, setOriginalProfileImageUrl] = useState("");
     const [profileImageUrl, setProfileImageUrl] = useState("");
-    const [profileImageUrlErrorMessage, setProfileImageUrlErrorMessage] = useState("");
+    const [changeProfileImageUrlMessage, setChangeProfileImageUrlMessage] = useState("");
 
     const [resendVerificationEmailMessage, setResendVerificationEmailMessage] = useState("");
 
-    const [isConfirmDeleteProfileVisible, setIsConfirmDeleteProfileVisible] = useState(false);
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [changePasswordMessage, setChangePasswordMessage] = useState("");
+
+    const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [deleteAccountError, setDeleteAccountError] = useState("");
 
     const navigate = useNavigate();
@@ -46,7 +50,7 @@ export default function Profile() {
         const fetchUser = () => {
             const userQuery = query(
                 collection(db, 'users'),
-                where('userId', '==', user_id)
+                where('userId', '==', profile_id)
             );
 
             getDocs(userQuery)
@@ -67,7 +71,7 @@ export default function Profile() {
         const fetchQuestions = () => {
             const questionsQuery = query(
                 collection(db, 'questions'),
-                where('questionOwnerId', '==', user_id),
+                where('questionOwnerId', '==', profile_id),
                 orderBy('questionCreated', 'desc')
             );
 
@@ -90,7 +94,7 @@ export default function Profile() {
         const fetchComments = () => {
             const commentsQuery = query(
                 collection(db, 'comments'),
-                where('commentOwnerId', '==', user_id),
+                where('commentOwnerId', '==', profile_id),
                 orderBy('commentCreated', 'desc')
             );
 
@@ -111,7 +115,7 @@ export default function Profile() {
         fetchUser();
         fetchQuestions();
         fetchComments();    
-    }, [user_id])
+    }, [profile_id])
 
     function updateComment(updatedComment) {
         setComments(prevComments =>
@@ -125,10 +129,14 @@ export default function Profile() {
         setIsEditingProfileImage(true);
         setOriginalProfileImageUrl(userProfile[0].photoURL);
         setProfileImageUrl(userProfile[0].photoURL);
+        setChangePasswordMessage(false);
+        setChangeProfileImageUrlMessage(false);
     }
 
     function handleCancelChangeProfileImage() {
         setIsEditingProfileImage(false);
+        setProfileImageUrl(originalProfileImageUrl);
+        setChangeProfileImageUrlMessage("");
     }
 
     function handleUpdateProfileImage() {
@@ -141,10 +149,10 @@ export default function Profile() {
         validateProfileImage
             .then((isValid) => {
                 if (!isValid) {
-                    setProfileImageUrlErrorMessage("Profile image URL is not valid.");
+                    setChangeProfileImageUrlMessage("Profile image URL is not valid.");
                     throw new Error("Profile image URL is not valid.");                    
                 }
-                return updateProfile(currentUser, {photoURL: profileImageUrlTrimmed})
+                return updateProfile(user, {photoURL: profileImageUrlTrimmed});
             })
             .then(() => {
                 const questionsRef = collection(db, "questions");
@@ -187,6 +195,7 @@ export default function Profile() {
                     { ...prevUserProfile[0], photoURL: profileImageUrlTrimmed },
                 ]);
                 setIsEditingProfileImage(false);
+                setChangeProfileImageUrlMessage("Your profile image has been successfully changed.")
             })
             .catch((error) => {
                 console.log(error);
@@ -195,16 +204,18 @@ export default function Profile() {
 
     function handleProfileImageUrl(event) {
         setProfileImageUrl(event.target.value);
-        setProfileImageUrlErrorMessage("");
+        setChangeProfileImageUrlMessage("");
     }
 
     function handleDeleteAccount() {
         setIsEditingProfileImage(false);
-        setIsConfirmDeleteProfileVisible(true);
+        setIsDeletingAccount(true);
+        setChangePasswordMessage(false);
+        setChangeProfileImageUrlMessage(false);
     }
 
     function handleDeleteAccountNo() {
-        setIsConfirmDeleteProfileVisible(false);
+        setIsDeletingAccount(false);
     }
 
     function handleDeleteAccountYes() {
@@ -249,7 +260,7 @@ export default function Profile() {
                 return Promise.all(deleteUsersPromises);
             })
             .then((response) => {
-                return deleteUser(currentUser);
+                return deleteUser(user);
             })
             .then(() => {
                 navigate('/');
@@ -269,6 +280,51 @@ export default function Profile() {
                 console.error("Error resending verification email:", error);
                 setResendVerificationEmailMessage("Verification email could not be sent.");  
             });
+    }
+
+    function handleChangePassword() {
+        setIsChangingPassword(true);
+        setChangePasswordMessage(false);
+        setChangeProfileImageUrlMessage(false);
+    }
+
+    function handleCurrentPassword(event) {
+        setCurrentPassword(event.target.value)
+    }
+
+    function handleNewPassword(event) {
+        setNewPassword(event.target.value)
+    }
+
+    function handleCancelChangePassword() {
+        setIsChangingPassword(false);
+        setCurrentPassword("");
+        setNewPassword("");
+    }
+
+    function handleConfirmChangePassword() {
+        const credential = EmailAuthProvider.credential(user.email, currentPassword);
+        reauthenticateWithCredential(user, credential)
+            .then((response) => {
+                console.log(response);
+                return updatePassword(user, newPassword);
+            })
+            .then((response) => {
+                console.log(response);
+                console.log("Password updated successfully.");
+                setChangePasswordMessage("Your password has been changed successfully.");
+                setCurrentPassword("");
+                setNewPassword("");
+                setIsChangingPassword(false);
+            })
+            .catch((error) => {
+                console.log(error.code)
+                if (error.code === "auth/invalid-credential") {
+                    setChangePasswordMessage("The password you entered is incorrect.");
+                } else {
+                    setChangePasswordMessage("Your password could not be changed.");
+                }                
+            })
     }
 
     if (!userProfile) {
@@ -297,10 +353,11 @@ export default function Profile() {
                     <h1>{userProfile[0].displayName}</h1>
 
                     <div className="error">{deleteAccountError}</div>
-                    <div className="error">{profileImageUrlErrorMessage}</div>
+                    <div>{changeProfileImageUrlMessage}</div>
+                    <div>{changePasswordMessage}</div>
                     
 
-                    {user && user_id === user.uid && !user.emailVerified
+                    {user && profile_id === user.uid && !user.emailVerified
                         ? <>
                             <p>Your email address has not been verified. Please check your email and verify it to post questions and comments, vote on other members' questions, and edit your profile.</p>
                             <p>If you can't see the email in your Inbox, it may appear in your spam folder.</p>
@@ -322,9 +379,11 @@ export default function Profile() {
                     {user.emailVerified &&
                     user.uid === userProfile[0].userId &&
                     !isEditingProfileImage &&
-                    !isConfirmDeleteProfileVisible
+                    !isDeletingAccount &&
+                    !isChangingPassword
                         ? <div>
                             <button onClick={handleChangeProfileImage}>Change Profile Image</button>
+                            <button onClick={handleChangePassword}>Change Password</button>
                             <button onClick={handleDeleteAccount}>Delete Account</button>
                         </div>
                         : null
@@ -334,12 +393,31 @@ export default function Profile() {
                         ? <div>
                             <button onClick={handleCancelChangeProfileImage}>Cancel</button>
                             <button onClick={handleUpdateProfileImage}>Update</button>
-                            
                         </div>
                         : null
                     }
 
-                    {isConfirmDeleteProfileVisible
+                    {isChangingPassword
+                        ? <div>
+                            <InputPassword
+                                id={"current-password"}
+                                password={currentPassword}
+                                handlePassword={handleCurrentPassword}
+                                placeholder={"Current Password"}
+                            />
+                            <InputPassword
+                                id={"new-password"}
+                                password={newPassword}
+                                handlePassword={handleNewPassword}
+                                placeholder={"New Password"}
+                            />
+                            <button onClick={handleCancelChangePassword}>Cancel</button>
+                            <button onClick={handleConfirmChangePassword}>Confirm</button>
+                        </div>
+                        : null
+                    }
+
+                    {isDeletingAccount
                         ? <div>
                             <div className="confirm">Delete profile? Your account, questions, and comments will be permanently deleted.</div>
                             <button onClick={handleDeleteAccountNo}>No</button>
@@ -358,7 +436,7 @@ export default function Profile() {
                                 return <QuestionCard key={index} question={question} page="profile" />
                             })}
                         </div>
-                        : user_id === user.uid
+                        : profile_id === user.uid
                             ? <p>You haven't posted any questions yet.</p>
                             : <p>This user hasn't posted any questions yet.</p>
                     }
@@ -384,11 +462,17 @@ export default function Profile() {
                                         editingCommentId={editingCommentId}
                                         setEditingCommentId={setEditingCommentId}
                                         setComments={setComments}
+                                        isEditingProfileImage={isEditingProfileImage}
+                                        setIsEditingProfileImage={setIsEditingProfileImage}
+                                        isChangingPassword={isChangingPassword}
+                                        setIsChangingPassword={setIsChangingPassword}
+                                        isDeletingAccount={isDeletingAccount}
+                                        setIsDeletingAccount={setIsDeletingAccount}
                                     />
                                 )
                             })}
                         </div>
-                        : user_id === user.uid
+                        : profile_id === user.uid
                             ? <p>You haven't posted any comments yet.</p>
                             : <p>This user hasn't posted any comments yet.</p>
                     }

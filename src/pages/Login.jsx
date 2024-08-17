@@ -13,6 +13,18 @@ export default function Login() {
     const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
     const [error, setError] = useState("");
 
+    function handleEmail(event) {
+        setEmail(event.target.value);
+        setEmailErrorMessage("");
+        setError("");
+    }
+
+    function handlePassword(event) {
+        setPassword(event.target.value);
+        setPasswordErrorMessage("");
+        setError("");
+    }
+
     function handleLogin() {
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
@@ -43,18 +55,14 @@ export default function Login() {
                 <form>
                     <InputEmail
                         email={email}
-                        setEmail={setEmail}
-                        emailErrorMessage={emailErrorMessage}
-                        setEmailErrorMessage={setEmailErrorMessage}
-                        setError={setError}
+                        handleEmail={handleEmail}
                     />
 
                     <InputPassword
+                        id={"password"}
                         password={password}
-                        setPassword={setPassword}
-                        passwordErrorMessage={passwordErrorMessage}
-                        setPasswordErrorMessage={setPasswordErrorMessage}
-                        setError={setError}
+                        handlePassword={handlePassword}
+                        placeholder={"Password"}
                     />
 
                     <div className="error">{error}</div>

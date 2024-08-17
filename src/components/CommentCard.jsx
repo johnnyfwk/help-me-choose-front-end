@@ -21,20 +21,26 @@ export default function CommentCard({
     setIsEditingQuestion,
     editingCommentId,
     setEditingCommentId,
-    setComments
+    setComments,
+    isEditingProfileImage,
+    setIsEditingProfileImage,
+    isChangingPassword,
+    setIsChangingPassword,
+    isDeletingAccount,
+    setIsDeletingAccount
 }) {
     const [isEditingComment, setIsEditingComment] = useState(false);
     const [originalComment, setOriginalComment] = useState("");
     const [isConfirmDeleteCommentVisible, setIsConfirmDeleteCommentVisible] = useState(false);
 
     useEffect(() => {
-        if (comment || isEditingQuestion) {
+        if (comment || isEditingQuestion || isEditingProfileImage || isChangingPassword || isDeletingAccount) {
             setIsEditingComment(false);
         }
         if (editingCommentId !== commentObject.id) {
             setIsEditingComment(false);
         }
-    }, [comment, isEditingQuestion, editingCommentId])
+    }, [comment, isEditingQuestion, editingCommentId, isEditingProfileImage, isChangingPassword, isDeletingAccount])
 
     function handleEditCommentButton() {
         setEditingCommentId(commentObject.id)
@@ -42,6 +48,9 @@ export default function CommentCard({
         setOriginalComment(commentObject.comment);
         setIsEditingQuestion(false);
         setComment("");
+        setIsEditingProfileImage(false);
+        setIsChangingPassword(false);
+        setIsDeletingAccount(false);
     }
 
     function handleCancelEditComment() {
