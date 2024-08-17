@@ -30,7 +30,7 @@ export default function Home() {
             </Helmet>
 
             <main>
-                <h1>Get help making a choice from other members</h1>
+                <h1>Let others help you make a choice</h1>
 
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt tellus eu mattis gravida. Praesent et lacinia elit. Phasellus mauris orci, ultricies id ipsum quis, mollis aliquet diam. Curabitur sollicitudin, nisi vel rhoncus porta, ligula odio volutpat leo, vitae sodales dui justo non tortor.</p>          
 

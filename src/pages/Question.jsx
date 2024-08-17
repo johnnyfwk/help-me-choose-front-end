@@ -26,6 +26,7 @@ import CommentCard from "../components/CommentCard";
 import * as utils from '../../utils';
 
 export default function Question({user}) {
+    console.log("User:", user);
     const [isLoading, setIsLoading] = useState(true);
 
     const {question_id} = useParams(null);
@@ -54,6 +55,10 @@ export default function Question({user}) {
 
     const [optionsError, setOptionsError] = useState("");
     const [optionImageUrlError, setOptionImageUrlError] = useState({imageUrls: [], msg: "Image URL is not valid"});
+
+    const [isEditingProfileImage, setIsEditingProfileImage] = useState(false);
+    const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
     const navigate = useNavigate();
 
@@ -184,6 +189,7 @@ export default function Question({user}) {
     }
 
     function handleEditQuestion() {
+        window.scrollTo(0, 0);
         setIsEditingQuestion(true);
         setOriginalQuestion(structuredClone(question));
         setEditOptionsError("");
@@ -461,6 +467,15 @@ export default function Question({user}) {
                     <div className="error">{editOptionsError}</div>
                     <div className="error">{updateVoteError}</div>
 
+                    {isConfirmDeleteQuestionVisible
+                        ? <div>
+                            <div className="confirm">Delete question? All votes and comments will also be deleted and can't be recovered.</div>
+                            <button onClick={handleDeleteQuestionNo}>No</button>
+                            <button onClick={handleDeleteQuestionYes}>Yes</button>
+                        </div>
+                        : null
+                    }
+
                     {isEditingQuestion
                         ? <div>
                             <InputOptions
@@ -519,15 +534,6 @@ export default function Question({user}) {
                         </div>
                         : null
                     }
-
-                    {isConfirmDeleteQuestionVisible
-                        ? <div>
-                            <div className="confirm">Delete question? All votes and comments will also be deleted and can't be recovered.</div>
-                            <button onClick={handleDeleteQuestionNo}>No</button>
-                            <button onClick={handleDeleteQuestionYes}>Yes</button>
-                        </div>
-                        : null
-                    }
                 </section>
                 
                 {user.emailVerified
@@ -570,6 +576,9 @@ export default function Question({user}) {
                                         editingCommentId={editingCommentId}
                                         setEditingCommentId={setEditingCommentId}
                                         setComments={setComments}
+                                        setIsEditingProfileImage={setIsEditingProfileImage}
+                                        setIsChangingPassword={setIsChangingPassword}
+                                        setIsDeletingAccount={setIsDeletingAccount}
                                     />
                                 )
                             })}

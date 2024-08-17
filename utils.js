@@ -47,10 +47,10 @@ export function validateUsername(username, registeredUsernames) {
 }
 
 export function validatePassword(password) {
-    if (password.length < 8) {
+    if (password.length < 6) {
         return {
             isValid: false,
-            msg: "Password must be at least 8 characters long."
+            msg: "Password must be at least 6 characters long."
         };
     } else if (password.length > 128) {
         return {
@@ -80,17 +80,21 @@ export function validateImageUrl(url) {
 }
 
 export function formatDate(timestamp) {
-    const milliseconds = (timestamp.seconds * 1000) + (timestamp.nanoseconds / 1000000);
-    const date = new Date(milliseconds);
-
-    const formatter = new Intl.DateTimeFormat('en-UK', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-    });
-
-    return formatter.format(date);
+    if (timestamp) {
+        const milliseconds = (timestamp.seconds * 1000) + (timestamp.nanoseconds / 1000000);
+        const date = new Date(milliseconds);
+    
+        const formatter = new Intl.DateTimeFormat('en-UK', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+        });
+    
+        return formatter.format(date);
+    } else {
+        return null;
+    }
 }
 
 export function extractDocData(collection) {

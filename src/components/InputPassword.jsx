@@ -1,32 +1,19 @@
 export default function InputPassword({
+    id,
     password,
-    setPassword,
-    passwordErrorMessage,
-    setPasswordErrorMessage,
-    setError
+    handlePassword,
+    placeholder
 }) {
-    function handlePassword(event) {
-        setPassword(event.target.value);
-        setPasswordErrorMessage("");
-        setError("");
-    }
-
     return (
-        <div id="password-input">
-            <label
-                htmlFor="password"
-            >Password</label>
-
-            <input
-                type="password"
-                id="password"
-                name="password"
-                value={password}
-                onChange={handlePassword}
-                maxLength="128"
-                placeholder="Password"
-                required
-            ></input>
-        </div>
+        <input
+            type="password"
+            id={id}
+            name="password"
+            value={password}
+            onChange={handlePassword}
+            maxLength="128"
+            placeholder={placeholder}
+            required
+        ></input>
     )
 }

@@ -39,15 +39,27 @@ export default function SignUp() {
             })
     }, [])
 
-    function handleProfileImageUrl(event) {
-        setProfileImageUrl(event.target.value);
-        setProfileImageUrlErrorMessage("");
+    function handleEmail(event) {
+        setEmail(event.target.value);
+        setEmailErrorMessage("");
         setError("");
     }
 
     function handleUsername(event) {
         setUsername(event.target.value);
         setUsernameErrorMessage("");
+        setError("");
+    }
+
+    function handlePassword(event) {
+        setPassword(event.target.value);
+        setPasswordErrorMessage("");
+        setError("");
+    }
+
+    function handleProfileImageUrl(event) {
+        setProfileImageUrl(event.target.value);
+        setProfileImageUrlErrorMessage("");
         setError("");
     }
 
@@ -152,9 +164,7 @@ export default function SignUp() {
                 <form>
                     <InputEmail
                         email={email}
-                        setEmail={setEmail}
-                        setEmailErrorMessage={setEmailErrorMessage}
-                        setError={setError}
+                        handleEmail={handleEmail}
                     />
 
                     <div className="error">{usernameErrorMessage}</div>                  
@@ -167,11 +177,10 @@ export default function SignUp() {
                     <div className="error">{passwordErrorMessage}</div>
 
                     <InputPassword
+                        id={"password"}
                         password={password}
-                        setPassword={setPassword}
-                        setPasswordErrorMessage={setPasswordErrorMessage}
-                        error={error}
-                        setError={setError}
+                        handlePassword={handlePassword}
+                        placeholder={"Password"}
                     />
 
                     <div className="error">{profileImageUrlErrorMessage}</div>
