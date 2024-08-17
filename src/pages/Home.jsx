@@ -3,14 +3,10 @@ import { useState, useEffect } from "react";
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import QuestionCard from "../components/QuestionCard";
-import { getAuth } from "firebase/auth";
 import * as utils from '../../utils';
 
 export default function Home() {
     const [questions, setQuestions] = useState([]);
-
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
 
     useEffect(() => {
         getDocs(collection(db, 'questions'))
@@ -34,7 +30,7 @@ export default function Home() {
             </Helmet>
 
             <main>
-                <h1>Let others help you make a choice</h1>
+                <h1>Get help making a choice from other members</h1>
 
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt tellus eu mattis gravida. Praesent et lacinia elit. Phasellus mauris orci, ultricies id ipsum quis, mollis aliquet diam. Curabitur sollicitudin, nisi vel rhoncus porta, ligula odio volutpat leo, vitae sodales dui justo non tortor.</p>          
 

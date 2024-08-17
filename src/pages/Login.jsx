@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import InputEmail from '../components/InputEmail';
 import InputPassword from '../components/InputPassword';
@@ -35,7 +36,9 @@ export default function Login() {
             <main>
                 <h1>Login</h1>
 
-                <p>Login to your account to ask a question and get responses from other members.</p>
+                <p>Login to your account to ask a question and get help making a choice from other members.</p>
+
+                <p>If you don't have an account, <Link to="/sign-up">sign up</Link> for one.</p>
 
                 <form>
                     <InputEmail

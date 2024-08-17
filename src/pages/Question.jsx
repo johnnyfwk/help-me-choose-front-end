@@ -243,7 +243,7 @@ export default function Question({user}) {
 
     function handleCancelEditQuestion() {
         setIsEditingQuestion(false);
-        setQuestion(originalQuestion);
+        setQuestion(structuredClone(originalQuestion));
         setEditOptionsError("");
     }
 
@@ -487,12 +487,12 @@ export default function Question({user}) {
                                         
                                         <div>{option.votes.length} votes</div>
 
-                                        {!currentUser || question.questionOwnerId === currentUser.uid
-                                            ? null
-                                            : <button
+                                        {user.emailVerified && question.questionOwnerId !== user.uid
+                                            ? <button
                                                 onClick={() => handleVote(option.name)}
                                                 disabled={userVote === option.name}
                                             >{userVote === option.name ? 'Voted' : 'Vote'}</button>
+                                            : null
                                         }
                                     </div>
                                 )
@@ -503,6 +503,7 @@ export default function Question({user}) {
                     <div className="error">{updateQuestionError}</div>   
 
                     {user &&
+                    user.emailVerified &&
                     user.uid === question.questionOwnerId &&
                     !isEditingQuestion &&
                     !isConfirmDeleteQuestionVisible
@@ -529,10 +530,9 @@ export default function Question({user}) {
                     }
                 </section>
                 
-                {currentUser
+                {user.emailVerified
                     ? <section>
-                        <h2>Add a Comment</h2>
-                        <p>Add a comment and help the poster make a choice.</p>
+                        <h2>Comments</h2>
 
                         <InputComment
                             comment={comment}
@@ -552,7 +552,6 @@ export default function Question({user}) {
                 }
                 
                 <section>
-                    <h2>Comments</h2>
                     <div className="error">{commentsError}</div>
                     {comments.length > 0
                         ? <div className="comments-wrapper">

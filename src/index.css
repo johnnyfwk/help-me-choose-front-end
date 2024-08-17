@@ -137,7 +137,7 @@ main {
     object-fit: cover;  
 }
 
-.like-comment {
+.like-comment-user-verified {
     cursor: pointer;
 }
 /************************ QUESTION PAGE ************************/

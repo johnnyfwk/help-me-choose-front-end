@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export function validateEmail(email) {
     const emailRegex = /^[a-zA-Z0-9](\.?[a-zA-Z0-9_-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
 
@@ -78,21 +80,8 @@ export function validateImageUrl(url) {
 }
 
 export function formatDate(timestamp) {
-    let date;
-
-    if (timestamp instanceof Date) {
-        date = timestamp;
-    } 
-
-    else if (timestamp && typeof timestamp.toDate === 'function') {
-        date = timestamp.toDate();
-    } 
-
-    else if (typeof timestamp === 'string' || typeof timestamp === 'number') {
-        date = new Date(timestamp);
-    } else {
-        return 'Invalid date';
-    }
+    const milliseconds = (timestamp.seconds * 1000) + (timestamp.nanoseconds / 1000000);
+    const date = new Date(milliseconds);
 
     const formatter = new Intl.DateTimeFormat('en-UK', {
         weekday: 'long',

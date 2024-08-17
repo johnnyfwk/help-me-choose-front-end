@@ -5,7 +5,7 @@ import { useAuth } from '../AuthContext';
 import { db } from '../firebase';
 import { updateProfile } from 'firebase/auth';
 import { collection, query, where, getDocs, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { getAuth, deleteUser } from "firebase/auth";
+import { getAuth, deleteUser, sendEmailVerification } from "firebase/auth";
 import QuestionCard from '../components/QuestionCard';
 import CommentCard from '../components/CommentCard';
 import InputProfileImage from '../components/InputProfileImage';
@@ -34,6 +34,8 @@ export default function Profile() {
     const [originalProfileImageUrl, setOriginalProfileImageUrl] = useState("");
     const [profileImageUrl, setProfileImageUrl] = useState("");
     const [profileImageUrlErrorMessage, setProfileImageUrlErrorMessage] = useState("");
+
+    const [resendVerificationEmailMessage, setResendVerificationEmailMessage] = useState("");
 
     const [isConfirmDeleteProfileVisible, setIsConfirmDeleteProfileVisible] = useState(false);
     const [deleteAccountError, setDeleteAccountError] = useState("");
@@ -150,7 +152,6 @@ export default function Profile() {
                 return getDocs(q);
             })
             .then((querySnapshot) => {
-                console.log("querySnapshot:", querySnapshot);
                 const batchUpdates = [];
                 querySnapshot.forEach((docSnapshot) => {
                     const docRef = doc(db, "questions", docSnapshot.id);    
@@ -166,7 +167,6 @@ export default function Profile() {
                 return getDocs(q);
             })
             .then((querySnapshot) => {
-                console.log("querySnapshot:", querySnapshot);
                 const batchUpdates = [];
                 querySnapshot.forEach((docSnapshot) => {
                     const docRef = doc(db, "comments", docSnapshot.id);    
@@ -259,6 +259,18 @@ export default function Profile() {
             });
     }
 
+    function handleResendVerificationEmail() {
+        sendEmailVerification(user)
+            .then(() => {
+                console.log("Verification email resent.");
+                setResendVerificationEmailMessage("Verification email has been sent.");                
+            })
+            .catch((error) => {
+                console.error("Error resending verification email:", error);
+                setResendVerificationEmailMessage("Verification email could not be sent.");  
+            });
+    }
+
     if (!userProfile) {
         return null;
     }
@@ -286,7 +298,19 @@ export default function Profile() {
 
                     <div className="error">{deleteAccountError}</div>
                     <div className="error">{profileImageUrlErrorMessage}</div>
+                    
 
+                    {user && user_id === user.uid && !user.emailVerified
+                        ? <>
+                            <p>Your email address has not been verified. Please check your email and verify it to post questions and comments, vote on other members' questions, and edit your profile.</p>
+                            <p>If you can't see the email in your Inbox, it may appear in your spam folder.</p>
+                            <p>Once you have verified your account, refresh the page to gain full access to features.</p>
+                            <div>{resendVerificationEmailMessage}</div>
+                            <button onClick={handleResendVerificationEmail}>Resend Verification Email</button>
+                        </>
+                        : null
+                    }
+                    
                     {isEditingProfileImage
                         ? <InputProfileImage
                             profileImageUrl={profileImageUrl}
@@ -295,12 +319,14 @@ export default function Profile() {
                         : null
                     }
 
-                    {user.uid === userProfile[0].userId && !isEditingProfileImage && !isConfirmDeleteProfileVisible
+                    {user.emailVerified &&
+                    user.uid === userProfile[0].userId &&
+                    !isEditingProfileImage &&
+                    !isConfirmDeleteProfileVisible
                         ? <div>
                             <button onClick={handleChangeProfileImage}>Change Profile Image</button>
                             <button onClick={handleDeleteAccount}>Delete Account</button>
                         </div>
-                        
                         : null
                     }
                     
@@ -323,19 +349,24 @@ export default function Profile() {
                     }
 
                     <h2>Questions</h2>
+
                     <div className="error">{getQuestionsError}</div>
+
                     {questions.length > 0
-                        ? <div className="questions-wrapper">
+                        ? <div className="question-cards-wrapper">
                             {questions.map((question, index) => {
                                 return <QuestionCard key={index} question={question} page="profile" />
                             })}
                         </div>
-                        : <div>You haven't posted any questions.</div>
+                        : user_id === user.uid
+                            ? <p>You haven't posted any questions yet.</p>
+                            : <p>This user hasn't posted any questions yet.</p>
                     }
                 </section>
                 
                 <section>
                     <h2>Comments</h2>
+
                     {comments.length > 0
                         ? <div className="comments-wrapper">
                             {comments.map((commentObject, index) => {
@@ -357,7 +388,9 @@ export default function Profile() {
                                 )
                             })}
                         </div>
-                        : <div>You haven't posted any comments.</div>
+                        : user_id === user.uid
+                            ? <p>You haven't posted any comments yet.</p>
+                            : <p>This user hasn't posted any comments yet.</p>
                     }
                 </section>
             </main>
