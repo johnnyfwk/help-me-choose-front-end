@@ -114,7 +114,7 @@ export default function PostAQuestion({user}) {
                     questionCategory: category,
                     questionOptions: newOptions,
                     questionCreated: serverTimestamp(),
-                    questionModified: "",
+                    questionModified: serverTimestamp(),
                 })
                 .then(() => {
                     setTitle("");
@@ -159,6 +159,7 @@ export default function PostAQuestion({user}) {
                     <InputCategory
                         category={category}
                         handleCategory={handleCategory}
+                        page={"post a question"}
                     />
 
                     <div className="error">{optionsError}</div>

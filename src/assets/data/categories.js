@@ -3,7 +3,7 @@ export const categories = [
     "Restaurants",
     "Bars & Clubs",
     "Mobile Phones",
-    "Laptops",
+    "Computers & Laptops",
     "Gadgets",
     "Software",
     "Electronics",
@@ -33,5 +33,9 @@ export const categories = [
     "Shopping",
     "Business",
     "Property",
-    "Miscellaneous"
+    "Miscellaneous",
+    "Insurance",
+    "Technology",
+    "Internet",
+    "Wearables"
 ];

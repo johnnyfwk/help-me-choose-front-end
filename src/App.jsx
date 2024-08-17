@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import Logo from "./components/Logo";
@@ -15,19 +16,19 @@ import Footer from "./components/Footer";
 
 function App() {
     const { user, loading } = useAuth();
-    console.log("User:", user);
+    // console.log("User:", user);
+
+    const [category, setCategory] = useState("");
     
     return (
         <>
-            <Logo />
-            <Nav
-                user={user}
-            />
+            <Logo setCategory={setCategory} />
+            <Nav user={user} />
             <Routes>
                 <Route
                     path="/"
                     element={
-                        <Home />
+                        <Home category={category} setCategory={setCategory} />
                     }
                 />
 
@@ -78,7 +79,7 @@ function App() {
                     path="/profile/:profile_id"
                     element={
                         user
-                            ? <Profile />
+                            ? <Profile user={user} />
                             : <Navigate to="/login" />
                     }
                 />

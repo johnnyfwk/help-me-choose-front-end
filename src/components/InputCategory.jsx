@@ -1,9 +1,10 @@
 import { categories } from "../assets/data/categories";
-const sortedUniqueCategories = Array.from(new Set(categories)).sort();
+const categoriesList = Array.from(new Set(categories)).sort();
 
 export default function InputCategory({
     category,
-    handleCategory
+    handleCategory,
+    page
 }) {
     return (
         <div id="input-category">
@@ -14,8 +15,17 @@ export default function InputCategory({
                 value={category}
                 onChange={handleCategory}
             >
-                <option value="" disabled>Select a Category</option>
-                {sortedUniqueCategories.map((category, index) => {
+                {page === "post a question"
+                    ? <option value="" disabled>Select a Category</option>
+                    : null
+                }                
+
+                {page === "home"
+                    ? <option value="">All</option>
+                    : null
+                }
+                
+                {categoriesList.map((category, index) => {
                     return <option key={index} value={category}>{category}</option>
                 })}
             </select>
