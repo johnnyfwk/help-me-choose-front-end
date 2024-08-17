@@ -25,8 +25,8 @@ function App() {
                 <Route
                     path="/"
                     element={
-                        <Home
-                    />}
+                        <Home />
+                    }
                 />
 
                 <Route

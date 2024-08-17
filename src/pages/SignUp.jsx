@@ -1,7 +1,8 @@
 import { Helmet } from 'react-helmet';
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { auth } from '../firebase';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { createUserWithEmailAndPassword, updateProfile, sendEmailVerification  } from 'firebase/auth';
 import { db } from '../firebase';
 import { collection, getDocs, addDoc } from 'firebase/firestore';
 import * as utils from '../../utils';
@@ -96,8 +97,18 @@ export default function SignUp() {
             })
             .then((userCredential) => {
                 userId = userCredential.user.uid;
-                const member = userCredential.user;
-                return updateProfile(member, {
+                const user = userCredential.user;
+
+                sendEmailVerification(user)
+                    .then((response) => {
+                        console.log(response);
+                        console.log("Verification email sent.");
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        console.error("Error sending verification email:", error);
+                    })
+                return updateProfile(user, {
                     displayName: username,
                     photoURL: profileImageUrlTrimmed || defaultImageUrl
                 });
@@ -116,7 +127,7 @@ export default function SignUp() {
                 console.log(error);
             });
 
-        // let userId;
+        let userId;
     }
 
     return (
@@ -130,7 +141,10 @@ export default function SignUp() {
 
             <main>
                 <h1>Sign Up</h1>
-                <p>Create an account to post questions and get answers from other users.</p>
+
+                <p>Create an account to post questions and get help making a choice from other members.</p>
+
+                <p>If you already have an account, <Link to="/login">login</Link> to your account.</p>
 
                 <div className="error">{error}</div>
                 <div className="error">{emailErrorMessage}</div>

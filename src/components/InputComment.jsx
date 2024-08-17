@@ -10,7 +10,7 @@ export default function InputComment({
                 value={comment}
                 onChange={handleComment}
                 maxLength="2000"
-                placeholder="Enter your comment and help the poster make a choice."
+                placeholder="Enter a comment and help the poster make a choice."
             ></textarea>
         </div>
     )
