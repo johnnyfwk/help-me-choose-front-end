@@ -208,7 +208,7 @@ export default function SignUp() {
 
                 <h3>Password:</h3>
                 <ul>
-                    <li>Between 8 and 128 characters (inclusive).</li>
+                    <li>Between 6 and 128 characters (inclusive).</li>
                 </ul>
             </main>
         </>
