@@ -161,9 +161,11 @@ export default function CommentCard({
                 : <div>{commentObject.comment}</div>
             }
 
-            {user.emailVerified && page === "question" && user.uid !== commentObject.commentOwnerId
-                ? <div onClick={handleLikeComment} className="like-comment-user-verified">&#128077; {commentObject.commentLikes.length}</div>
-                : <div className="like-comment-user-not-verified">&#128077; {commentObject.commentLikes.length}</div>
+            {!user
+                ? <div className="like-comment-user-not-verified">&#128077;{commentObject.commentLikes.length}</div>
+                : user.emailVerified && page === "question" && user.uid !== commentObject.commentOwnerId
+                    ? <div onClick={handleLikeComment}><span className="like-comment-user-verified">&#128077;</span>{commentObject.commentLikes.length}</div>
+                    : null
             }
 
             <div>{utils.formatDate(commentObject.commentCreated)}</div>

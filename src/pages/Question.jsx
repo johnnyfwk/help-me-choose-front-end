@@ -26,7 +26,6 @@ import CommentCard from "../components/CommentCard";
 import * as utils from '../../utils';
 
 export default function Question({user}) {
-    console.log("User:", user);
     const [isLoading, setIsLoading] = useState(true);
 
     const {question_id} = useParams(null);
@@ -502,12 +501,14 @@ export default function Question({user}) {
                                         
                                         <div>{option.votes.length} votes</div>
 
-                                        {user.emailVerified && question.questionOwnerId !== user.uid
-                                            ? <button
-                                                onClick={() => handleVote(option.name)}
-                                                disabled={userVote === option.name}
-                                            >{userVote === option.name ? 'Voted' : 'Vote'}</button>
-                                            : null
+                                        {!user
+                                            ? null
+                                            : user.emailVerified && question.questionOwnerId !== user.uid
+                                                ? <button
+                                                    onClick={() => handleVote(option.name)}
+                                                    disabled={userVote === option.name}
+                                                >{userVote === option.name ? 'Voted' : 'Vote'}</button>
+                                                : null
                                         }
                                     </div>
                                 )
@@ -535,8 +536,31 @@ export default function Question({user}) {
                         : null
                     }
                 </section>
+
+                {!user
+                    ? null
+                    : user.emailVerified
+                        ? <section>
+                            <h2>Comments</h2>
+
+                            <InputComment
+                                comment={comment}
+                                handleComment={handleComment}
+                            />
+
+                            <div className="error">{commentError}</div>
+
+                            <input
+                                type="button"
+                                value="Post Comment"
+                                onClick={handlePostComment}
+                                disabled={!comment}
+                            ></input>
+                        </section>
+                        : null
+                }
                 
-                {user.emailVerified
+                {/* {user.emailVerified
                     ? <section>
                         <h2>Comments</h2>
 
@@ -555,7 +579,7 @@ export default function Question({user}) {
                         ></input>
                     </section>
                     : null
-                }
+                } */}
                 
                 <section>
                     <div className="error">{commentsError}</div>
