@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { db } from '../firebase';
 import { updateProfile } from 'firebase/auth';
-import { collection, query, where, getDocs, orderBy, deleteDoc, doc, updateDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, orderBy, deleteDoc, doc, updateDoc, getCountFromServer, limit, startAfter } from 'firebase/firestore';
 import { deleteUser, sendEmailVerification, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "firebase/auth";
 import QuestionCard from '../components/QuestionCard';
 import CommentCard from '../components/CommentCard';
@@ -22,6 +22,7 @@ export default function Profile({user}) {
     const [getUserProfileError, setGetUserProfileError] = useState("");
 
     const [questions, setQuestions] = useState([]);
+    console.log("Questions:", questions)
     const [comments, setComments] = useState([]);
     const [getQuestionsError, setGetQuestionsError] = useState("");
 
@@ -44,8 +45,28 @@ export default function Profile({user}) {
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [deleteAccountError, setDeleteAccountError] = useState("");
 
+    const cardsPerPage = 1;
+
+    const [isFetchingQuestions, setIsFetchingQuestions] = useState(false);
+    const [questionsPage, setQuestionsPage] = useState(1);
+    console.log("Question page number:", questionsPage);
+    const [totalQuestions, setTotalQuestions] = useState(0);
+    // console.log("Total number of questions:", totalQuestions);
+    const totalQuestionPages = Math.ceil(totalQuestions / cardsPerPage);
+    // console.log("Total number of question pages:", totalQuestionPages);    
+    const [fetchQuestionsMessage, setFetchQuestionsMessage] = useState("");
+
+    const [isFetchingComments, setIsFetchingComments] = useState(false);
+    const [commentsPage, setCommentsPage] = useState(1);
+    const [totalComments, setTotalComments] = useState(0);
+    const totalCommentPages = Math.ceil(totalComments / cardsPerPage);
+    const [fetchCommentsMessage, setFetchCommentsMessage] = useState("");
+
     useEffect(() => {
-        const fetchUser = () => {
+        setQuestionsPage(1);
+        setCommentsPage(1);
+
+        const fetchUserProfile = () => {
             const userQuery = query(
                 collection(db, 'users'),
                 where('userId', '==', profile_id)
@@ -66,54 +87,70 @@ export default function Profile({user}) {
                 });
         };
 
-        const fetchQuestions = () => {
-            const questionsQuery = query(
-                collection(db, 'questions'),
-                where('questionOwnerId', '==', profile_id),
-                orderBy('questionModified', 'desc')
-            );
-
-            getDocs(questionsQuery)
-                .then((questionsSnapshot) => {
-                    const questionsData = questionsSnapshot.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data(),
-                    }));
-                    // const questionsOrdered = utils.sortQuestions(questionsData);
-                    setQuestions(questionsData);
-                    setGetQuestionsError("");
-                })
-                .catch((error) => {
-                    console.error("Error fetching questions: ", error);
-                    setGetQuestionsError("Questions could not be retrieved.");
-                });
+        const fetchNumberOfQuestions = () => {
+            const questionsRef = collection(db, "questions");
+            const questionsQuery = query(questionsRef, where("questionOwnerId", "==", profile_id));
+            utils.getDocumentCount(getCountFromServer, questionsQuery, setTotalQuestions);
         };
 
-        const fetchComments = () => {
-            const commentsQuery = query(
-                collection(db, 'comments'),
-                where('commentOwnerId', '==', profile_id),
-                orderBy('commentCreated', 'desc')
-            );
+        const fetchNumberOfComments = () => {
+            const commentRef = collection(db, "comments");
+            const commentsQuery = query(commentRef, where("commentOwnerId", "==", profile_id));
+            utils.getDocumentCount(getCountFromServer, commentsQuery, setTotalComments);
+        }
 
-            getDocs(commentsQuery)
-                .then((commentsSnapshot) => {
-                    const commentsData = commentsSnapshot.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data(),
-                    }));
-                    setComments(commentsData);
-                })
-                .catch((error) => {
-                    console.error("Error fetching comments: ", error);
-                    setDeleteAccountError("Account could not be deleted.");
-                });
-        };
-
-        fetchUser();
-        fetchQuestions();
-        fetchComments();    
+        fetchUserProfile();
+        fetchNumberOfQuestions();
+        fetchNumberOfComments();
     }, [profile_id])
+
+    // Fetch questions
+    useEffect(() => {
+        utils.fetchPaginatedDocuments(
+            setIsFetchingQuestions,
+            collection,
+            db,
+            'questions',
+            questionsPage,
+            query,
+            profile_id,
+            profile_id,
+            where,
+            "questionOwnerId",
+            orderBy,
+            'questionModified',
+            limit,
+            cardsPerPage,
+            getDocs,
+            startAfter,
+            setQuestions,
+            setFetchQuestionsMessage,
+        );
+    }, [profile_id, questionsPage])
+
+    // Fetch comments
+    useEffect(() => {
+        utils.fetchPaginatedDocuments(
+            setIsFetchingComments,
+            collection,
+            db,
+            'comments',
+            commentsPage,
+            query,
+            profile_id,
+            profile_id,
+            where,
+            "commentOwnerId",
+            orderBy,
+            'commentCreated',
+            limit,
+            cardsPerPage,
+            getDocs,
+            startAfter,
+            setComments,
+            setFetchCommentsMessage,
+        );
+    }, [profile_id, commentsPage])
 
     function updateComment(updatedComment) {
         setComments(prevComments =>
@@ -325,6 +362,18 @@ export default function Profile({user}) {
             })
     }
 
+    const handleQuestionPageChange = (newPage) => {
+        if (newPage > 0 && newPage <= totalQuestionPages) {
+            setQuestionsPage(newPage);
+        }
+    };
+
+    const handleCommentPageChange = (newPage) => {
+        if (newPage > 0 && newPage <= totalCommentPages) {
+            setCommentsPage(newPage);
+        }
+    };
+
     if (!userProfile) {
         return null;
     }
@@ -427,13 +476,21 @@ export default function Profile({user}) {
                     <h2>Questions</h2>
 
                     <div className="error">{getQuestionsError}</div>
+                    <div className="error">{fetchQuestionsMessage}</div>
 
                     {questions.length > 0
-                        ? <div className="question-cards-wrapper">
-                            {questions.map((question, index) => {
-                                return <QuestionCard key={index} question={question} page="profile" />
-                            })}
-                        </div>
+                        ? <>
+                            <div className="question-cards-wrapper">
+                                {questions.map((question, index) => {
+                                    return <QuestionCard key={index} question={question} page="profile" />
+                                })}
+                            </div>
+                            <div>
+                                <button onClick={() => handleQuestionPageChange(questionsPage - 1)} disabled={isFetchingQuestions || questionsPage === 1}>Previous</button>
+                                <span>Page {questionsPage} of {totalQuestionPages}</span>
+                                <button onClick={() => handleQuestionPageChange(questionsPage + 1)} disabled={isFetchingQuestions || questionsPage === totalQuestionPages}>Next</button>
+                            </div>
+                        </>
                         : profile_id === user.uid
                             ? <p>You haven't posted any questions yet.</p>
                             : <p>This user hasn't posted any questions yet.</p>
@@ -443,33 +500,42 @@ export default function Profile({user}) {
                 <section>
                     <h2>Comments</h2>
 
+                    <div className="error">{fetchCommentsMessage}</div>
+
                     {comments.length > 0
-                        ? <div className="comments-wrapper">
-                            {comments.map((commentObject, index) => {
-                                return (
-                                    <CommentCard
-                                        key={index}
-                                        commentObject={commentObject}
-                                        page="profile"
-                                        user={user}
-                                        updateComment={updateComment}
-                                        comment={comment}
-                                        setComment={setComment}
-                                        isEditingQuestion={isEditingQuestion}
-                                        setIsEditingQuestion={setIsEditingQuestion}
-                                        editingCommentId={editingCommentId}
-                                        setEditingCommentId={setEditingCommentId}
-                                        setComments={setComments}
-                                        isEditingProfileImage={isEditingProfileImage}
-                                        setIsEditingProfileImage={setIsEditingProfileImage}
-                                        isChangingPassword={isChangingPassword}
-                                        setIsChangingPassword={setIsChangingPassword}
-                                        isDeletingAccount={isDeletingAccount}
-                                        setIsDeletingAccount={setIsDeletingAccount}
-                                    />
-                                )
-                            })}
-                        </div>
+                        ? <>
+                            <div className="comments-wrapper">
+                                {comments.map((commentObject, index) => {
+                                    return (
+                                        <CommentCard
+                                            key={index}
+                                            commentObject={commentObject}
+                                            page="profile"
+                                            user={user}
+                                            updateComment={updateComment}
+                                            comment={comment}
+                                            setComment={setComment}
+                                            isEditingQuestion={isEditingQuestion}
+                                            setIsEditingQuestion={setIsEditingQuestion}
+                                            editingCommentId={editingCommentId}
+                                            setEditingCommentId={setEditingCommentId}
+                                            setComments={setComments}
+                                            isEditingProfileImage={isEditingProfileImage}
+                                            setIsEditingProfileImage={setIsEditingProfileImage}
+                                            isChangingPassword={isChangingPassword}
+                                            setIsChangingPassword={setIsChangingPassword}
+                                            isDeletingAccount={isDeletingAccount}
+                                            setIsDeletingAccount={setIsDeletingAccount}
+                                        />
+                                    )
+                                })}
+                            </div>
+                            <div>
+                                <button onClick={() => handleCommentPageChange(commentsPage - 1)} disabled={isFetchingComments || commentsPage === 1}>Previous</button>
+                                <span>Page {commentsPage} of {totalCommentPages}</span>
+                                <button onClick={() => handleCommentPageChange(commentsPage + 1)} disabled={isFetchingComments || commentsPage === totalCommentPages}>Next</button>
+                            </div>
+                        </>
                         : profile_id === user.uid
                             ? <p>You haven't posted any comments yet.</p>
                             : <p>This user hasn't posted any comments yet.</p>

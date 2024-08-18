@@ -130,3 +130,112 @@ export function convertSlugToCategory(slug) {
         .replace(/\band\b/g, '&')
         .replace(/\b\w/g, char => char.toUpperCase());
 }
+
+export function getDocumentCount(getCountFromServer, query, setTotalDocuments) {
+    return getCountFromServer(query)
+        .then((snapshot) => {
+            const totalDocuments = snapshot.data().count;
+            setTotalDocuments(totalDocuments);
+        })
+        .catch((error) => {
+            console.error("Error fetching document count: ", error);
+        })
+}
+
+export function fetchPaginatedDocuments(
+    setIsFetching,
+    collection,
+    db,
+    collectionName,
+    page,
+    query,
+    filterName,
+    filterValue,
+    where,
+    fieldName,
+    orderBy,
+    orderByName,
+    limit,
+    documentsPerPage,
+    getDocs,
+    startAfter,
+    setDocuments,
+    setFetchDocumentsMessage,
+) {
+    setIsFetching(true);
+
+    const collectionRef = collection(db, collectionName);
+
+    let q;
+
+    if (page === 1) {
+        console.log("Page 1")
+        q = query(
+            collectionRef,
+            ...(filterName ? [where(fieldName, "==", filterValue)] : []),
+            orderBy(orderByName, 'desc'),
+            limit(documentsPerPage)
+        );
+    } else {
+        console.log("Not Page 1")
+        const offset = (page - 1) * documentsPerPage;
+
+        const tempQuery = query(
+            collectionRef,
+            ...(filterName ? [where(fieldName, "==", filterValue)] : []),
+            orderBy(orderByName, 'desc'),
+            limit(offset)
+        );
+
+        getDocs(tempQuery)
+            .then((snapshot) => {
+                if (!snapshot.empty) {
+                    const lastVisible = snapshot.docs[snapshot.docs.length - 1];
+
+                    q = query(
+                        collectionRef,
+                        ...(filterName ? [where(fieldName, "==", filterValue)] : []),
+                        orderBy(orderByName, 'desc'),
+                        startAfter(lastVisible),
+                        limit(documentsPerPage)
+                    );
+
+                    return getDocs(q);
+                }
+            })
+            .then((snapshot) => {
+                if (snapshot) {
+                    const documents = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data(),
+                    }));
+                    console.log("Documents:", documents)
+                    setDocuments(documents);
+                }
+                setIsFetching(false);
+            })
+            .catch((error) => {
+                console.error("Error fetching documents: ", error);
+                setIsFetching(false);
+                setFetchDocumentsMessage("Could not fetch documents.");
+            });
+
+        return;
+    }
+
+    return getDocs(q)
+        .then((snapshot) => {
+            const documents = snapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            setDocuments(documents);
+            setIsFetching(false);
+        })
+        .catch((error) => {
+            console.error("Error fetching documents: ", error);
+            setIsFetching(false);
+            setFetchDocumentsMessage("Could not fetch documents.");
+        })
+}
