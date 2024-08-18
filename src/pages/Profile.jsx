@@ -11,7 +11,7 @@ import InputProfileImage from '../components/InputProfileImage';
 import InputPassword from '../components/InputPassword';
 import * as utils from '../../utils';
 
-export default function Profile({user}) {
+export default function Profile({user, setCategory}) {
     // console.log("User:", user)
 
     const {profile_id} = useParams(null);
@@ -370,6 +370,10 @@ export default function Profile({user}) {
         }
     };
 
+    function handleQuestionCardCategory(category) {
+        setCategory(category);
+    }
+
     if (!userProfile) {
         return null;
     }
@@ -478,7 +482,14 @@ export default function Profile({user}) {
                         ? <>
                             <div className="question-cards-wrapper">
                                 {questions.map((question, index) => {
-                                    return <QuestionCard key={index} question={question} page="profile" />
+                                    return (
+                                        <QuestionCard
+                                            key={index}
+                                            question={question}
+                                            page="profile"
+                                            handleQuestionCardCategory={handleQuestionCardCategory}
+                                        />
+                                    )
                                 })}
                             </div>
                             <div>

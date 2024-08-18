@@ -15,7 +15,7 @@ export default function Home({category, setCategory}) {
 
     const [questions, setQuestions] = useState([]);
     
-    const questionsPerPage = 1;    
+    const questionsPerPage = 3;    
     const [isFetching, setIsFetching] = useState(false);
     const [page, setPage] = useState(1);
     const [totalQuestions, setTotalQuestions] = useState(0);    
@@ -63,12 +63,18 @@ export default function Home({category, setCategory}) {
     };
 
     function handleCategory(event) {
+        setPage(1);
         setCategory(event.target.value);
         if (event.target.value === "") {
             navigate("/");
         } else {
             navigate(`/?category=${utils.convertToSlug(event.target.value)}`);
         }
+    }
+
+    function handleQuestionCardCategory(category) {
+        setPage(1);
+        setCategory(category);
     }
 
     return (
@@ -97,7 +103,14 @@ export default function Home({category, setCategory}) {
                     ? <>
                         <div className="question-cards-wrapper">
                             {questions.map((question, index) => {
-                                return <QuestionCard key={index} question={question} page="home" />
+                                return (
+                                    <QuestionCard
+                                        key={index}
+                                        question={question}
+                                        page="home"
+                                        handleQuestionCardCategory={handleQuestionCardCategory}
+                                    />
+                                )
                             })}
                         </div>
                         <div>

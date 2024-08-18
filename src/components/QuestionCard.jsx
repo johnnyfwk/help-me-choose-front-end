@@ -3,7 +3,8 @@ import * as utils from '../../utils';
 
 export default function QuestionCard({
     question,
-    page
+    page,
+    handleQuestionCardCategory
 }) {
     return (
         <div className="question-card-wrapper">
@@ -24,7 +25,10 @@ export default function QuestionCard({
             }
             <Link to={`/question/${question.id}`}>{question.questionTitle}</Link>
             <p>{question.questionDescription}</p>
-            <div>{question.questionCategory}</div>
+            <Link
+                to={`/?category=${utils.convertToSlug(question.questionCategory)}`}
+                onClick={() => handleQuestionCardCategory(question.questionCategory)}
+            >{question.questionCategory}</Link>
                           
             <div>{utils.formatDate(question.questionCreated)}</div>
         </div>
