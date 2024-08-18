@@ -15,112 +15,45 @@ export default function Home({category, setCategory}) {
 
     const [questions, setQuestions] = useState([]);
     
-    const [page, setPage] = useState(1);
-    const [totalQuestions, setTotalQuestions] = useState(0);
-    const [fetchQuestionsMessage, setFetchQuestionsMessage] = useState("");
+    const questionsPerPage = 1;    
     const [isFetching, setIsFetching] = useState(false);
-    const questionsPerPage = 30;
+    const [page, setPage] = useState(1);
+    const [totalQuestions, setTotalQuestions] = useState(0);    
     const totalPages = Math.ceil(totalQuestions / questionsPerPage);
+    const [fetchQuestionsMessage, setFetchQuestionsMessage] = useState("");
 
     useEffect(() => {
         const questionsRef = collection(db, "questions");
 
         if (!category_slug) {
-            getCountFromServer(questionsRef)
-                .then((allQuestionsSnapshot) => {
-                    const totalQuestions = allQuestionsSnapshot.data().count;
-                    setTotalQuestions(totalQuestions);
-                })
-                .catch((error) => {
-                    console.error("Error fetching document counts: ", error);
-                })
+            utils.getDocumentCount(getCountFromServer, questionsRef, setTotalQuestions);
         } else {
             const categoryQuery = query(questionsRef, where("questionCategory", "==", utils.convertSlugToCategory(category_slug)));
-            getCountFromServer(categoryQuery)
-                .then((categoryQuestionsSnapshot) => {
-                    const totalCategoryQuestions = categoryQuestionsSnapshot.data().count;
-                    setTotalQuestions(totalCategoryQuestions);
-                })
-                .catch((error) => {
-                    console.error("Error fetching document counts: ", error);
-                })
+            utils.getDocumentCount(getCountFromServer, categoryQuery, setTotalQuestions);
         }
     }, [category_slug]);
 
     useEffect(() => {
-        setIsFetching(true);
-        const questionsRef = collection(db, 'questions');
-
-        let q;
-
-        if (page === 1) {
-            q = query(
-                questionsRef,
-                ...(category_slug ? [where("questionCategory", "==", utils.convertSlugToCategory(category_slug))] : []),
-                orderBy('questionModified', 'desc'),
-                limit(questionsPerPage)
-            );
-        } else {
-            const offset = (page - 1) * questionsPerPage;
-
-            const tempQuery = query(
-                questionsRef,
-                ...(category_slug ? [where("questionCategory", "==", utils.convertSlugToCategory(category_slug))] : []),
-                orderBy('questionModified', 'desc'),
-                limit(offset)
-            );
-
-            getDocs(tempQuery)
-                .then((snapshot) => {
-                    if (!snapshot.empty) {
-                        const lastVisible = snapshot.docs[snapshot.docs.length - 1];
-
-                        q = query(
-                            questionsRef,
-                            ...(category_slug ? [where("questionCategory", "==", utils.convertSlugToCategory(category_slug))] : []),
-                            orderBy('questionModified', 'desc'),
-                            startAfter(lastVisible),
-                            limit(questionsPerPage)
-                        );
-
-                        return getDocs(q);
-                    }
-                })
-                .then((snapshot) => {
-                    if (snapshot) {
-                        const documents = snapshot.docs.map(doc => ({
-                            id: doc.id,
-                            ...doc.data(),
-                        }));
-
-                        setQuestions(documents);
-                    }
-                    setIsFetching(false);
-                })
-                .catch((error) => {
-                    console.error("Error fetching documents: ", error);
-                    setIsFetching(false);
-                    setFetchQuestionsMessage("Could not fetch questions.");
-                });
-
-            return;
-        }
-
-        getDocs(q)
-            .then((snapshot) => {
-                const documents = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-
-                setQuestions(documents);
-                setIsFetching(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching documents: ", error);
-                setIsFetching(false);
-                setFetchQuestionsMessage("Could not fetch questions.");
-            });
+        utils.fetchPaginatedDocuments(
+            setIsFetching,
+            collection,
+            db,
+            'questions',
+            page,
+            query,
+            category_slug,
+            utils.convertSlugToCategory(category_slug),
+            where,
+            "questionCategory",
+            orderBy,
+            'questionModified',
+            limit,
+            questionsPerPage,
+            getDocs,
+            startAfter,
+            setQuestions,
+            setFetchQuestionsMessage,
+        );
     }, [page, category_slug]);
 
     const handlePageChange = (newPage) => {
@@ -169,7 +102,7 @@ export default function Home({category, setCategory}) {
                         </div>
                         <div>
                             <button onClick={() => handlePageChange(page - 1)} disabled={isFetching || page === 1}>Previous</button>
-                            <span> Page {page} of {totalPages} </span>
+                            <span>Page {page} of {totalPages}</span>
                             <button onClick={() => handlePageChange(page + 1)} disabled={isFetching || page === totalPages}>Next</button>
                         </div>
                     </>
