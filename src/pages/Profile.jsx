@@ -22,7 +22,6 @@ export default function Profile({user}) {
     const [getUserProfileError, setGetUserProfileError] = useState("");
 
     const [questions, setQuestions] = useState([]);
-    console.log("Questions:", questions)
     const [comments, setComments] = useState([]);
     const [getQuestionsError, setGetQuestionsError] = useState("");
 
@@ -49,11 +48,8 @@ export default function Profile({user}) {
 
     const [isFetchingQuestions, setIsFetchingQuestions] = useState(false);
     const [questionsPage, setQuestionsPage] = useState(1);
-    console.log("Question page number:", questionsPage);
     const [totalQuestions, setTotalQuestions] = useState(0);
-    // console.log("Total number of questions:", totalQuestions);
-    const totalQuestionPages = Math.ceil(totalQuestions / cardsPerPage);
-    // console.log("Total number of question pages:", totalQuestionPages);    
+    const totalQuestionPages = Math.ceil(totalQuestions / cardsPerPage);   
     const [fetchQuestionsMessage, setFetchQuestionsMessage] = useState("");
 
     const [isFetchingComments, setIsFetchingComments] = useState(false);
@@ -126,7 +122,7 @@ export default function Profile({user}) {
             setQuestions,
             setFetchQuestionsMessage,
         );
-    }, [profile_id, questionsPage])
+    }, [questionsPage])
 
     // Fetch comments
     useEffect(() => {
@@ -150,7 +146,7 @@ export default function Profile({user}) {
             setComments,
             setFetchCommentsMessage,
         );
-    }, [profile_id, commentsPage])
+    }, [commentsPage])
 
     function updateComment(updatedComment) {
         setComments(prevComments =>

@@ -166,10 +166,11 @@ export function fetchPaginatedDocuments(
 
     const collectionRef = collection(db, collectionName);
 
+    console.log("Page:", page)
+
     let q;
 
     if (page === 1) {
-        console.log("Page 1")
         q = query(
             collectionRef,
             ...(filterName ? [where(fieldName, "==", filterValue)] : []),
@@ -177,7 +178,6 @@ export function fetchPaginatedDocuments(
             limit(documentsPerPage)
         );
     } else {
-        console.log("Not Page 1")
         const offset = (page - 1) * documentsPerPage;
 
         const tempQuery = query(
@@ -209,7 +209,6 @@ export function fetchPaginatedDocuments(
                         id: doc.id,
                         ...doc.data(),
                     }));
-                    console.log("Documents:", documents)
                     setDocuments(documents);
                 }
                 setIsFetching(false);
