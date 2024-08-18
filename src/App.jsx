@@ -62,7 +62,7 @@ function App() {
                 <Route
                     path="/question/:question_id"
                     element={
-                        <Question user={user} />
+                        <Question user={user} setCategory={setCategory} />
                     }
                 />
 
@@ -79,7 +79,7 @@ function App() {
                     path="/profile/:profile_id"
                     element={
                         user
-                            ? <Profile user={user} />
+                            ? <Profile user={user} setCategory={setCategory} />
                             : <Navigate to="/login" />
                     }
                 />

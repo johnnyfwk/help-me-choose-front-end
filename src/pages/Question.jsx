@@ -25,7 +25,7 @@ import InputOptions from "../components/InputOptions";
 import CommentCard from "../components/CommentCard";
 import * as utils from '../../utils';
 
-export default function Question({user}) {
+export default function Question({user, setCategory}) {
     const [isLoading, setIsLoading] = useState(true);
 
     const {question_id} = useParams(null);
@@ -395,6 +395,10 @@ export default function Question({user}) {
             });
     }
 
+    function handleQuestionCategory(category) {
+        setCategory(category);
+    }
+
     if (isLoading) {
         return <p>Loading...</p>;
     }
@@ -443,7 +447,10 @@ export default function Question({user}) {
                                 handleCategory={handleCategory}
                             />
                         </div>
-                        : <div>{question.questionCategory}</div>
+                        : <Link
+                            to={`/?category=${utils.convertToSlug(question.questionCategory)}`}
+                            onClick={() => handleQuestionCategory(question.questionCategory)}
+                        >{question.questionCategory}</Link>
                     }              
                 
                     {isEditingQuestion

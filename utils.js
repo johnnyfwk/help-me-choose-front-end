@@ -166,8 +166,6 @@ export function fetchPaginatedDocuments(
 
     const collectionRef = collection(db, collectionName);
 
-    console.log("Page:", page)
-
     let q;
 
     if (page === 1) {
