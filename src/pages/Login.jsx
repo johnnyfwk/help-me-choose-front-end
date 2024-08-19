@@ -36,10 +36,6 @@ export default function Login() {
             })
     }
 
-    function handleResetPassword() {
-
-    }
-
     return (
         <>
             <Helmet>

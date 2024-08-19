@@ -12,12 +12,13 @@ import {
     collection,
     query,
     where,
-    onSnapshot,
     orderBy,
     deleteDoc,
-    limit
+    limit,
+    getCountFromServer,
+    startAfter,
+    onSnapshot
 } from 'firebase/firestore';
-import { onAuthStateChanged, getAuth } from 'firebase/auth';
 import InputTitle from "../components/InputTitle";
 import InputDescription from "../components/InputDescription";
 import InputCategory from "../components/InputCategory";
@@ -27,7 +28,7 @@ import CommentCard from "../components/CommentCard";
 import QuestionCard from "../components/QuestionCard";
 import * as utils from '../../utils';
 
-export default function Question({user, setCategory}) {
+export default function Question({user, setCategory, setHomepageQuestionPage}) {
     const [isLoading, setIsLoading] = useState(true);
 
     const {question_id} = useParams(null);
@@ -42,18 +43,23 @@ export default function Question({user, setCategory}) {
     const [userVote, setUserVote] = useState("");
 
     const [comment, setComment] = useState("");
-    const [comments, setComments] = useState([]);
     const [commentError, setCommentError] = useState("");
-    const [commentsError, setCommentsError] = useState("");
 
+    const commentsPerPage = 1;
+    const [comments, setComments] = useState([]);    
+    const [isFetchingComments, setIsFetchingComments] = useState(false);
+    const [commentsPage, setCommentsPage] = useState(1);
+    const [totalComments, setTotalComments] = useState(0);
+    const totalCommentsPages = Math.ceil(totalComments / commentsPerPage);
+    const [fetchCommentsError, setFetchCommentsError] = useState("");
+    
     const [isEditingQuestion, setIsEditingQuestion] = useState(false);
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editTitleError, setEditTitleError] = useState("");
     const [editDescriptionError, setEditDescriptionError] = useState("");
     const [editOptionsError, setEditOptionsError] = useState("");
 
-    const latestAndRelatedCards = 10;
-
+    const latestAndRelatedCards = 1;
     const [latestQuestions, setLatestQuestions] = useState([]);
     const [fetchLatestQuestionsError, setFetchLatestQuestionsError] = useState("");
 
@@ -71,16 +77,15 @@ export default function Question({user, setCategory}) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user);
-        });
+        setCommentsPage(1);
+        window.scrollTo(0, 0);
 
         const fetchQuestionAndRelatedQuestions = () => {
-            const docRef = doc(db, 'questions', question_id);
-            getDoc(docRef)
-                .then((docSnap) => {
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
+            const questionRef = doc(db, 'questions', question_id);
+            getDoc(questionRef)
+                .then((questionSnap) => {
+                    if (questionSnap.exists()) {
+                        const data = questionSnap.data();
                         setQuestion(data);
                         if (user) {
                             const usersVote = data.questionOptions.find((option) => option.votes.includes(user.uid));
@@ -124,27 +129,6 @@ export default function Question({user, setCategory}) {
                 })
         };
 
-        const fetchComments = () => {
-            const q = query(
-                collection(db, 'comments'),
-                where('questionId', '==', question_id),
-                orderBy('commentCreated', 'desc')
-            );
-
-            const unsubscribeComments = onSnapshot(q, (querySnapshot) => {
-                const matchingComments = [];
-                querySnapshot.forEach(doc => {
-                    matchingComments.push({ id: doc.id, ...doc.data() });
-                });
-                setComments(matchingComments);
-            }, (error) => {
-                console.error("Error fetching comments: ", error);
-                setCommentsError("Comments could not be fetched.");
-            });
-
-            return unsubscribeComments;
-        };
-
         const fetchLatestPosts = () => {
             const latestQuestionsRef = collection(db, 'questions');
 
@@ -168,18 +152,66 @@ export default function Question({user, setCategory}) {
                     console.error("Error fetching documents: ", error);
                     setFetchLatestQuestionsError("Could not fetch the latest questions.");
                 });
-        }
+        };
+
+        const fetchCommentCount = () => {
+            const commentsRef = collection(db, "comments");
+
+            const commentsQuery = query(
+                commentsRef,
+                where("questionId", "==", question_id)
+            );
+            utils.getDocumentCount(getCountFromServer, commentsQuery, setTotalComments);
+        };
+
+        const unsubscribe = onSnapshot(
+            query(
+                collection(db, 'comments'),
+                where('questionId', '==', question_id),
+                orderBy('commentCreated', 'desc'),
+                limit(commentsPerPage)
+            ),
+            (snapshot) => {
+                const newComments = [];
+                snapshot.forEach((doc) => {
+                    newComments.push({ id: doc.id, ...doc.data() });
+                });
+                setComments(newComments);
+            },
+            (error) => {
+                setFetchCommentsError("Error fetching comments: " + error.message);
+            }
+        );
 
         fetchQuestionAndRelatedQuestions();
-        const unsubscribeComments = fetchComments();
-
         fetchLatestPosts();
+        fetchCommentCount();
 
-        return () => {
-            unsubscribe();
-            unsubscribeComments();
-        };
-    }, [question_id, user]);
+        return () => unsubscribe();
+    }, [question_id]);
+
+    useEffect(() => {
+        utils.fetchPaginatedDocuments(
+            setIsFetchingComments,
+            collection,
+            db,
+            'comments',
+            commentsPage,
+            query,
+            question_id,
+            question_id,
+            where,
+            "questionId",
+            orderBy,
+            'commentCreated',
+            limit,
+            commentsPerPage,
+            getDocs,
+            startAfter,
+            setComments,
+            setFetchCommentsError,
+        );
+    }, [question_id, commentsPage]);
 
     function handleVote(vote) {
         if (!question || !currentUser) return;
@@ -195,9 +227,9 @@ export default function Question({user, setCategory}) {
             return updatedOption;
         });
 
-        const docRef = doc(db, 'questions', question_id);
+        const questionsRef = doc(db, 'questions', question_id);
 
-        updateDoc(docRef, {
+        updateDoc(questionsRef, {
             questionOptions: updatedQuestionOptions,
             questionModified: serverTimestamp()
         })
@@ -215,14 +247,14 @@ export default function Question({user, setCategory}) {
     }
 
     function handlePostComment() {
-        addDoc(collection(db, 'comments'), {
+        const newComment = {
             comment: comment.trim(),
             commentOwnerId: user.uid,
             commentOwnerUsername: user.displayName,
             commentOwnerImageUrl: user.photoURL,
             commentLikes: [],
             commentCreated: serverTimestamp(),
-            commentModified: "",
+            commentModified: serverTimestamp(),
             questionId: question_id,
             questionOwnerId: question.questionOwnerId,
             questionOwnerUsername: question.questionOwnerUsername,
@@ -230,21 +262,25 @@ export default function Question({user, setCategory}) {
             questionDescription: question.questionDescription,
             questionCategory: question.questionCategory,
             questionCreated: question.questionCreated,
-            questionModified: question.questionModified,
-        })
-        .then((response) => {
-            setComment("");
-            setCommentError("");
-            const questionRef = doc(db, 'questions', question_id);
-            updateDoc(questionRef, {
-                questionModified: serverTimestamp()
+            questionModified: serverTimestamp()
+        };
+
+        addDoc(collection(db, 'comments'), newComment)
+            .then((response) => {
+                setComment("");
+                setCommentError("");
+                setCommentsPage(1);
+                setTotalComments((currentTotalComments) => currentTotalComments + 1);
+                const questionRef = doc(db, 'questions', question_id);                
+                updateDoc(questionRef, {
+                    questionModified: serverTimestamp()
+                })
             })
-        })
-        .catch((error) => {
-            console.log(error);
-            console.error('Error posting comment: ', error);
-            setCommentError("Comment could not be posted.");
-        })
+            .catch((error) => {
+                console.log(error);
+                console.error('Error posting comment: ', error);
+                setCommentError("Comment could not be posted.");
+            })
     }
 
     function handleEditQuestion() {
@@ -371,8 +407,8 @@ export default function Question({user, setCategory}) {
                     return;
                 }
 
-                const docRef = doc(db, 'questions', question_id);
-                updateDoc(docRef, {
+                const questionsRef = doc(db, 'questions', question_id);
+                updateDoc(questionsRef, {
                     questionTitle: questionTitle.trim(),
                     questionDescription: questionDescription.trim(),
                     questionCategory,
@@ -459,8 +495,21 @@ export default function Question({user, setCategory}) {
     }
 
     function handleQuestionCardCategory(category) {
-        setPage(1);
+        console.log("Category:", category)
+        setHomepageQuestionPage(1);
         setCategory(category);
+    }
+
+    function handleQuestionCardTitle() {
+        setCommentsPage(1);
+    }
+
+    function handleCommentsPageChange(newPage) {
+        console.log("commentsPage:", newPage);
+        console.log("Total number of comments:", totalComments);
+        if (newPage > 0 && newPage <= totalCommentsPages) {
+            setCommentsPage(newPage);
+        }
     }
 
     if (isLoading) {
@@ -613,50 +662,6 @@ export default function Question({user, setCategory}) {
                 </section>
 
                 <section>
-                    <h2>Latest Questions</h2>
-
-                    <div className="error">{fetchLatestQuestionsError}</div>
-
-                    {latestQuestions.length === 0
-                        ? <div>There are no questions to display.</div>
-                        : <div className="question-cards-wrapper">
-                            {latestQuestions.map((question, index) => {
-                                return (
-                                    <QuestionCard
-                                        key={index}
-                                        question={question}
-                                        page="question"
-                                        handleQuestionCardCategory={handleQuestionCardCategory}
-                                    />
-                                )
-                            })}
-                        </div>
-                    }
-                </section>
-
-                <section>
-                    <h2>Related Questions</h2>
-
-                    <div className="error">{fetchRelatedQuestionsError}</div>
-
-                    {relatedQuestions.length === 0
-                        ? <div>There are no related questions.</div>
-                        : <div className="question-cards-wrapper">
-                            {relatedQuestions.map((question, index) => {
-                                return (
-                                    <QuestionCard
-                                        key={index}
-                                        question={question}
-                                        page="question"
-                                        handleQuestionCardCategory={handleQuestionCardCategory}
-                                    />
-                                )
-                            })}
-                        </div>
-                    }
-                </section>
-
-                <section>
                     <h2>Comments</h2>
 
                     {!user
@@ -681,34 +686,88 @@ export default function Question({user, setCategory}) {
                     }
 
                     <>
-                        <div className="error">{commentsError}</div>
+                        <div className="error">{fetchCommentsError}</div>
+
                         {comments.length > 0
-                            ? <div className="comments-wrapper">
-                                {comments.map((commentObject, index) => {
-                                    return (
-                                        <CommentCard
-                                            key={index}
-                                            commentObject={commentObject}
-                                            page="question"
-                                            user={user}
-                                            updateComment={updateComment}
-                                            comment={comment}
-                                            setComment={setComment}
-                                            isEditingQuestion={isEditingQuestion}
-                                            setIsEditingQuestion={setIsEditingQuestion}
-                                            editingCommentId={editingCommentId}
-                                            setEditingCommentId={setEditingCommentId}
-                                            setComments={setComments}
-                                            setIsEditingProfileImage={setIsEditingProfileImage}
-                                            setIsChangingPassword={setIsChangingPassword}
-                                            setIsDeletingAccount={setIsDeletingAccount}
-                                        />
-                                    )
-                                })}
-                            </div>
+                            ? <>
+                                <div className="comments-wrapper">
+                                    {comments.map((commentObject, index) => {
+                                        return (
+                                            <CommentCard
+                                                key={index}
+                                                commentObject={commentObject}
+                                                page="question"
+                                                user={user}
+                                                updateComment={updateComment}
+                                                comment={comment}
+                                                setComment={setComment}
+                                                isEditingQuestion={isEditingQuestion}
+                                                setIsEditingQuestion={setIsEditingQuestion}
+                                                editingCommentId={editingCommentId}
+                                                setEditingCommentId={setEditingCommentId}
+                                                setComments={setComments}
+                                                setIsEditingProfileImage={setIsEditingProfileImage}
+                                                setIsChangingPassword={setIsChangingPassword}
+                                                setIsDeletingAccount={setIsDeletingAccount}
+                                            />
+                                        )
+                                    })}
+                                </div>
+                                <div>
+                                    <button onClick={() => handleCommentsPageChange(commentsPage - 1)} disabled={isFetchingComments || commentsPage === 1}>Previous</button>
+                                    <span>Page {commentsPage} of {totalCommentsPages}</span>
+                                    <button onClick={() => handleCommentsPageChange(commentsPage + 1)} disabled={isFetchingComments || commentsPage === totalCommentsPages}>Next</button>
+                                </div>
+                            </>
                             : <div>There are no comments for this question.</div>
                         }
                     </>
+                </section>
+
+                <section>
+                    <h2>Latest Questions</h2>
+
+                    <div className="error">{fetchLatestQuestionsError}</div>
+
+                    {latestQuestions.length === 0
+                        ? <div>There are no questions to display.</div>
+                        : <div className="question-cards-wrapper">
+                            {latestQuestions.map((question, index) => {
+                                return (
+                                    <QuestionCard
+                                        key={index}
+                                        question={question}
+                                        page="question"
+                                        handleQuestionCardCategory={handleQuestionCardCategory}
+                                        handleQuestionCardTitle={handleQuestionCardTitle}
+                                    />
+                                )
+                            })}
+                        </div>
+                    }
+                </section>
+
+                <section>
+                    <h2>Related Questions</h2>
+
+                    <div className="error">{fetchRelatedQuestionsError}</div>
+
+                    {relatedQuestions.length === 0
+                        ? <div>There are no related questions.</div>
+                        : <div className="question-cards-wrapper">
+                            {relatedQuestions.map((question, index) => {
+                                return (
+                                    <QuestionCard
+                                        key={index}
+                                        question={question}
+                                        page="question"
+                                        handleQuestionCardCategory={handleQuestionCardCategory}
+                                        handleQuestionCardTitle={handleQuestionCardTitle}
+                                    />
+                                )
+                            })}
+                        </div>
+                    }
                 </section>
             </main>
         </>
