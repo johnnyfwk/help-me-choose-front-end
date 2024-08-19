@@ -14,7 +14,8 @@ import {
     where,
     onSnapshot,
     orderBy,
-    deleteDoc
+    deleteDoc,
+    limit
 } from 'firebase/firestore';
 import { onAuthStateChanged, getAuth } from 'firebase/auth';
 import InputTitle from "../components/InputTitle";
@@ -23,6 +24,7 @@ import InputCategory from "../components/InputCategory";
 import InputComment from "../components/InputComment";
 import InputOptions from "../components/InputOptions";
 import CommentCard from "../components/CommentCard";
+import QuestionCard from "../components/QuestionCard";
 import * as utils from '../../utils';
 
 export default function Question({user, setCategory}) {
@@ -50,13 +52,20 @@ export default function Question({user, setCategory}) {
     const [editDescriptionError, setEditDescriptionError] = useState("");
     const [editOptionsError, setEditOptionsError] = useState("");
 
-    const [isConfirmDeleteQuestionVisible, setIsConfirmDeleteQuestionVisible] = useState(false);
+    const latestAndRelatedCards = 10;
+
+    const [latestQuestions, setLatestQuestions] = useState([]);
+    const [fetchLatestQuestionsError, setFetchLatestQuestionsError] = useState("");
+
+    const [relatedQuestions, setRelatedQuestions] = useState([]);
+    const [fetchRelatedQuestionsError, setFetchRelatedQuestionsError] = useState("");
 
     const [optionsError, setOptionsError] = useState("");
     const [optionImageUrlError, setOptionImageUrlError] = useState({imageUrls: [], msg: "Image URL is not valid"});
 
     const [isEditingProfileImage, setIsEditingProfileImage] = useState(false);
     const [isChangingPassword, setIsChangingPassword] = useState(false);
+    const [isConfirmDeleteQuestionVisible, setIsConfirmDeleteQuestionVisible] = useState(false);
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
     const navigate = useNavigate();
@@ -66,7 +75,7 @@ export default function Question({user, setCategory}) {
             setCurrentUser(user);
         });
 
-        const fetchQuestion = () => {
+        const fetchQuestionAndRelatedQuestions = () => {
             const docRef = doc(db, 'questions', question_id);
             getDoc(docRef)
                 .then((docSnap) => {
@@ -77,14 +86,38 @@ export default function Question({user, setCategory}) {
                             const usersVote = data.questionOptions.find((option) => option.votes.includes(user.uid));
                             setUserVote(usersVote ? usersVote.name : "");
                         }
+                        return data;
                     } else {
                         console.log("Question doesn't exist.");
                     }
                 })
+                .then((question) => {
+                    const relatedQuestionsRef = collection(db, 'questions');
+
+                    const q = query(
+                        relatedQuestionsRef,
+                        where('questionCategory', '==', question.questionCategory),
+                        orderBy('questionModified', 'desc'),                
+                        limit(latestAndRelatedCards)
+                    );
+
+                    return getDocs(q)
+                })
+                .then((relatedQuestions) => {
+                    const similarQuestions = [];
+
+                    relatedQuestions.forEach((doc) => {
+                        if (doc.id !== question_id) {
+                            similarQuestions.push({ id: doc.id, ...doc.data() });
+                        }
+                    });
+                    setRelatedQuestions(similarQuestions);
+                })
                 .catch((error) => {
-                    console.log(error);
-                    setGetQuestionError("Could not get question.");
+                    console.log("Error:", error);
                     console.error('Error fetching question:', error);
+                    setGetQuestionError("Could not get question.");
+                    setFetchRelatedQuestionsError("Could not fetch related questions.");
                 })
                 .finally(() => {
                     setIsLoading(false);
@@ -112,8 +145,35 @@ export default function Question({user, setCategory}) {
             return unsubscribeComments;
         };
 
-        fetchQuestion();
+        const fetchLatestPosts = () => {
+            const latestQuestionsRef = collection(db, 'questions');
+
+            const q = query(
+                latestQuestionsRef,
+                orderBy('questionModified', 'desc'),
+                limit(latestAndRelatedCards)
+            );
+
+            getDocs(q)
+                .then((querySnapshot) => {
+                    const newestQuestions = [];
+                    querySnapshot.forEach((doc) => {
+                        if (doc.id !== question_id) {
+                            newestQuestions.push({ id: doc.id, ...doc.data() });
+                        }
+                    });
+                    setLatestQuestions(newestQuestions);
+                })
+                .catch((error) => {
+                    console.error("Error fetching documents: ", error);
+                    setFetchLatestQuestionsError("Could not fetch the latest questions.");
+                });
+        }
+
+        fetchQuestionAndRelatedQuestions();
         const unsubscribeComments = fetchComments();
+
+        fetchLatestPosts();
 
         return () => {
             unsubscribe();
@@ -361,7 +421,6 @@ export default function Question({user, setCategory}) {
     }
 
     function handleDeleteQuestionNo() {
-        console.log("Delete: No")
         setIsConfirmDeleteQuestionVisible(false);
     }
 
@@ -399,8 +458,17 @@ export default function Question({user, setCategory}) {
         setCategory(category);
     }
 
+    function handleQuestionCardCategory(category) {
+        setPage(1);
+        setCategory(category);
+    }
+
     if (isLoading) {
         return <p>Loading...</p>;
+    }
+
+    if (!question) {
+        return null;
     }
 
     if (getQuestionError) {
@@ -544,57 +612,103 @@ export default function Question({user, setCategory}) {
                     }
                 </section>
 
-                {!user
-                    ? null
-                    : user.emailVerified
-                        ? <section>
-                            <h2>Comments</h2>
-
-                            <InputComment
-                                comment={comment}
-                                handleComment={handleComment}
-                            />
-
-                            <div className="error">{commentError}</div>
-
-                            <input
-                                type="button"
-                                value="Post Comment"
-                                onClick={handlePostComment}
-                                disabled={!comment}
-                            ></input>
-                        </section>
-                        : null
-                }
-                
                 <section>
-                    <div className="error">{commentsError}</div>
-                    {comments.length > 0
-                        ? <div className="comments-wrapper">
-                            {comments.map((commentObject, index) => {
+                    <h2>Latest Questions</h2>
+
+                    <div className="error">{fetchLatestQuestionsError}</div>
+
+                    {latestQuestions.length === 0
+                        ? <div>There are no questions to display.</div>
+                        : <div className="question-cards-wrapper">
+                            {latestQuestions.map((question, index) => {
                                 return (
-                                    <CommentCard
+                                    <QuestionCard
                                         key={index}
-                                        commentObject={commentObject}
+                                        question={question}
                                         page="question"
-                                        user={user}
-                                        updateComment={updateComment}
-                                        comment={comment}
-                                        setComment={setComment}
-                                        isEditingQuestion={isEditingQuestion}
-                                        setIsEditingQuestion={setIsEditingQuestion}
-                                        editingCommentId={editingCommentId}
-                                        setEditingCommentId={setEditingCommentId}
-                                        setComments={setComments}
-                                        setIsEditingProfileImage={setIsEditingProfileImage}
-                                        setIsChangingPassword={setIsChangingPassword}
-                                        setIsDeletingAccount={setIsDeletingAccount}
+                                        handleQuestionCardCategory={handleQuestionCardCategory}
                                     />
                                 )
                             })}
                         </div>
-                        : <div>There are no comments for this question.</div>
                     }
+                </section>
+
+                <section>
+                    <h2>Related Questions</h2>
+
+                    <div className="error">{fetchRelatedQuestionsError}</div>
+
+                    {relatedQuestions.length === 0
+                        ? <div>There are no related questions.</div>
+                        : <div className="question-cards-wrapper">
+                            {relatedQuestions.map((question, index) => {
+                                return (
+                                    <QuestionCard
+                                        key={index}
+                                        question={question}
+                                        page="question"
+                                        handleQuestionCardCategory={handleQuestionCardCategory}
+                                    />
+                                )
+                            })}
+                        </div>
+                    }
+                </section>
+
+                <section>
+                    <h2>Comments</h2>
+
+                    {!user
+                        ? null
+                        : user.emailVerified
+                            ? <>
+                                <div className="error">{commentError}</div>
+
+                                <InputComment
+                                    comment={comment}
+                                    handleComment={handleComment}
+                                />
+
+                                <input
+                                    type="button"
+                                    value="Post Comment"
+                                    onClick={handlePostComment}
+                                    disabled={!comment}
+                                ></input>
+                            </>
+                            : null
+                    }
+
+                    <>
+                        <div className="error">{commentsError}</div>
+                        {comments.length > 0
+                            ? <div className="comments-wrapper">
+                                {comments.map((commentObject, index) => {
+                                    return (
+                                        <CommentCard
+                                            key={index}
+                                            commentObject={commentObject}
+                                            page="question"
+                                            user={user}
+                                            updateComment={updateComment}
+                                            comment={comment}
+                                            setComment={setComment}
+                                            isEditingQuestion={isEditingQuestion}
+                                            setIsEditingQuestion={setIsEditingQuestion}
+                                            editingCommentId={editingCommentId}
+                                            setEditingCommentId={setEditingCommentId}
+                                            setComments={setComments}
+                                            setIsEditingProfileImage={setIsEditingProfileImage}
+                                            setIsChangingPassword={setIsChangingPassword}
+                                            setIsDeletingAccount={setIsDeletingAccount}
+                                        />
+                                    )
+                                })}
+                            </div>
+                            : <div>There are no comments for this question.</div>
+                        }
+                    </>
                 </section>
             </main>
         </>
