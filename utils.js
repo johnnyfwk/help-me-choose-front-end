@@ -74,7 +74,6 @@ export function validateImageUrl(url) {
             return response;
         })
         .catch((error) => {
-            console.log(error);
             return false;
         });
 }
@@ -212,7 +211,6 @@ export function fetchPaginatedDocuments(
                 setIsFetching(false);
             })
             .catch((error) => {
-                console.error("Error fetching documents: ", error);
                 setIsFetching(false);
                 setFetchDocumentsMessage("Could not fetch documents.");
             });
@@ -231,7 +229,6 @@ export function fetchPaginatedDocuments(
             setIsFetching(false);
         })
         .catch((error) => {
-            console.error("Error fetching documents: ", error);
             setIsFetching(false);
             setFetchDocumentsMessage("Could not fetch documents.");
         })

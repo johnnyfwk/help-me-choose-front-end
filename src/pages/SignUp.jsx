@@ -11,7 +11,9 @@ import InputUsername from '../components/InputUsername';
 import InputPassword from '../components/InputPassword';
 import InputProfileImage from '../components/InputProfileImage';
 
-export default function SignUp() {
+export default function SignUp({
+    setIsEmailVerificationSuccessMessageVisible
+}) {
     const [email, setEmail] = useState("");
     const [emailErrorMessage, setEmailErrorMessage] = useState("");
 
@@ -26,7 +28,7 @@ export default function SignUp() {
     const [profileImageUrl, setProfileImageUrl] = useState("");
     const [profileImageUrlErrorMessage, setProfileImageUrlErrorMessage] = useState("");
 
-    const [error, setError] = useState("");
+    const [emailVerificationError, setEmailVerificationError] = useState(false);
 
     useEffect(() => {
         getDocs(collection(db, 'users'))
@@ -42,25 +44,25 @@ export default function SignUp() {
     function handleEmail(event) {
         setEmail(event.target.value);
         setEmailErrorMessage("");
-        setError("");
+        setEmailVerificationError("");
     }
 
     function handleUsername(event) {
         setUsername(event.target.value);
         setUsernameErrorMessage("");
-        setError("");
+        setEmailVerificationError("");
     }
 
     function handlePassword(event) {
         setPassword(event.target.value);
         setPasswordErrorMessage("");
-        setError("");
+        setEmailVerificationError("");
     }
 
     function handleProfileImageUrl(event) {
         setProfileImageUrl(event.target.value);
         setProfileImageUrlErrorMessage("");
-        setError("");
+        setEmailVerificationError("");
     }
 
     function handleCreateAccount() {
@@ -101,7 +103,7 @@ export default function SignUp() {
                 const usernamesList = utils.extractDocData(response);
                 const lowercaseUsernames = usernamesList.map((username) => username.displayName.toLowerCase());
                 if (lowercaseUsernames.includes(username.toLowerCase())) {
-                    console.log("Username is NOT available");
+                    console.log("Username is not available");
                     return;
                 } else {
                     return createUserWithEmailAndPassword(auth, email, password);
@@ -112,14 +114,17 @@ export default function SignUp() {
                 const user = userCredential.user;
 
                 sendEmailVerification(user)
-                    .then((response) => {
-                        console.log(response);
-                        console.log("Verification email sent.");
+                    .then((response) => {                    
+                        setIsEmailVerificationSuccessMessageVisible(true);
+                        setTimeout(() => {
+                            setIsEmailVerificationSuccessMessageVisible(false);
+                        }, 3000);
+                        setEmailVerificationError("");
                     })
                     .catch((error) => {
-                        console.log(error);
-                        console.error("Error sending verification email:", error);
+                        setEmailVerificationError("Verification email could not be sent.");
                     })
+
                 return updateProfile(user, {
                     displayName: username,
                     photoURL: profileImageUrlTrimmed || defaultImageUrl
@@ -133,7 +138,7 @@ export default function SignUp() {
                 });
             })
             .then(() => {
-                console.log('User account has been created and display name added to Firestore.');
+                console.log('User account has been created.');
             })
             .catch((error) => {
                 console.log(error);
@@ -158,10 +163,11 @@ export default function SignUp() {
 
                 <p>If you already have an account, <Link to="/login">login</Link> to your account.</p>
 
-                <div className="error">{error}</div>
-                <div className="error">{emailErrorMessage}</div>
+                <div className="error">{emailVerificationError}</div>                
                 
                 <form>
+                    <div className="error">{emailErrorMessage}</div>
+
                     <InputEmail
                         email={email}
                         handleEmail={handleEmail}

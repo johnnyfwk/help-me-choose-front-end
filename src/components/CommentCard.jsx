@@ -27,7 +27,13 @@ export default function CommentCard({
     isChangingPassword,
     setIsChangingPassword,
     isDeletingAccount,
-    setIsDeletingAccount
+    setIsDeletingAccount,
+    setIsCommentUpdatedSuccessMessageVisible,
+    setIsCommentUpdatedErrorMessageVisible,
+    setIsCommentDeletedSuccessMessageVisible,
+    setIsCommentDeletedErrorMessageVisible,
+    setCommentsPage,
+    setTotalComments
 }) {
     const [isEditingComment, setIsEditingComment] = useState(false);
     const [originalComment, setOriginalComment] = useState("");
@@ -64,12 +70,19 @@ export default function CommentCard({
             commentModified: serverTimestamp()
         })
         .then(() => {
+            setIsCommentUpdatedSuccessMessageVisible(true);
+            setTimeout(() => {
+                setIsCommentUpdatedSuccessMessageVisible(false);
+            }, 3000);
+            setIsEditingComment(false);
             const updatedComment = {...commentObject, comment: originalComment};
             updateComment(updatedComment);
-            setIsEditingComment(false);
         })
         .catch((error) => {
-            console.log(error.message);
+            setIsCommentUpdatedErrorMessageVisible(true);
+            setTimeout(() => {
+                setIsCommentUpdatedErrorMessageVisible(false);
+            }, 3000);
         });
     }
 
@@ -91,17 +104,24 @@ export default function CommentCard({
         setIsConfirmDeleteCommentVisible(false);
         deleteDoc(doc(db, "comments", editingCommentId))
             .then(() => {
+                setIsCommentDeletedSuccessMessageVisible(true);
+                setTimeout(() => {
+                    setIsCommentDeletedSuccessMessageVisible(false);
+                }, 3000);
+                setCommentsPage(1);
+                setTotalComments((currentTotalComments) => currentTotalComments - 1);
                 setComments((currentComments) => {
                     const updatedComments = currentComments.filter((comment) => {
                         return comment.id !== editingCommentId;
                     })
                     return updatedComments;
                 })
-                console.log("Comment has been deleted!");
             })
             .catch((error) => {
-                console.log(error);
-                console.log("Comment could not be deleted.");
+                setIsCommentDeletedErrorMessageVisible(true);
+                setTimeout(() => {
+                    setIsCommentDeletedErrorMessageVisible(false);
+                }, 3000);
             })
     }
 
@@ -124,7 +144,7 @@ export default function CommentCard({
             updateComment(updatedCommentObject);
         })
         .catch((error) => {
-            console.log(error.message);
+            console.error(error.message);
         });
     }
 

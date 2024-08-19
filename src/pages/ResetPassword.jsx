@@ -18,8 +18,6 @@ export default function ResetPassword() {
     function handleResetPassword() {
         sendPasswordResetEmail(auth, email)
             .then((response) => {
-                console.log(response);
-                console.log("Password reset email sent!");
                 setPasswordResetMessage("Password reset email sent.");
                 setEmail("");
                 setTimeout(() => {
@@ -28,8 +26,6 @@ export default function ResetPassword() {
                 
             })
             .catch((error) => {
-                console.error("Error sending password reset email:", error);
-                console.log("error.code:", error.code);
                 if (error.code === "auth/invalid-email") {
                     setPasswordResetMessage("Please enter a valid email address.");
                 } else {

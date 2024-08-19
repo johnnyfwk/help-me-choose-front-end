@@ -9,7 +9,10 @@ import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import * as utils from '../../utils';
 
-export default function PostAQuestion({user}) {
+export default function PostAQuestion({
+    user,
+    setIsPostQuestionSuccessMessageVisible
+}) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [category, setCategory] = useState("");
@@ -82,7 +85,6 @@ export default function PostAQuestion({user}) {
                         }
                     })
                     .catch((error) => {
-                        console.log(error);
                         invalidImageUrls.push(option.imageUrl);
                     })
             } else {
@@ -117,6 +119,10 @@ export default function PostAQuestion({user}) {
                     questionModified: serverTimestamp(),
                 })
                 .then(() => {
+                    setIsPostQuestionSuccessMessageVisible(true);
+                    setTimeout(() => {
+                        setIsPostQuestionSuccessMessageVisible(false);
+                    }, 3000);
                     setTitle("");
                     setDescription("");
                     setCategory("");
@@ -124,8 +130,7 @@ export default function PostAQuestion({user}) {
                     navigate('/');
                 })
                 .catch((error) => {
-                    console.error('Error posting question:', error);
-                    setPostQuestionError("Question could not be posted.");
+                    setPostQuestionError("Your question could not be posted.");
                 });
             })
     }

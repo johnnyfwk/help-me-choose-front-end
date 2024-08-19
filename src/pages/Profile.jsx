@@ -11,9 +11,17 @@ import InputProfileImage from '../components/InputProfileImage';
 import InputPassword from '../components/InputPassword';
 import * as utils from '../../utils';
 
-export default function Profile({user, setCategory}) {
-    // console.log("User:", user)
-
+export default function Profile({
+    user,
+    setCategory,
+    setIsCommentUpdatedSuccessMessageVisible,
+    setIsCommentUpdatedErrorMessageVisible,
+    setIsCommentDeletedSuccessMessageVisible,
+    setIsCommentDeletedErrorMessageVisible,
+    setIsUpdateProfileImageSuccessMessageVisible,
+    setIsChangePasswordSuccessMessageVisible,
+    setIsDeleteAccountSuccessMessageVisible
+}) {
     const {profile_id} = useParams(null);
 
     const navigate = useNavigate();
@@ -32,14 +40,14 @@ export default function Profile({user, setCategory}) {
     const [isEditingProfileImage, setIsEditingProfileImage] = useState(false);
     const [originalProfileImageUrl, setOriginalProfileImageUrl] = useState("");
     const [profileImageUrl, setProfileImageUrl] = useState("");
-    const [changeProfileImageUrlMessage, setChangeProfileImageUrlMessage] = useState("");
+    const [updateProfileImageError, setUpdateProfileImageError] = useState("");
 
     const [resendVerificationEmailMessage, setResendVerificationEmailMessage] = useState("");
 
     const [isChangingPassword, setIsChangingPassword] = useState(false);
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
-    const [changePasswordMessage, setChangePasswordMessage] = useState("");
+    const [changePasswordError, setChangePasswordError] = useState("");
 
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [deleteAccountError, setDeleteAccountError] = useState("");
@@ -78,7 +86,6 @@ export default function Profile({user, setCategory}) {
                     setGetUserProfileError("");
                 })
                 .catch((error) => {
-                    console.error("Error fetching user profile: ", error);
                     setGetUserProfileError("User profile could not be retrieved.");
                 });
         };
@@ -160,14 +167,15 @@ export default function Profile({user, setCategory}) {
         setIsEditingProfileImage(true);
         setOriginalProfileImageUrl(userProfile[0].photoURL);
         setProfileImageUrl(userProfile[0].photoURL);
-        setChangePasswordMessage(false);
-        setChangeProfileImageUrlMessage(false);
+        setChangePasswordError("");
+        setUpdateProfileImageError("");
+        setDeleteAccountError("");
     }
 
     function handleCancelChangeProfileImage() {
         setIsEditingProfileImage(false);
         setProfileImageUrl(originalProfileImageUrl);
-        setChangeProfileImageUrlMessage("");
+        setUpdateProfileImageError("");
     }
 
     function handleUpdateProfileImage() {
@@ -180,7 +188,7 @@ export default function Profile({user, setCategory}) {
         validateProfileImage
             .then((isValid) => {
                 if (!isValid) {
-                    setChangeProfileImageUrlMessage("Profile image URL is not valid.");
+                    setUpdateProfileImageError("Profile image URL is not valid.");
                     throw new Error("Profile image URL is not valid.");                    
                 }
                 return updateProfile(user, {photoURL: profileImageUrlTrimmed});
@@ -222,27 +230,31 @@ export default function Profile({user, setCategory}) {
                 })
             })
             .then((response) => {
+                setIsUpdateProfileImageSuccessMessageVisible(true);
+                setTimeout(() => {
+                    setIsUpdateProfileImageSuccessMessageVisible(false);
+                }, 3000);
                 setUserProfile((prevUserProfile) => [
                     { ...prevUserProfile[0], photoURL: profileImageUrlTrimmed },
                 ]);
                 setIsEditingProfileImage(false);
-                setChangeProfileImageUrlMessage("Your profile image has been successfully changed.")
             })
             .catch((error) => {
-                console.log(error);
+                setUpdateProfileImageError("Your profile image could not be updated.");
             })
     }
 
     function handleProfileImageUrl(event) {
         setProfileImageUrl(event.target.value);
-        setChangeProfileImageUrlMessage("");
+        setUpdateProfileImageError("");
     }
 
     function handleDeleteAccount() {
         setIsEditingProfileImage(false);
         setIsDeletingAccount(true);
-        setChangePasswordMessage(false);
-        setChangeProfileImageUrlMessage(false);
+        setChangePasswordError("");
+        setUpdateProfileImageError("");
+        setDeleteAccountError("");
     }
 
     function handleDeleteAccountNo() {
@@ -294,29 +306,33 @@ export default function Profile({user, setCategory}) {
                 return deleteUser(user);
             })
             .then(() => {
+                setIsDeleteAccountSuccessMessageVisible(true);
+                setTimeout(() => {
+                    setIsDeleteAccountSuccessMessageVisible(false);
+                }, 3000);
+                setDeleteAccountError("");
                 navigate('/');
             })
             .catch((error) => {
-                console.error("Error deleting user:", error);
+                setDeleteAccountError("Your account could not be deleted.");
             });
     }
 
     function handleResendVerificationEmail() {
         sendEmailVerification(user)
             .then(() => {
-                console.log("Verification email resent.");
                 setResendVerificationEmailMessage("Verification email has been sent.");                
             })
             .catch((error) => {
-                console.error("Error resending verification email:", error);
                 setResendVerificationEmailMessage("Verification email could not be sent.");  
             });
     }
 
     function handleChangePassword() {
         setIsChangingPassword(true);
-        setChangePasswordMessage(false);
-        setChangeProfileImageUrlMessage(false);
+        setChangePasswordError("");
+        setUpdateProfileImageError("");
+        setDeleteAccountError("");
     }
 
     function handleCurrentPassword(event) {
@@ -337,23 +353,23 @@ export default function Profile({user, setCategory}) {
         const credential = EmailAuthProvider.credential(user.email, currentPassword);
         reauthenticateWithCredential(user, credential)
             .then((response) => {
-                console.log(response);
                 return updatePassword(user, newPassword);
             })
             .then((response) => {
-                console.log(response);
-                console.log("Password updated successfully.");
-                setChangePasswordMessage("Your password has been changed successfully.");
+                setIsChangePasswordSuccessMessageVisible(true);
+                setTimeout(() => {
+                    setIsChangePasswordSuccessMessageVisible(false);
+                }, 3000);
+                setChangePasswordError("");
                 setCurrentPassword("");
                 setNewPassword("");
                 setIsChangingPassword(false);
             })
             .catch((error) => {
-                console.log(error.code)
                 if (error.code === "auth/invalid-credential") {
-                    setChangePasswordMessage("The password you entered is incorrect.");
+                    setChangePasswordError("The password you entered is incorrect.");
                 } else {
-                    setChangePasswordMessage("Your password could not be changed.");
+                    setChangePasswordError("Your password could not be changed.");
                 }                
             })
     }
@@ -400,9 +416,8 @@ export default function Profile({user, setCategory}) {
                     <h1>{userProfile[0].displayName}</h1>
 
                     <div className="error">{deleteAccountError}</div>
-                    <div>{changeProfileImageUrlMessage}</div>
-                    <div>{changePasswordMessage}</div>
-                    
+                    <div className="error">{updateProfileImageError}</div>
+                    <div className="error">{changePasswordError}</div>                    
 
                     {user && profile_id === user.uid && !user.emailVerified
                         ? <>
@@ -533,6 +548,12 @@ export default function Profile({user, setCategory}) {
                                             setIsChangingPassword={setIsChangingPassword}
                                             isDeletingAccount={isDeletingAccount}
                                             setIsDeletingAccount={setIsDeletingAccount}
+                                            setIsCommentUpdatedSuccessMessageVisible={setIsCommentUpdatedSuccessMessageVisible}
+                                            setIsCommentUpdatedErrorMessageVisible={setIsCommentUpdatedErrorMessageVisible}
+                                            setIsCommentDeletedSuccessMessageVisible={setIsCommentDeletedSuccessMessageVisible}
+                                            setIsCommentDeletedErrorMessageVisible={setIsCommentDeletedErrorMessageVisible}
+                                            setCommentsPage={setCommentsPage}
+                                            setTotalComments={setTotalComments}
                                         />
                                     )
                                 })}
