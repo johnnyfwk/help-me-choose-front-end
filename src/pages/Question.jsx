@@ -59,7 +59,7 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
     const [editDescriptionError, setEditDescriptionError] = useState("");
     const [editOptionsError, setEditOptionsError] = useState("");
 
-    const latestAndRelatedCards = 1;
+    const latestAndRelatedCards = 10;
     const [latestQuestions, setLatestQuestions] = useState([]);
     const [fetchLatestQuestionsError, setFetchLatestQuestionsError] = useState("");
 
@@ -79,6 +79,16 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
     useEffect(() => {
         setCommentsPage(1);
         window.scrollTo(0, 0);
+
+        const fetchCommentCount = () => {
+            const commentsRef = collection(db, "comments");
+
+            const commentsQuery = query(
+                commentsRef,
+                where("questionId", "==", question_id)
+            );
+            utils.getDocumentCount(getCountFromServer, commentsQuery, setTotalComments);
+        };
 
         const fetchQuestionAndRelatedQuestions = () => {
             const questionRef = doc(db, 'questions', question_id);
@@ -152,16 +162,6 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                     console.error("Error fetching documents: ", error);
                     setFetchLatestQuestionsError("Could not fetch the latest questions.");
                 });
-        };
-
-        const fetchCommentCount = () => {
-            const commentsRef = collection(db, "comments");
-
-            const commentsQuery = query(
-                commentsRef,
-                where("questionId", "==", question_id)
-            );
-            utils.getDocumentCount(getCountFromServer, commentsQuery, setTotalComments);
         };
 
         const unsubscribe = onSnapshot(
