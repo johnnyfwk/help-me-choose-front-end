@@ -28,7 +28,18 @@ import CommentCard from "../components/CommentCard";
 import QuestionCard from "../components/QuestionCard";
 import * as utils from '../../utils';
 
-export default function Question({user, setCategory, setHomepageQuestionPage}) {
+export default function Question({
+    user,
+    setCategory,
+    setHomepageQuestionPage,
+    setIsPostCommentSuccessMessageVisible,
+    setIsQuestionUpdatedSuccessMessageVisible,
+    setIsCommentUpdatedSuccessMessageVisible,
+    setIsCommentUpdatedErrorMessageVisible,
+    setIsCommentDeletedSuccessMessageVisible,
+    setIsCommentDeletedErrorMessageVisible,
+    setIsQuestionDeletedSuccessMessageVisible
+}) {
     const [isLoading, setIsLoading] = useState(true);
 
     const {question_id} = useParams(null);
@@ -38,12 +49,12 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
     const [getQuestionError, setGetQuestionError] = useState(null);
     const [updateQuestionError, setUpdateQuestionError] = useState(null);
     const [updateVoteError, setUpdateVoteError] = useState(null);
+    const [deleteQuestionError, setDeleteQuestionError] = useState("");
 
-    const [currentUser, setCurrentUser] = useState(null);
     const [userVote, setUserVote] = useState("");
 
     const [comment, setComment] = useState("");
-    const [commentError, setCommentError] = useState("");
+    const [postCommentError, setPostCommentError] = useState("");
 
     const commentsPerPage = 1;
     const [comments, setComments] = useState([]);    
@@ -129,8 +140,6 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                     setRelatedQuestions(similarQuestions);
                 })
                 .catch((error) => {
-                    console.log("Error:", error);
-                    console.error('Error fetching question:', error);
                     setGetQuestionError("Could not get question.");
                     setFetchRelatedQuestionsError("Could not fetch related questions.");
                 })
@@ -159,7 +168,6 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                     setLatestQuestions(newestQuestions);
                 })
                 .catch((error) => {
-                    console.error("Error fetching documents: ", error);
                     setFetchLatestQuestionsError("Could not fetch the latest questions.");
                 });
         };
@@ -214,7 +222,7 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
     }, [question_id, commentsPage]);
 
     function handleVote(vote) {
-        if (!question || !currentUser) return;
+        if (!question || !user) return;
 
         const updatedQuestionOptions = question.questionOptions.map((option) => {
             const updatedOption = { ...option };
@@ -242,7 +250,6 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
             })
             .catch((error) => {
                 setUpdateVoteError(error.message);
-                console.error('Error updating votes:', error);
             });
     }
 
@@ -267,8 +274,12 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
 
         addDoc(collection(db, 'comments'), newComment)
             .then((response) => {
+                setIsPostCommentSuccessMessageVisible(true);
+                setTimeout(() => {
+                    setIsPostCommentSuccessMessageVisible(false);
+                }, 3000);
                 setComment("");
-                setCommentError("");
+                setPostCommentError("");
                 setCommentsPage(1);
                 setTotalComments((currentTotalComments) => currentTotalComments + 1);
                 const questionRef = doc(db, 'questions', question_id);                
@@ -277,9 +288,7 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                 })
             })
             .catch((error) => {
-                console.log(error);
-                console.error('Error posting comment: ', error);
-                setCommentError("Comment could not be posted.");
+                setPostCommentError("Comment could not be posted.");
             })
     }
 
@@ -289,6 +298,7 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
         setOriginalQuestion(structuredClone(question));
         setEditOptionsError("");
         setComment("");
+        setDeleteQuestionError("");
     }
 
     function handleTitle(event) {
@@ -349,7 +359,7 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
     }
 
     function handleUpdateQuestion() {
-        if (!question || !currentUser) return;
+        if (!question || !user) return;
 
         setEditOptionsError("");
 
@@ -389,7 +399,6 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                         }
                     })
                     .catch((error) => {
-                        console.log(error);
                         invalidImageUrls.push(option.imageUrl);
                     })
             } else {
@@ -415,7 +424,11 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                     questionOptions: updatedOptionsTrimmed,
                     questionModified: serverTimestamp()
                 })
-                .then(() => {
+                .then((response) => {
+                    setIsQuestionUpdatedSuccessMessageVisible(true);
+                    setTimeout(() => {
+                        setIsQuestionUpdatedSuccessMessageVisible(false);
+                    }, 3000);
                     setQuestion(prevQuestion => ({
                         ...prevQuestion,
                         questionTitle: questionTitle.trim(),
@@ -430,8 +443,7 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                     setUpdateQuestionError("");
                 })
                 .catch((error) => {
-                    setUpdateQuestionError(error.message);
-                    console.error('Error updating question:', error);
+                    setUpdateQuestionError("Your question could not be updated.");
                 });
             })
     }
@@ -477,16 +489,18 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                 return Promise.all(deleteCommentPromises);
             })
             .then((response) => {
-                console.log(response);
                 return deleteDoc(questionRef);
             })
             .then((response) => {
-                console.log(response);
-                console.log('Question and its comments have been deleted successfully.');
+                setIsQuestionDeletedSuccessMessageVisible(true);
+                setTimeout(() => {
+                    setIsQuestionDeletedSuccessMessageVisible(false);
+                }, 3000);
+                setDeleteQuestionError("");
                 navigate('/');
             })
             .catch((error) => {
-                console.error('Error deleting question and comments:', error);
+                setDeleteQuestionError("Your question could not be deleted.");
             });
     }
 
@@ -495,7 +509,6 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
     }
 
     function handleQuestionCardCategory(category) {
-        console.log("Category:", category)
         setHomepageQuestionPage(1);
         setCategory(category);
     }
@@ -505,8 +518,6 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
     }
 
     function handleCommentsPageChange(newPage) {
-        console.log("commentsPage:", newPage);
-        console.log("Total number of comments:", totalComments);
         if (newPage > 0 && newPage <= totalCommentsPages) {
             setCommentsPage(newPage);
         }
@@ -589,6 +600,8 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                     
                     <div className="error">{editOptionsError}</div>
                     <div className="error">{updateVoteError}</div>
+                    <div className="error">{updateQuestionError}</div>   
+                    <div className="error">{deleteQuestionError}</div>
 
                     {isConfirmDeleteQuestionVisible
                         ? <div>
@@ -640,8 +653,6 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                         </div>
                     }
 
-                    <div className="error">{updateQuestionError}</div>   
-
                     {user &&
                     user.emailVerified &&
                     user.uid === question.questionOwnerId &&
@@ -668,7 +679,7 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                         ? null
                         : user.emailVerified
                             ? <>
-                                <div className="error">{commentError}</div>
+                                <div className="error">{postCommentError}</div>
 
                                 <InputComment
                                     comment={comment}
@@ -709,6 +720,12 @@ export default function Question({user, setCategory, setHomepageQuestionPage}) {
                                                 setIsEditingProfileImage={setIsEditingProfileImage}
                                                 setIsChangingPassword={setIsChangingPassword}
                                                 setIsDeletingAccount={setIsDeletingAccount}
+                                                setIsCommentUpdatedSuccessMessageVisible={setIsCommentUpdatedSuccessMessageVisible}
+                                                setIsCommentUpdatedErrorMessageVisible={setIsCommentUpdatedErrorMessageVisible}
+                                                setIsCommentDeletedSuccessMessageVisible={setIsCommentDeletedSuccessMessageVisible}
+                                                setIsCommentDeletedErrorMessageVisible={setIsCommentDeletedErrorMessageVisible}
+                                                setCommentsPage={setCommentsPage}
+                                                setTotalComments={setTotalComments}
                                             />
                                         )
                                     })}

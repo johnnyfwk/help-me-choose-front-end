@@ -6,33 +6,36 @@ import InputPassword from '../components/InputPassword';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 
-export default function Login() {
+export default function Login({setIsLoginSuccessMessageVisible}) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailErrorMessage, setEmailErrorMessage] = useState("");    
     const [passwordErrorMessage, setPasswordErrorMessage] = useState("");
-    const [error, setError] = useState("");
+    const [loginError, setLoginError] = useState("");
 
     function handleEmail(event) {
         setEmail(event.target.value);
         setEmailErrorMessage("");
-        setError("");
+        setLoginError("");
     }
 
     function handlePassword(event) {
         setPassword(event.target.value);
         setPasswordErrorMessage("");
-        setError("");
+        setLoginError("");
     }
 
     function handleLogin() {
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
-                console.log("Logged in successfully!");
+                setIsLoginSuccessMessageVisible(true);
+                setTimeout(() => {
+                    setIsLoginSuccessMessageVisible(false);
+                }, 3000);
+                setLoginError("");
             })
             .catch((error) => {
-                console.log(error);
-                setError("Email or password is invalid.");
+                setLoginError("Email or password is invalid.");
             })
     }
 
@@ -52,6 +55,8 @@ export default function Login() {
 
                 <p>If you don't have an account, <Link to="/sign-up">sign up</Link> for one.</p>
 
+                <div className="error">{loginError}</div>
+
                 <form>
                     <InputEmail
                         email={email}
@@ -64,8 +69,6 @@ export default function Login() {
                         handlePassword={handlePassword}
                         placeholder={"Password"}
                     />
-
-                    <div className="error">{error}</div>
 
                     <input
                         type="button"

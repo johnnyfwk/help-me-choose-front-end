@@ -39,6 +39,27 @@ img {
     width: 100%;
 }
 
+.message-box {
+    width: 100%;
+    height: 100px;
+    display: grid;
+    text-align: center;
+    align-content: center;
+    position: fixed;
+    font-weight: bold;
+    transition: bottom 0.2s ease;
+}
+
+.message-box.success {
+    background-color: var(--success);
+    color: white;
+}
+
+.message-box.error {
+    background-color: var(--error);
+    color: white;  
+}
+
 .success {
     color: var(--success);
 }

@@ -19,6 +19,11 @@ export default function InputOptions({
                             className="input-option"
                         />
 
+                        {optionImageUrlError.imageUrls.includes(option.imageUrl.trim())
+                            ? <div className="error">{optionImageUrlError.msg}</div>
+                            : null
+                        }
+
                         <input
                             type="text"
                             id={`option-${index}-image-url`}
@@ -29,11 +34,6 @@ export default function InputOptions({
                             placeholder={`Option ${index + 1} image URL`}
                             disabled={!options[index].name}
                         ></input>
-
-                        {optionImageUrlError.imageUrls.includes(option.imageUrl.trim())
-                            ? <div className="error">{optionImageUrlError.msg}</div>
-                            : null
-                        }
                     </div>
                 )
             })}
