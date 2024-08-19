@@ -15,7 +15,7 @@ export default function Home({category, setCategory}) {
 
     const [questions, setQuestions] = useState([]);
     
-    const questionsPerPage = 3;    
+    const questionsPerPage = 20;    
     const [isFetching, setIsFetching] = useState(false);
     const [page, setPage] = useState(1);
     const [totalQuestions, setTotalQuestions] = useState(0);    

@@ -8,7 +8,7 @@ export default function QuestionCard({
 }) {
     return (
         <div className="question-card-wrapper">
-            {page === "home"
+            {page === "home" || page === "question"
                 ? <Link to={`/profile/${question.questionOwnerId}`}>
                     <div className="question-card-user-image-wrapper">
                         <img src={question.questionOwnerImageUrl} alt={`Profile image of ${question.questionOwnerUsername}`} className="question-card-user-image"/>  
@@ -17,7 +17,7 @@ export default function QuestionCard({
                 : null
             }
 
-            {page === "home"
+            {page === "home" || page === "question"
                 ? <div>
                     <Link to={`/profile/${question.questionOwnerId}`}>{question.questionOwnerUsername}</Link>
                 </div> 
