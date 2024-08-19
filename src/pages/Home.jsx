@@ -7,7 +7,7 @@ import QuestionCard from '../components/QuestionCard';
 import InputCategory from '../components/InputCategory';
 import * as utils from '../../utils';
 
-export default function Home({category, setCategory}) {
+export default function Home({category, setCategory, homepageQuestionPage, setHomepageQuestionPage}) {
     const [ searchParams ] = useSearchParams();
     const category_slug = searchParams.get("category");
 
@@ -17,20 +17,29 @@ export default function Home({category, setCategory}) {
     
     const questionsPerPage = 20;    
     const [isFetching, setIsFetching] = useState(false);
-    const [page, setPage] = useState(1);
     const [totalQuestions, setTotalQuestions] = useState(0);    
     const totalPages = Math.ceil(totalQuestions / questionsPerPage);
-    const [fetchQuestionsMessage, setFetchQuestionsMessage] = useState("");
+    const [fetchQuestionsError, setFetchQuestionsError] = useState("");
 
+    // Get total number of questions to determine pagination
     useEffect(() => {
-        const questionsRef = collection(db, "questions");
+        window.scrollTo(0, 0);
 
-        if (!category_slug) {
-            utils.getDocumentCount(getCountFromServer, questionsRef, setTotalQuestions);
-        } else {
-            const categoryQuery = query(questionsRef, where("questionCategory", "==", utils.convertSlugToCategory(category_slug)));
-            utils.getDocumentCount(getCountFromServer, categoryQuery, setTotalQuestions);
-        }
+        const fetchQuestionCount = () => {
+            const questionsRef = collection(db, "questions");
+
+            if (!category_slug) {
+                utils.getDocumentCount(getCountFromServer, questionsRef, setTotalQuestions);
+            } else {
+                const categoryQuery = query(
+                    questionsRef,
+                    where("questionCategory", "==", utils.convertSlugToCategory(category_slug))
+                );
+                utils.getDocumentCount(getCountFromServer, categoryQuery, setTotalQuestions);
+            }
+        };        
+
+        fetchQuestionCount();
     }, [category_slug]);
 
     useEffect(() => {
@@ -39,7 +48,7 @@ export default function Home({category, setCategory}) {
             collection,
             db,
             'questions',
-            page,
+            homepageQuestionPage,
             query,
             category_slug,
             utils.convertSlugToCategory(category_slug),
@@ -52,18 +61,18 @@ export default function Home({category, setCategory}) {
             getDocs,
             startAfter,
             setQuestions,
-            setFetchQuestionsMessage,
+            setFetchQuestionsError,
         );
-    }, [page, category_slug]);
+    }, [category_slug, homepageQuestionPage]);
 
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= totalPages) {
-            setPage(newPage);
+            setHomepageQuestionPage(newPage);
         }
     };
 
     function handleCategory(event) {
-        setPage(1);
+        setHomepageQuestionPage(1);
         setCategory(event.target.value);
         if (event.target.value === "") {
             navigate("/");
@@ -73,7 +82,7 @@ export default function Home({category, setCategory}) {
     }
 
     function handleQuestionCardCategory(category) {
-        setPage(1);
+        setHomepageQuestionPage(1);
         setCategory(category);
     }
 
@@ -97,7 +106,7 @@ export default function Home({category, setCategory}) {
                     page={"home"}
                 />
 
-                <div>{fetchQuestionsMessage}</div>
+                <div>{fetchQuestionsError}</div>
 
                 {questions.length > 0
                     ? <>
@@ -114,9 +123,9 @@ export default function Home({category, setCategory}) {
                             })}
                         </div>
                         <div>
-                            <button onClick={() => handlePageChange(page - 1)} disabled={isFetching || page === 1}>Previous</button>
-                            <span>Page {page} of {totalPages}</span>
-                            <button onClick={() => handlePageChange(page + 1)} disabled={isFetching || page === totalPages}>Next</button>
+                            <button onClick={() => handlePageChange(homepageQuestionPage - 1)} disabled={isFetching || homepageQuestionPage === 1}>Previous</button>
+                            <span>Page {homepageQuestionPage} of {totalPages}</span>
+                            <button onClick={() => handlePageChange(homepageQuestionPage + 1)} disabled={isFetching || homepageQuestionPage === totalPages}>Next</button>
                         </div>
                     </>
                     : <div>There are no questions in this category.</div>

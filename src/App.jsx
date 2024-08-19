@@ -19,6 +19,7 @@ function App() {
     // console.log("User:", user);
 
     const [category, setCategory] = useState("");
+    const [homepageQuestionPage, setHomepageQuestionPage] = useState(1);
     
     return (
         <>
@@ -28,7 +29,12 @@ function App() {
                 <Route
                     path="/"
                     element={
-                        <Home category={category} setCategory={setCategory} />
+                        <Home
+                            category={category}
+                            setCategory={setCategory}
+                            homepageQuestionPage={homepageQuestionPage}
+                            setHomepageQuestionPage={setHomepageQuestionPage}
+                        />
                     }
                 />
 
@@ -62,7 +68,11 @@ function App() {
                 <Route
                     path="/question/:question_id"
                     element={
-                        <Question user={user} setCategory={setCategory} />
+                        <Question
+                            user={user}
+                            setCategory={setCategory}
+                            setHomepageQuestionPage={setHomepageQuestionPage}
+                        />
                     }
                 />
 
@@ -99,7 +109,7 @@ function App() {
                     element={<Home />}
                 />
             </Routes>
-            <Footer />
+            <Footer user={user} />
         </>
     )
 }
