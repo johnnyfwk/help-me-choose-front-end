@@ -17,8 +17,8 @@ export default function CommentCard({
     updateComment,
     comment,
     setComment,
-    isEditingQuestion,
-    setIsEditingQuestion,
+    isEditingPoll,
+    setIsEditingPoll,
     editingCommentId,
     setEditingCommentId,
     setComments,
@@ -40,19 +40,19 @@ export default function CommentCard({
     const [isConfirmDeleteCommentVisible, setIsConfirmDeleteCommentVisible] = useState(false);
 
     useEffect(() => {
-        if (comment || isEditingQuestion || isEditingProfileImage || isChangingPassword || isDeletingAccount) {
+        if (comment || isEditingPoll || isEditingProfileImage || isChangingPassword || isDeletingAccount) {
             setIsEditingComment(false);
         }
         if (editingCommentId !== commentObject.id) {
             setIsEditingComment(false);
         }
-    }, [comment, isEditingQuestion, editingCommentId, isEditingProfileImage, isChangingPassword, isDeletingAccount])
+    }, [comment, isEditingPoll, editingCommentId, isEditingProfileImage, isChangingPassword, isDeletingAccount])
 
     function handleEditCommentButton() {
         setEditingCommentId(commentObject.id)
         setIsEditingComment(true);
         setOriginalComment(commentObject.comment);
-        setIsEditingQuestion(false);
+        setIsEditingPoll(false);
         setComment("");
         setIsEditingProfileImage(false);
         setIsChangingPassword(false);
@@ -150,7 +150,7 @@ export default function CommentCard({
 
     return (
         <div className="comment-card">
-            {page === "question"
+            {page === "poll"
                 ? <Link to={`/profile/${commentObject.commentOwnerId}`}>
                     <div className="comment-card-user-image-wrapper">
                         <img
@@ -164,11 +164,11 @@ export default function CommentCard({
             }
             
             {page === "profile"
-                ? <Link to={`/poll/${commentObject.questionId}`}>{commentObject.questionTitle}</Link>
+                ? <Link to={`/poll/${commentObject.pollId}`}>{commentObject.pollTitle}</Link>
                 : null
             }
 
-            {page === "question"
+            {page === "poll"
                 ? <Link to={`/profile/${commentObject.commentOwnerId}`}>{commentObject.commentOwnerUsername}</Link>
                 : null
             }
@@ -183,7 +183,7 @@ export default function CommentCard({
 
             {!user
                 ? <div className="like-comment-user-not-verified">&#128077;{commentObject.commentLikes.length}</div>
-                : user.emailVerified && page === "question" && user.uid !== commentObject.commentOwnerId
+                : user.emailVerified && page === "poll" && user.uid !== commentObject.commentOwnerId
                     ? <div onClick={handleLikeComment}><span className="like-comment-user-verified">&#128077;</span>{commentObject.commentLikes.length}</div>
                     : null
             }
@@ -212,7 +212,7 @@ export default function CommentCard({
 
             {isConfirmDeleteCommentVisible
                 ? <div>
-                    <div>Delete comment?</div>
+                    <div className="confirm">Delete comment?</div>
                     <button onClick={handleDeleteCommentNo}>No</button>
                     <button onClick={handleDeleteCommentYes}>Yes</button>
                 </div>                

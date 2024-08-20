@@ -25,31 +25,31 @@ import InputCategory from "../components/InputCategory";
 import InputComment from "../components/InputComment";
 import InputOptions from "../components/InputOptions";
 import CommentCard from "../components/CommentCard";
-import QuestionCard from "../components/QuestionCard";
+import PollCard from "../components/PollCard";
 import * as utils from '../../utils';
 
-export default function Question({
+export default function Poll({
     user,
     setCategory,
-    setHomepageQuestionPage,
+    setHomepagePollPage,
     setIsPostCommentSuccessMessageVisible,
-    setIsQuestionUpdatedSuccessMessageVisible,
+    setIsPollUpdatedSuccessMessageVisible,
     setIsCommentUpdatedSuccessMessageVisible,
     setIsCommentUpdatedErrorMessageVisible,
     setIsCommentDeletedSuccessMessageVisible,
     setIsCommentDeletedErrorMessageVisible,
-    setIsQuestionDeletedSuccessMessageVisible
+    setIsPollDeletedSuccessMessageVisible
 }) {
     const [isLoading, setIsLoading] = useState(true);
 
-    const {question_id} = useParams(null);
+    const {poll_id} = useParams(null);
 
-    const [question, setQuestion] = useState(null);
-    const [originalQuestion, setOriginalQuestion] = useState(null);
-    const [getQuestionError, setGetQuestionError] = useState(null);
-    const [updateQuestionError, setUpdateQuestionError] = useState(null);
+    const [poll, setPoll] = useState(null);
+    const [originalPoll, setOriginalPoll] = useState(null);
+    const [getPollError, setGetPollError] = useState(null);
+    const [updatePollError, setUpdatePollError] = useState(null);
     const [updateVoteError, setUpdateVoteError] = useState(null);
-    const [deleteQuestionError, setDeleteQuestionError] = useState("");
+    const [deletePollError, setDeletePollError] = useState("");
 
     const [userVote, setUserVote] = useState("");
 
@@ -64,25 +64,25 @@ export default function Question({
     const totalCommentsPages = Math.ceil(totalComments / commentsPerPage);
     const [fetchCommentsError, setFetchCommentsError] = useState("");
     
-    const [isEditingQuestion, setIsEditingQuestion] = useState(false);
+    const [isEditingPoll, setIsEditingPoll] = useState(false);
     const [editingCommentId, setEditingCommentId] = useState(null);
     const [editTitleError, setEditTitleError] = useState("");
     const [editDescriptionError, setEditDescriptionError] = useState("");
     const [editOptionsError, setEditOptionsError] = useState("");
 
     const latestAndRelatedCards = 10;
-    const [latestQuestions, setLatestQuestions] = useState([]);
-    const [fetchLatestQuestionsError, setFetchLatestQuestionsError] = useState("");
+    const [latestPolls, setLatestPolls] = useState([]);
+    const [fetchLatestPollsError, setFetchLatestPollsError] = useState("");
 
-    const [relatedQuestions, setRelatedQuestions] = useState([]);
-    const [fetchRelatedQuestionsError, setFetchRelatedQuestionsError] = useState("");
+    const [relatedPolls, setRelatedPolls] = useState([]);
+    const [fetchRelatedPollsError, setFetchRelatedPollsError] = useState("");
 
     const [optionsError, setOptionsError] = useState("");
     const [optionImageUrlError, setOptionImageUrlError] = useState({imageUrls: [], msg: "Image URL is not valid"});
 
     const [isEditingProfileImage, setIsEditingProfileImage] = useState(false);
     const [isChangingPassword, setIsChangingPassword] = useState(false);
-    const [isConfirmDeleteQuestionVisible, setIsConfirmDeleteQuestionVisible] = useState(false);
+    const [isConfirmDeletePollVisible, setIsConfirmDeletePollVisible] = useState(false);
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
     const navigate = useNavigate();
@@ -96,52 +96,52 @@ export default function Question({
 
             const commentsQuery = query(
                 commentsRef,
-                where("questionId", "==", question_id)
+                where("pollId", "==", poll_id)
             );
             utils.getDocumentCount(getCountFromServer, commentsQuery, setTotalComments);
         };
 
-        const fetchQuestionAndRelatedQuestions = () => {
-            const questionRef = doc(db, 'questions', question_id);
-            getDoc(questionRef)
-                .then((questionSnap) => {
-                    if (questionSnap.exists()) {
-                        const data = questionSnap.data();
-                        setQuestion(data);
+        const fetchPollAndRelatedPolls = () => {
+            const pollRef = doc(db, 'polls', poll_id);
+            getDoc(pollRef)
+                .then((pollSnap) => {
+                    if (pollSnap.exists()) {
+                        const data = pollSnap.data();
+                        setPoll(data);
                         if (user) {
-                            const usersVote = data.questionOptions.find((option) => option.votes.includes(user.uid));
+                            const usersVote = data.pollOptions.find((option) => option.votes.includes(user.uid));
                             setUserVote(usersVote ? usersVote.name : "");
                         }
                         return data;
                     } else {
-                        console.log("Question doesn't exist.");
+                        console.log("Poll doesn't exist.");
                     }
                 })
-                .then((question) => {
-                    const relatedQuestionsRef = collection(db, 'questions');
+                .then((poll) => {
+                    const relatedPollsRef = collection(db, 'polls');
 
                     const q = query(
-                        relatedQuestionsRef,
-                        where('questionCategory', '==', question.questionCategory),
-                        orderBy('questionModified', 'desc'),                
+                        relatedPollsRef,
+                        where('pollCategory', '==', poll.pollCategory),
+                        orderBy('pollModified', 'desc'),                
                         limit(latestAndRelatedCards)
                     );
 
                     return getDocs(q)
                 })
-                .then((relatedQuestions) => {
-                    const similarQuestions = [];
+                .then((relatedPolls) => {
+                    const similarPolls = [];
 
-                    relatedQuestions.forEach((doc) => {
-                        if (doc.id !== question_id) {
-                            similarQuestions.push({ id: doc.id, ...doc.data() });
+                    relatedPolls.forEach((doc) => {
+                        if (doc.id !== poll_id) {
+                            similarPolls.push({ id: doc.id, ...doc.data() });
                         }
                     });
-                    setRelatedQuestions(similarQuestions);
+                    setRelatedPolls(similarPolls);
                 })
                 .catch((error) => {
-                    setGetQuestionError("Could not get question.");
-                    setFetchRelatedQuestionsError("Could not fetch related questions.");
+                    setGetPollError("Could not get poll.");
+                    setFetchRelatedPollsError("Could not fetch related polls.");
                 })
                 .finally(() => {
                     setIsLoading(false);
@@ -149,33 +149,33 @@ export default function Question({
         };
 
         const fetchLatestPosts = () => {
-            const latestQuestionsRef = collection(db, 'questions');
+            const latestPollsRef = collection(db, 'polls');
 
             const q = query(
-                latestQuestionsRef,
-                orderBy('questionModified', 'desc'),
+                latestPollsRef,
+                orderBy('pollModified', 'desc'),
                 limit(latestAndRelatedCards)
             );
 
             getDocs(q)
                 .then((querySnapshot) => {
-                    const newestQuestions = [];
+                    const newestPolls = [];
                     querySnapshot.forEach((doc) => {
-                        if (doc.id !== question_id) {
-                            newestQuestions.push({ id: doc.id, ...doc.data() });
+                        if (doc.id !== poll_id) {
+                            newestPolls.push({ id: doc.id, ...doc.data() });
                         }
                     });
-                    setLatestQuestions(newestQuestions);
+                    setLatestPolls(newestPolls);
                 })
                 .catch((error) => {
-                    setFetchLatestQuestionsError("Could not fetch the latest questions.");
+                    setFetchLatestPollsError("Could not fetch the latest polls.");
                 });
         };
 
         const unsubscribe = onSnapshot(
             query(
                 collection(db, 'comments'),
-                where('questionId', '==', question_id),
+                where('pollId', '==', poll_id),
                 orderBy('commentCreated', 'desc'),
                 limit(commentsPerPage)
             ),
@@ -191,12 +191,12 @@ export default function Question({
             }
         );
 
-        fetchQuestionAndRelatedQuestions();
+        fetchPollAndRelatedPolls();
         fetchLatestPosts();
         fetchCommentCount();
 
         return () => unsubscribe();
-    }, [question_id]);
+    }, [poll_id]);
 
     useEffect(() => {
         utils.fetchPaginatedDocuments(
@@ -206,10 +206,10 @@ export default function Question({
             'comments',
             commentsPage,
             query,
-            question_id,
-            question_id,
+            poll_id,
+            poll_id,
             where,
-            "questionId",
+            "pollId",
             orderBy,
             'commentCreated',
             limit,
@@ -219,12 +219,12 @@ export default function Question({
             setComments,
             setFetchCommentsError,
         );
-    }, [question_id, commentsPage]);
+    }, [poll_id, commentsPage]);
 
     function handleVote(vote) {
-        if (!question || !user) return;
+        if (!poll || !user) return;
 
-        const updatedQuestionOptions = question.questionOptions.map((option) => {
+        const updatedPollOptions = poll.pollOptions.map((option) => {
             const updatedOption = { ...option };
             if (updatedOption.votes.includes(user.uid)) {
                 updatedOption.votes = updatedOption.votes.filter(uid => uid !== user.uid);
@@ -235,16 +235,16 @@ export default function Question({
             return updatedOption;
         });
 
-        const questionsRef = doc(db, 'questions', question_id);
+        const pollsRef = doc(db, 'polls', poll_id);
 
-        updateDoc(questionsRef, {
-            questionOptions: updatedQuestionOptions,
-            questionModified: serverTimestamp()
+        updateDoc(pollsRef, {
+            pollOptions: updatedPollOptions,
+            pollModified: serverTimestamp()
         })
             .then(() => {
-                setQuestion((prevQuestion) => ({
-                    ...prevQuestion,
-                    questionOptions: updatedQuestionOptions,
+                setPoll((prevPoll) => ({
+                    ...prevPoll,
+                    pollOptions: updatedPollOptions,
                 }));
                 setUserVote(vote);
             })
@@ -262,14 +262,14 @@ export default function Question({
             commentLikes: [],
             commentCreated: serverTimestamp(),
             commentModified: serverTimestamp(),
-            questionId: question_id,
-            questionOwnerId: question.questionOwnerId,
-            questionOwnerUsername: question.questionOwnerUsername,
-            questionTitle: question.questionTitle,
-            questionDescription: question.questionDescription,
-            questionCategory: question.questionCategory,
-            questionCreated: question.questionCreated,
-            questionModified: serverTimestamp()
+            pollId: poll_id,
+            pollOwnerId: poll.pollOwnerId,
+            pollOwnerUsername: poll.pollOwnerUsername,
+            pollTitle: poll.pollTitle,
+            pollDescription: poll.pollDescription,
+            pollCategory: poll.pollCategory,
+            pollCreated: poll.pollCreated,
+            pollModified: serverTimestamp()
         };
 
         addDoc(collection(db, 'comments'), newComment)
@@ -282,9 +282,9 @@ export default function Question({
                 setPostCommentError("");
                 setCommentsPage(1);
                 setTotalComments((currentTotalComments) => currentTotalComments + 1);
-                const questionRef = doc(db, 'questions', question_id);                
-                updateDoc(questionRef, {
-                    questionModified: serverTimestamp()
+                const pollRef = doc(db, 'polls', poll_id);                
+                updateDoc(pollRef, {
+                    pollModified: serverTimestamp()
                 })
             })
             .catch((error) => {
@@ -292,80 +292,80 @@ export default function Question({
             })
     }
 
-    function handleEditQuestion() {
+    function handleEditPoll() {
         window.scrollTo(0, 0);
-        setIsEditingQuestion(true);
-        setOriginalQuestion(structuredClone(question));
+        setIsEditingPoll(true);
+        setOriginalPoll(structuredClone(poll));
         setEditOptionsError("");
         setComment("");
-        setDeleteQuestionError("");
+        setDeletePollError("");
     }
 
     function handleTitle(event) {
         setEditTitleError("");
-        let updatedTitle = question.questionTitle;
+        let updatedTitle = poll.pollTitle;
         updatedTitle = event.target.value;
-        setQuestion(prevData => ({
+        setPoll(prevData => ({
             ...prevData,
-            questionTitle: updatedTitle
+            pollTitle: updatedTitle
         }))
     }
 
     function handleDescription(event) {
         setEditDescriptionError("");
-        let updatedDescription = question.questionDescription;
+        let updatedDescription = poll.pollDescription;
         updatedDescription = event.target.value;
-        setQuestion(prevData => ({
+        setPoll(prevData => ({
             ...prevData,
-            questionDescription: updatedDescription
+            pollDescription: updatedDescription
         }))
     }
 
     function handleCategory(event) {
-        let updatedCategory = question.questionCategory;
+        let updatedCategory = poll.pollCategory;
         updatedCategory = event.target.value;
-        setQuestion(prevData => ({
+        setPoll(prevData => ({
             ...prevData,
-            questionCategory: updatedCategory
+            pollCategory: updatedCategory
         }))
     }
 
     function handleOptionNames(index, value) {
-        const questionCopy = structuredClone(question);
-        questionCopy.questionOptions[index].name = value;
-        setQuestion(questionCopy);
+        const pollCopy = structuredClone(poll);
+        pollCopy.pollOptions[index].name = value;
+        setPoll(pollCopy);
         setOptionsError("");
     }
 
     function handleOptionImages(index, value) {
-        const questionCopy = structuredClone(question);
-        questionCopy.questionOptions[index].imageUrl = value;
-        setQuestion(questionCopy);
+        const pollCopy = structuredClone(poll);
+        pollCopy.pollOptions[index].imageUrl = value;
+        setPoll(pollCopy);
         setOptionsError("");
     }
 
     function handleAddOption() {
-        const questionCopy = structuredClone(question);
-        questionCopy.questionOptions.push(
+        const pollCopy = structuredClone(poll);
+        pollCopy.pollOptions.push(
             {name: "", imageUrl: "", votes: []}
         );
-        setQuestion(questionCopy);
+        setPoll(pollCopy);
     }
 
-    function handleCancelEditQuestion() {
-        setIsEditingQuestion(false);
-        setQuestion(structuredClone(originalQuestion));
+    function handleCancelEditPoll() {
+        setIsEditingPoll(false);
+        setPoll(structuredClone(originalPoll));
         setEditOptionsError("");
     }
 
-    function handleUpdateQuestion() {
-        if (!question || !user) return;
+    function handleUpdatePoll() {
+        if (!poll || !user) return;
 
         setEditOptionsError("");
 
-        const { questionTitle, questionDescription, questionCategory } = question;
+        const { pollTitle, pollDescription, pollCategory } = poll;
 
-        const updatedOptions = question.questionOptions.filter((option) => option.name);
+        const updatedOptions = poll.pollOptions.filter((option) => option.name);
         
         const updatedOptionsTrimmed = updatedOptions.map((option) => {
             const newOption = {};
@@ -375,12 +375,12 @@ export default function Question({
             return newOption;
         })
 
-        if (!questionTitle) {
-            setEditTitleError("Please enter a title for your question.");
+        if (!pollTitle) {
+            setEditTitleError("Please enter a title for your poll.");
             return;
         }
-        if (!questionDescription) {
-            setEditDescriptionError("Please enter a description for your question.");
+        if (!pollDescription) {
+            setEditDescriptionError("Please enter a description for your poll.");
             return;
         }
         if (updatedOptionsTrimmed.length < 2) {
@@ -416,40 +416,40 @@ export default function Question({
                     return;
                 }
 
-                const questionsRef = doc(db, 'questions', question_id);
-                updateDoc(questionsRef, {
-                    questionTitle: questionTitle.trim(),
-                    questionDescription: questionDescription.trim(),
-                    questionCategory,
-                    questionOptions: updatedOptionsTrimmed,
-                    questionModified: serverTimestamp()
+                const pollsRef = doc(db, 'polls', poll_id);
+                updateDoc(pollsRef, {
+                    pollTitle: pollTitle.trim(),
+                    pollDescription: pollDescription.trim(),
+                    pollCategory,
+                    pollOptions: updatedOptionsTrimmed,
+                    pollModified: serverTimestamp()
                 })
                 .then((response) => {
-                    setIsQuestionUpdatedSuccessMessageVisible(true);
+                    setIsPollUpdatedSuccessMessageVisible(true);
                     setTimeout(() => {
-                        setIsQuestionUpdatedSuccessMessageVisible(false);
+                        setIsPollUpdatedSuccessMessageVisible(false);
                     }, 3000);
-                    setQuestion(prevQuestion => ({
-                        ...prevQuestion,
-                        questionTitle: questionTitle.trim(),
-                        questionDescription: questionDescription.trim(),
-                        questionCategory,
-                        questionOptions: updatedOptionsTrimmed
+                    setPoll(prevPoll => ({
+                        ...prevPoll,
+                        pollTitle: pollTitle.trim(),
+                        pollDescription: pollDescription.trim(),
+                        pollCategory,
+                        pollOptions: updatedOptionsTrimmed
                     }));
-                    setIsEditingQuestion(false);
+                    setIsEditingPoll(false);
                     setEditTitleError("");
                     setEditDescriptionError("");
                     setEditOptionsError("");
-                    setUpdateQuestionError("");
+                    setUpdatePollError("");
                 })
                 .catch((error) => {
-                    setUpdateQuestionError("Your question could not be updated.");
+                    setUpdatePollError("Your poll could not be updated.");
                 });
             })
     }
 
     function handleComment(event) {
-        setIsEditingQuestion(false);
+        setIsEditingPoll(false);
         setComment(event.target.value);
     }
 
@@ -463,22 +463,22 @@ export default function Question({
         );
     }
 
-    function handleDeleteQuestion() {
-        setIsEditingQuestion(false);
-        setIsConfirmDeleteQuestionVisible(true);
+    function handleDeletePoll() {
+        setIsEditingPoll(false);
+        setIsConfirmDeletePollVisible(true);
     }
 
-    function handleDeleteQuestionNo() {
-        setIsConfirmDeleteQuestionVisible(false);
+    function handleDeletePollNo() {
+        setIsConfirmDeletePollVisible(false);
     }
 
-    function handleDeleteQuestionYes() {
-        setIsConfirmDeleteQuestionVisible(false);
+    function handleDeletePollYes() {
+        setIsConfirmDeletePollVisible(false);
 
-        const questionRef = doc(db, 'questions', question_id);
+        const pollRef = doc(db, 'polls', poll_id);
         const commentsQuery = query(
             collection(db, 'comments'),
-            where('questionId', '==', question_id)
+            where('pollId', '==', poll_id)
         );
 
         getDocs(commentsQuery)
@@ -489,31 +489,32 @@ export default function Question({
                 return Promise.all(deleteCommentPromises);
             })
             .then((response) => {
-                return deleteDoc(questionRef);
+                return deleteDoc(pollRef);
             })
             .then((response) => {
-                setIsQuestionDeletedSuccessMessageVisible(true);
+                setIsPollDeletedSuccessMessageVisible(true);
                 setTimeout(() => {
-                    setIsQuestionDeletedSuccessMessageVisible(false);
+                    setIsPollDeletedSuccessMessageVisible(false);
                 }, 3000);
-                setDeleteQuestionError("");
+                setDeletePollError("");
+                setCategory("");
                 navigate('/');
             })
             .catch((error) => {
-                setDeleteQuestionError("Your question could not be deleted.");
+                setDeletePollError("Your poll could not be deleted.");
             });
     }
 
-    function handleQuestionCategory(category) {
+    function handlePollCategory(category) {
         setCategory(category);
     }
 
-    function handleQuestionCardCategory(category) {
-        setHomepageQuestionPage(1);
+    function handlePollCardCategory(category) {
+        setHomepagePollPage(1);
         setCategory(category);
     }
 
-    function handleQuestionCardTitle() {
+    function handlePollCardTitle() {
         setCommentsPage(1);
     }
 
@@ -527,12 +528,12 @@ export default function Question({
         return <p>Loading...</p>;
     }
 
-    if (!question) {
-        return <div className="error">Could not retrieve question.</div>;
+    if (!poll) {
+        return <div className="error">Could not retrieve poll.</div>;
     }
 
-    if (getQuestionError) {
-        return <div className="error">Error: {getQuestionError}</div>;
+    if (getPollError) {
+        return <div className="error">Error: {getPollError}</div>;
     }
 
     const schemaData = {
@@ -550,17 +551,17 @@ export default function Question({
                     {
                         "@type": "ListItem",
                         "position": 2,
-                        "name": question.questionTitle,
-                        "item": `https://helpmechoose.uk/poll/${question_id}`
+                        "name": poll.pollTitle,
+                        "item": `https://helpmechoose.uk/poll/${poll_id}`
                     }
                 ]
             },
             {
                 "@type": "Question",
-                "name": question.questionTitle,
-                "text": question.questionDescription,
-                "answerCount": question.questionOptions.length,
-                "suggestedAnswer": question.questionOptions.map((option) => ({
+                "name": poll.pollTitle,
+                "text": poll.pollDescription,
+                "answerCount": poll.pollOptions.length,
+                "suggestedAnswer": poll.pollOptions.map((option) => ({
                     "@type": "Answer",
                     "name": option.name,
                 }))
@@ -572,107 +573,107 @@ export default function Question({
         <>
             <Helmet>
                 <meta name="robots" content="index, follow" />
-                <link rel="canonical" href={`https://helpmechoose.uk/poll/${question_id}`} />
-                <title>{question.questionTitle} • HelpMeChoose.uk</title>                
-                <meta name="description" content={question.questionDescription} />
+                <link rel="canonical" href={`https://helpmechoose.uk/poll/${poll_id}`} />
+                <title>{poll.pollTitle} • HelpMeChoose.uk</title>                
+                <meta name="description" content={poll.pollDescription} />
                 <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
             </Helmet>
 
             <header>
                 <div aria-label="breadcrumb">
-                    <div><Link to="/">Home</Link> &gt; Poll &gt; {question.questionTitle}</div>
+                    <div><Link to="/">Home</Link> &gt; Poll &gt; {poll.pollTitle}</div>
                 </div>
             </header>
 
             <main>
                 <section>
-                    {isEditingQuestion
+                    {isEditingPoll
                         ? <div>
                             <div className="error">{editTitleError}</div>
                             <InputTitle
-                                title={question.questionTitle}
+                                title={poll.pollTitle}
                                 handleTitle={handleTitle}
                             />
                         </div>                        
-                        : <h1>{question.questionTitle}</h1>
+                        : <h1>{poll.pollTitle}</h1>
                     }
 
-                    {isEditingQuestion
+                    {isEditingPoll
                         ? <div>
                             <div className="error">{editDescriptionError}</div>
                             <InputDescription
-                                description={question.questionDescription}
+                                description={poll.pollDescription}
                                 handleDescription={handleDescription}
                             />
                         </div>
-                        : <p>{question.questionDescription}</p>
+                        : <p>{poll.pollDescription}</p>
                     }
 
-                    {isEditingQuestion
+                    {isEditingPoll
                         ? <div>
                             <InputCategory
-                                category={question.questionCategory}
+                                category={poll.pollCategory}
                                 handleCategory={handleCategory}
                             />
                         </div>
                         : <Link
-                            to={`/?category=${utils.convertToSlug(question.questionCategory)}`}
-                            onClick={() => handleQuestionCategory(question.questionCategory)}
-                        >{question.questionCategory}</Link>
+                            to={`/?category=${utils.convertToSlug(poll.pollCategory)}`}
+                            onClick={() => handlePollCategory(poll.pollCategory)}
+                        >{poll.pollCategory}</Link>
                     }              
                 
-                    {isEditingQuestion
+                    {isEditingPoll
                         ? null
                         : <>
-                            <Link to={`/profile/${question.questionOwnerId}`}>
-                                <div className="question-owner-image-wrapper">
+                            <Link to={`/profile/${poll.pollOwnerId}`}>
+                                <div className="poll-owner-image-wrapper">
                                     <img
-                                        src={question.questionOwnerImageUrl}
-                                        alt={`Profile image of ${question.questionOwnerUsername}`}
-                                        className="question-owner-image"
+                                        src={poll.pollOwnerImageUrl}
+                                        alt={`Profile image of ${poll.pollOwnerUsername}`}
+                                        className="poll-owner-image"
                                     />
                                 </div>
                             </Link>                                     
-                            <Link to={`/profile/${question.questionOwnerId}`}>{question.questionOwnerUsername}</Link>
-                            <div>{utils.formatDate(question.questionCreated)}</div>
+                            <Link to={`/profile/${poll.pollOwnerId}`}>{poll.pollOwnerUsername}</Link>
+                            <div>{utils.formatDate(poll.pollCreated)}</div>
                         </>
                     }
                     
                     <div className="error">{editOptionsError}</div>
                     <div className="error">{updateVoteError}</div>
-                    <div className="error">{updateQuestionError}</div>   
-                    <div className="error">{deleteQuestionError}</div>
+                    <div className="error">{updatePollError}</div>   
+                    <div className="error">{deletePollError}</div>
 
-                    {isConfirmDeleteQuestionVisible
+                    {isConfirmDeletePollVisible
                         ? <div>
-                            <div className="confirm">Delete question? All votes and comments will also be deleted and can't be recovered.</div>
-                            <button onClick={handleDeleteQuestionNo}>No</button>
-                            <button onClick={handleDeleteQuestionYes}>Yes</button>
+                            <div className="confirm">Delete poll? All votes and comments will also be deleted and can't be recovered.</div>
+                            <button onClick={handleDeletePollNo}>No</button>
+                            <button onClick={handleDeletePollYes}>Yes</button>
                         </div>
                         : null
                     }
 
-                    {isEditingQuestion
+                    {isEditingPoll
                         ? <div>
                             <InputOptions
-                                options={question.questionOptions}
+                                options={poll.pollOptions}
                                 handleOptionNames={handleOptionNames}
                                 handleOptionImages={handleOptionImages}
                                 optionImageUrlError={optionImageUrlError}
                             />
-                            {question.questionOptions.length < 5
+                            {poll.pollOptions.length < 5
                                 ? <button onClick={handleAddOption}>Add Option</button>
                                 : null
                             }
                         </div>
-                        : <div className="question-options-wrapper">
-                            {question.questionOptions.map((option, index) => {
+                        : <div className="poll-options-wrapper">
+                            {poll.pollOptions.map((option, index) => {
                                 return (
-                                    <div key={index} className="question-option-wrapper">
+                                    <div key={index} className="poll-option-wrapper">
                                         <div key={index}>{option.name}</div>
 
                                         {option.imageUrl
-                                            ? <img src={option.imageUrl} alt={option.name} className="question-option-image"/>
+                                            ? <img src={option.imageUrl} alt={option.name} className="poll-option-image"/>
                                             : null
                                         }
                                         
@@ -680,7 +681,7 @@ export default function Question({
 
                                         {!user
                                             ? null
-                                            : user.emailVerified && question.questionOwnerId !== user.uid
+                                            : user.emailVerified && poll.pollOwnerId !== user.uid
                                                 ? <button
                                                     onClick={() => handleVote(option.name)}
                                                     disabled={userVote === option.name}
@@ -695,18 +696,18 @@ export default function Question({
 
                     {user &&
                     user.emailVerified &&
-                    user.uid === question.questionOwnerId &&
-                    !isEditingQuestion &&
-                    !isConfirmDeleteQuestionVisible
-                        ? <button onClick={handleEditQuestion}>Edit</button>
+                    user.uid === poll.pollOwnerId &&
+                    !isEditingPoll &&
+                    !isConfirmDeletePollVisible
+                        ? <button onClick={handleEditPoll}>Edit</button>
                         : null
                     }
 
-                    {isEditingQuestion
+                    {isEditingPoll
                         ? <div>
-                            <button onClick={handleCancelEditQuestion}>Cancel</button>
-                            <button onClick={handleUpdateQuestion}>Update</button>
-                            <button onClick={handleDeleteQuestion}>Delete</button>
+                            <button onClick={handleCancelEditPoll}>Cancel</button>
+                            <button onClick={handleUpdatePoll}>Update</button>
+                            <button onClick={handleDeletePoll}>Delete</button>
                         </div>
                         : null
                     }
@@ -747,13 +748,13 @@ export default function Question({
                                             <CommentCard
                                                 key={index}
                                                 commentObject={commentObject}
-                                                page="question"
+                                                page="poll"
                                                 user={user}
                                                 updateComment={updateComment}
                                                 comment={comment}
                                                 setComment={setComment}
-                                                isEditingQuestion={isEditingQuestion}
-                                                setIsEditingQuestion={setIsEditingQuestion}
+                                                isEditingPoll={isEditingPoll}
+                                                setIsEditingPoll={setIsEditingPoll}
                                                 editingCommentId={editingCommentId}
                                                 setEditingCommentId={setEditingCommentId}
                                                 setComments={setComments}
@@ -776,27 +777,27 @@ export default function Question({
                                     <button onClick={() => handleCommentsPageChange(commentsPage + 1)} disabled={isFetchingComments || commentsPage === totalCommentsPages}>Next</button>
                                 </div>
                             </>
-                            : <div>There are no comments for this question.</div>
+                            : <div>There are no comments for this poll.</div>
                         }
                     </>
                 </section>
 
                 <section>
-                    <h2>Latest Questions</h2>
+                    <h2>Latest Polls</h2>
 
-                    <div className="error">{fetchLatestQuestionsError}</div>
+                    <div className="error">{fetchLatestPollsError}</div>
 
-                    {latestQuestions.length === 0
-                        ? <div>There are no questions to display.</div>
-                        : <div className="question-cards-wrapper">
-                            {latestQuestions.map((question, index) => {
+                    {latestPolls.length === 0
+                        ? <div>There are no polls to display.</div>
+                        : <div className="poll-cards-wrapper">
+                            {latestPolls.map((poll, index) => {
                                 return (
-                                    <QuestionCard
+                                    <PollCard
                                         key={index}
-                                        question={question}
-                                        page="question"
-                                        handleQuestionCardCategory={handleQuestionCardCategory}
-                                        handleQuestionCardTitle={handleQuestionCardTitle}
+                                        poll={poll}
+                                        page="poll"
+                                        handlePollCardCategory={handlePollCardCategory}
+                                        handlePollCardTitle={handlePollCardTitle}
                                     />
                                 )
                             })}
@@ -805,21 +806,21 @@ export default function Question({
                 </section>
 
                 <section>
-                    <h2>Related Questions</h2>
+                    <h2>Related Polls</h2>
 
-                    <div className="error">{fetchRelatedQuestionsError}</div>
+                    <div className="error">{fetchRelatedPollsError}</div>
 
-                    {relatedQuestions.length === 0
-                        ? <div>There are no related questions.</div>
-                        : <div className="question-cards-wrapper">
-                            {relatedQuestions.map((question, index) => {
+                    {relatedPolls.length === 0
+                        ? <div>There are no related polls.</div>
+                        : <div className="poll-cards-wrapper">
+                            {relatedPolls.map((poll, index) => {
                                 return (
-                                    <QuestionCard
+                                    <PollCard
                                         key={index}
-                                        question={question}
-                                        page="question"
-                                        handleQuestionCardCategory={handleQuestionCardCategory}
-                                        handleQuestionCardTitle={handleQuestionCardTitle}
+                                        poll={poll}
+                                        page="poll"
+                                        handlePollCardCategory={handlePollCardCategory}
+                                        handlePollCardTitle={handlePollCardTitle}
                                     />
                                 )
                             })}

@@ -3,23 +3,23 @@ import { useState, useEffect } from "react";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { db } from '../firebase';
 import { collection, getDocs, getCountFromServer, query, where, orderBy, limit, startAfter } from 'firebase/firestore';
-import QuestionCard from '../components/QuestionCard';
+import PollCard from '../components/PollCard';
 import InputCategory from '../components/InputCategory';
 import * as utils from '../../utils';
 
-export default function Home({category, setCategory, homepageQuestionPage, setHomepageQuestionPage}) {
+export default function Home({user, category, setCategory, homepagePollPage, setHomepagePollPage}) {
     const [ searchParams ] = useSearchParams();
     const category_slug = searchParams.get("category");
 
     const navigate = useNavigate();
 
-    const [questions, setQuestions] = useState([]);
+    const [polls, setPolls] = useState([]);
     
-    const questionsPerPage = 20;    
+    const pollsPerPage = 20;    
     const [isFetching, setIsFetching] = useState(false);
-    const [totalQuestions, setTotalQuestions] = useState(0);    
-    const totalPages = Math.ceil(totalQuestions / questionsPerPage);
-    const [fetchQuestionsError, setFetchQuestionsError] = useState("");
+    const [totalPolls, setTotalPolls] = useState(0);    
+    const totalPages = Math.ceil(totalPolls / pollsPerPage);
+    const [fetchPollsError, setFetchPollsError] = useState("");
 
     const titleAndH1 = "Get Help Making a Choice";
 
@@ -27,21 +27,21 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
     useEffect(() => {
         window.scrollTo(0, 0);
 
-        const fetchQuestionCount = () => {
-            const questionsRef = collection(db, 'questions');
+        const fetchPollCount = () => {
+            const pollsRef = collection(db, 'polls');
 
             if (!category_slug) {
-                utils.getDocumentCount(getCountFromServer, questionsRef, setTotalQuestions);
+                utils.getDocumentCount(getCountFromServer, pollsRef, setTotalPolls);
             } else {
                 const categoryQuery = query(
-                    questionsRef,
-                    where("questionCategory", "==", utils.convertSlugToCategory(category_slug))
+                    pollsRef,
+                    where("pollCategory", "==", utils.convertSlugToCategory(category_slug))
                 );
-                utils.getDocumentCount(getCountFromServer, categoryQuery, setTotalQuestions);
+                utils.getDocumentCount(getCountFromServer, categoryQuery, setTotalPolls);
             }
         };        
 
-        fetchQuestionCount();
+        fetchPollCount();
     }, [category_slug]);
 
     useEffect(() => {
@@ -49,32 +49,32 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
             setIsFetching,
             collection,
             db,
-            'questions',
-            homepageQuestionPage,
+            'polls',
+            homepagePollPage,
             query,
             category_slug,
             utils.convertSlugToCategory(category_slug),
             where,
-            "questionCategory",
+            "pollCategory",
             orderBy,
-            'questionModified',
+            'pollModified',
             limit,
-            questionsPerPage,
+            pollsPerPage,
             getDocs,
             startAfter,
-            setQuestions,
-            setFetchQuestionsError,
+            setPolls,
+            setFetchPollsError,
         );
-    }, [category_slug, homepageQuestionPage]);
+    }, [category_slug, homepagePollPage]);
 
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= totalPages) {
-            setHomepageQuestionPage(newPage);
+            setHomepagePollPage(newPage);
         }
     };
 
     function handleCategory(event) {
-        setHomepageQuestionPage(1);
+        setHomepagePollPage(1);
         setCategory(event.target.value);
         if (event.target.value === "") {
             navigate("/");
@@ -83,8 +83,8 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
         }
     }
 
-    function handleQuestionCardCategory(category) {
-        setHomepageQuestionPage(1);
+    function handlePollCardCategory(category) {
+        setHomepagePollPage(1);
         setCategory(category);
     }
 
@@ -120,12 +120,16 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
             }
             
             <main>
-                {!category_slug
-                    ? <>
-                        <h1>{titleAndH1}</h1>                        
-                        <p>Get help making a choice by <Link to="/create-a-poll">creating a poll</Link> and getting suggestions and advice from the community.</p>
-                    </>
-                    : <h1>{utils.convertSlugToCategory(category_slug)}</h1>
+                <h1>{titleAndH1}</h1>
+
+                {!user || !user.emailVerified
+                    ? <p>Get help making a choice by creating a poll and getting suggestions and advice from the community.</p>
+                    : <p>Get help making a choice by <Link to="/create-a-poll">creating a poll</Link> and getting suggestions and advice from the community.</p>
+                }                  
+                
+                {category_slug
+                    ? <h2>{utils.convertSlugToCategory(category_slug)}</h2>
+                    : null
                 }
 
                 <InputCategory
@@ -134,29 +138,29 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
                     page={"home"}
                 />
 
-                <div>{fetchQuestionsError}</div>
+                <div className="error">{fetchPollsError}</div>
 
-                {questions.length > 0
+                {polls.length > 0
                     ? <>
-                        <div className="question-cards-wrapper">
-                            {questions.map((question, index) => {
+                        <div className="poll-cards-wrapper">
+                            {polls.map((poll, index) => {
                                 return (
-                                    <QuestionCard
+                                    <PollCard
                                         key={index}
-                                        question={question}
+                                        poll={poll}
                                         page="home"
-                                        handleQuestionCardCategory={handleQuestionCardCategory}
+                                        handlePollCardCategory={handlePollCardCategory}
                                     />
                                 )
                             })}
                         </div>
                         <div>
-                            <button onClick={() => handlePageChange(homepageQuestionPage - 1)} disabled={isFetching || homepageQuestionPage === 1}>Previous</button>
-                            <span>Page {homepageQuestionPage} of {totalPages}</span>
-                            <button onClick={() => handlePageChange(homepageQuestionPage + 1)} disabled={isFetching || homepageQuestionPage === totalPages}>Next</button>
+                            <button onClick={() => handlePageChange(homepagePollPage - 1)} disabled={isFetching || homepagePollPage === 1}>Previous</button>
+                            <span>Page {homepagePollPage} of {totalPages}</span>
+                            <button onClick={() => handlePageChange(homepagePollPage + 1)} disabled={isFetching || homepagePollPage === totalPages}>Next</button>
                         </div>
                     </>
-                    : <div>There are no questions in this category.</div>
+                    : <div>There are no polls to display in this category.</div>
                 }
             </main>
         </>

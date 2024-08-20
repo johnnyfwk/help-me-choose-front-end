@@ -101,15 +101,6 @@ export function extractDocData(collection) {
     return list;
 }
 
-export function sortQuestions(questions) {
-    const questionsSorted = questions.sort((a, b) => {
-        const latestA = a.questionModified ? a.questionModified.seconds : a.questionCreated.seconds;
-        const latestB = b.questionModified ? b.questionModified.seconds : b.questionCreated.seconds;
-        return latestB - latestA;
-    });
-    return questionsSorted;
-}
-
 export function convertToSlug(name) {
     return name
         .toLowerCase()
@@ -211,6 +202,7 @@ export function fetchPaginatedDocuments(
                 setIsFetching(false);
             })
             .catch((error) => {
+                console.log(error);
                 setIsFetching(false);
                 setFetchDocumentsMessage("Could not fetch documents.");
             });
@@ -229,6 +221,7 @@ export function fetchPaginatedDocuments(
             setIsFetching(false);
         })
         .catch((error) => {
+            console.log(error);
             setIsFetching(false);
             setFetchDocumentsMessage("Could not fetch documents.");
         })
