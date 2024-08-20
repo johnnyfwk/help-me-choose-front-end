@@ -537,19 +537,33 @@ export default function Question({
 
     const schemaData = {
         "@context": "https://schema.org",
-        "@type": "BreadcrumbList",
-        "itemListElement": [
+        "@graph": [
             {
-                "@type": "ListItem",
-                "position": 1,
-                "name": "Home",
-                "item": "https://helpmechoose.uk/"
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "Home",
+                        "item": "https://helpmechoose.uk/"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": question.questionTitle,
+                        "item": `https://helpmechoose.uk/poll/${question_id}`
+                    }
+                ]
             },
             {
-                "@type": "ListItem",
-                "position": 2,
+                "@type": "Question",
                 "name": question.questionTitle,
-                "item": `https://helpmechoose.uk/poll/${question_id}`
+                "text": question.questionDescription,
+                "answerCount": question.questionOptions.length,
+                "suggestedAnswer": question.questionOptions.map((option) => ({
+                    "@type": "Answer",
+                    "name": option.name,
+                }))
             }
         ]
     };
