@@ -153,13 +153,13 @@ export default function SignUp({
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://helpmechoose.uk/sign-up" />
                 <title>Sign Up • HelpMeChoose.uk</title>                
-                <meta name="description" content="Sign up to post a question at HelpMeChoose.uk and get help making a choice." />
+                <meta name="description" content="Sign up at HelpMeChoose.uk to create a poll and get help making a choice." />
             </Helmet>
 
             <main>
                 <h1>Sign Up</h1>
 
-                <p>Create an account to post questions and get help making choices from other members.</p>
+                <p>Create an account to create a poll and get help making a choice from other members.</p>
 
                 <p>If you already have an account, <Link to="/login">login</Link> to your account.</p>
 

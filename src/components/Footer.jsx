@@ -15,7 +15,7 @@ export default function Footer({user}) {
                     <div className="links-section-heading">HelpMeChoose.uk</div>
                     <div className="footer-links" onClick={handleFooterLinks}>
                         {user && user.emailVerified
-                            ? <Link to="/post-a-question">Post a Question</Link>
+                            ? <Link to="/create-a-poll">Create a Poll</Link>
                             : null
                         }
                         

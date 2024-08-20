@@ -1,7 +1,7 @@
 import { Helmet } from "react-helmet";
 import { useState, useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { db, auth } from '../firebase';
+import { db } from '../firebase';
 import {
     doc,
     getDoc,

@@ -91,7 +91,7 @@ export default function Profile({
         };
 
         const fetchNumberOfQuestions = () => {
-            const questionsRef = collection(db, "questions");
+            const questionsRef = collection(db, 'questions');
             const questionsQuery = query(questionsRef, where("questionOwnerId", "==", profile_id));
             utils.getDocumentCount(getCountFromServer, questionsQuery, setTotalQuestions);
         };
@@ -194,14 +194,14 @@ export default function Profile({
                 return updateProfile(user, {photoURL: profileImageUrlTrimmed});
             })
             .then(() => {
-                const questionsRef = collection(db, "questions");
+                const questionsRef = collection(db, 'questions');
                 const q = query(questionsRef, where("questionOwnerId", "==", user.uid));
                 return getDocs(q);
             })
             .then((querySnapshot) => {
                 const batchUpdates = [];
                 querySnapshot.forEach((docSnapshot) => {
-                    const docRef = doc(db, "questions", docSnapshot.id);    
+                    const docRef = doc(db, 'questions', docSnapshot.id);    
                     const updatePromise = updateDoc(docRef, {
                         questionOwnerImageUrl: profileImageUrlTrimmed,
                     });    

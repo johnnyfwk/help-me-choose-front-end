@@ -31,7 +31,7 @@ export default function InputOptions({
                             value={option.name ? option.imageUrl : ""}
                             onChange={(event) => handleOptionImages(index, event.target.value)}
                             maxLength="2083"
-                            placeholder={`Option ${index + 1} image URL`}
+                            placeholder={`Option ${index + 1} Image URL`}
                             disabled={!options[index].name}
                         ></input>
                     </div>

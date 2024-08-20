@@ -8,7 +8,7 @@ import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import ResetPassword from './pages/ResetPassword';
 import Question from './pages/Question';
-import PostAQuestion from './pages/PostAQuestion';
+import CreateAPoll from './pages/CreateAPoll';
 import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
@@ -161,10 +161,10 @@ function App() {
                 />
 
                 <Route
-                    path="/post-a-question"
+                    path="/create-a-poll"
                     element={
                         user
-                            ? <PostAQuestion
+                            ? <CreateAPoll
                                 user={user}
                                 setIsPostQuestionSuccessMessageVisible={setIsPostQuestionSuccessMessageVisible}
                             />
@@ -235,21 +235,21 @@ function App() {
             <Footer user={user} />
 
             <div className="message-box success email-verification" style={styleEmailVerificationSuccessMessage}>Verification Email Sent</div>
-            <div className="message-box success login" style={styleLoginSuccessMessage}>You have logged in successfully.</div>
+            <div className="message-box success login" style={styleLoginSuccessMessage}>You have logged in successfully</div>
 
-            <div className="message-box success post-question" style={stylePostQuestionSuccessMessage}>Your question has been posted.</div>
-            <div className="message-box success question-updated" style={styleQuestionUpdatedSuccessMessage}>Your question has been updated.</div>
-            <div className="message-box success question-deleted" style={styleQuestionDeletedSuccessMessage}>Your question has been deleted.</div>
+            <div className="message-box success post-question" style={stylePostQuestionSuccessMessage}>Your question has been posted</div>
+            <div className="message-box success question-updated" style={styleQuestionUpdatedSuccessMessage}>Your question has been updated</div>
+            <div className="message-box success question-deleted" style={styleQuestionDeletedSuccessMessage}>Your question has been deleted</div>
             
-            <div className="message-box success post-comment" style={stylePostCommentSuccessMessage}>Your comment has been posted.</div>            
-            <div className="message-box success comment-updated" style={styleCommentUpdatedSuccessMessage}>Your comment has been updated.</div>
-            <div className="message-box error comment-updated" style={styleCommentUpdatedErrorMessage}>Your comment could not be updated.</div>
-            <div className="message-box success comment-deleted" style={styleCommentDeletedSuccessMessage}>Your comment was deleted.</div>
-            <div className="message-box error comment-deleted" style={styleCommentDeletedErrorMessage}>Your comment could not be deleted.</div>
+            <div className="message-box success post-comment" style={stylePostCommentSuccessMessage}>Your comment has been posted</div>            
+            <div className="message-box success comment-updated" style={styleCommentUpdatedSuccessMessage}>Your comment has been updated</div>
+            <div className="message-box error comment-updated" style={styleCommentUpdatedErrorMessage}>Your comment could not be updated</div>
+            <div className="message-box success comment-deleted" style={styleCommentDeletedSuccessMessage}>Your comment was deleted</div>
+            <div className="message-box error comment-deleted" style={styleCommentDeletedErrorMessage}>Your comment could not be deleted</div>
 
-            <div className="message-box success update-profile-image" style={styleUpdateProfileImageSuccessMessage}>Your profile image has been updated.</div>
-            <div className="message-box success change-password" style={styleChangePasswordSuccessMessage}>Your password has been changed.</div>
-            <div className="message-box success delete-account" style={styleDeleteAccountSuccessMessage}>Your account has been deleted.</div>
+            <div className="message-box success update-profile-image" style={styleUpdateProfileImageSuccessMessage}>Your profile image has been updated</div>
+            <div className="message-box success change-password" style={styleChangePasswordSuccessMessage}>Your password has been changed</div>
+            <div className="message-box success delete-account" style={styleDeleteAccountSuccessMessage}>Your account has been deleted</div>
         </>
     )
 }
