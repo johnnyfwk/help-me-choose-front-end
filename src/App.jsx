@@ -18,6 +18,7 @@ import CookiePolicy from './pages/CookiePolicy';
 import CommunityGuidelines from './pages/CommunityGuidelines';
 import Disclaimer from './pages/Disclaimer';
 import Footer from "./components/Footer";
+import Erro404 from './pages/Error404';
 
 function App() {
     const { user, loading } = useAuth();
@@ -230,7 +231,7 @@ function App() {
 
                 <Route
                     path="*"
-                    element={<Home />}
+                    element={<Erro404 />}
                 />
             </Routes>
             
