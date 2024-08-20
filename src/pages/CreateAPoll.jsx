@@ -11,7 +11,7 @@ import * as utils from '../../utils';
 
 export default function CreateAPoll({
     user,
-    setIsPostQuestionSuccessMessageVisible
+    setIsPostPollSuccessMessageVisible
 }) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -21,7 +21,7 @@ export default function CreateAPoll({
     );
     const [optionsError, setOptionsError] = useState("");
     const [optionImageUrlError, setOptionImageUrlError] = useState({imageUrls: [], msg: "Image URL is not valid"});
-    const [postQuestionError, setPostQuestionError] = useState("");
+    const [postPollError, setPostPollError] = useState("");
 
     const navigate = useNavigate();
 
@@ -63,7 +63,7 @@ export default function CreateAPoll({
         setOptionsError("");
     }
 
-    function handlePostQuestion() {
+    function handlePostPoll() {
         const filteredOptions = options.filter((option) => option.name);
 
         const newOptions = filteredOptions.map((option) => {
@@ -107,21 +107,21 @@ export default function CreateAPoll({
                     return;
                 }
 
-                addDoc(collection(db, 'questions'), {
-                    questionOwnerId: user.uid,
-                    questionOwnerUsername: user.displayName,
-                    questionOwnerImageUrl: user.photoURL,
-                    questionTitle: title.trim(),
-                    questionDescription: description.trim(),
-                    questionCategory: category,
-                    questionOptions: newOptions,
-                    questionCreated: serverTimestamp(),
-                    questionModified: serverTimestamp(),
+                addDoc(collection(db, 'polls'), {
+                    pollOwnerId: user.uid,
+                    pollOwnerUsername: user.displayName,
+                    pollOwnerImageUrl: user.photoURL,
+                    pollTitle: title.trim(),
+                    pollDescription: description.trim(),
+                    pollCategory: category,
+                    pollOptions: newOptions,
+                    pollCreated: serverTimestamp(),
+                    pollModified: serverTimestamp(),
                 })
                 .then(() => {
-                    setIsPostQuestionSuccessMessageVisible(true);
+                    setIsPostPollSuccessMessageVisible(true);
                     setTimeout(() => {
-                        setIsPostQuestionSuccessMessageVisible(false);
+                        setIsPostPollSuccessMessageVisible(false);
                     }, 3000);
                     setTitle("");
                     setDescription("");
@@ -130,7 +130,7 @@ export default function CreateAPoll({
                     navigate('/');
                 })
                 .catch((error) => {
-                    setPostQuestionError("Your question could not be posted.");
+                    setPostPollError("Your poll could not be posted.");
                 });
             })
     }
@@ -174,7 +174,7 @@ export default function CreateAPoll({
                 <h1>Create a Poll</h1>
                 <p>If you need help making a choice, create a poll and let other members vote on your options and offer suggestions and advice.</p>
 
-                <div className="error">{postQuestionError}</div>
+                <div className="error">{postPollError}</div>
 
                 <form>
                     <InputTitle
@@ -205,7 +205,7 @@ export default function CreateAPoll({
                     <input
                         type="button"
                         value="Create Poll"
-                        onClick={handlePostQuestion}
+                        onClick={handlePostPoll}
                         disabled={!title || !description || !category}
                     ></input>
                 </form>

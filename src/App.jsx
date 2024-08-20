@@ -7,7 +7,7 @@ import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import ResetPassword from './pages/ResetPassword';
-import Question from './pages/Question';
+import Poll from './pages/Poll';
 import CreateAPoll from './pages/CreateAPoll';
 import Profile from "./pages/Profile";
 import About from "./pages/About";
@@ -21,16 +21,17 @@ import Footer from "./components/Footer";
 
 function App() {
     const { user, loading } = useAuth();
+    // console.log(user)
 
     const [category, setCategory] = useState("");
-    const [homepageQuestionPage, setHomepageQuestionPage] = useState(1);
+    const [homepagePollPage, setHomepagePollPage] = useState(1);
 
     const [isEmailVerificationSuccessMessageVisible, setIsEmailVerificationSuccessMessageVisible] = useState(false);
     const [isLoginSuccessMessageVisible, setIsLoginSuccessMessageVisible] = useState(false);
 
-    const [isPostQuestionSuccessMessageVisible, setIsPostQuestionSuccessMessageVisible] = useState(false);
-    const [isQuestionUpdatedSuccessMessageVisible, setIsQuestionUpdatedSuccessMessageVisible] = useState(false);
-    const [isQuestionDeletedSuccessMessageVisible, setIsQuestionDeletedSuccessMessageVisible] = useState(false);
+    const [isPostPollSuccessMessageVisible, setIsPostPollSuccessMessageVisible] = useState(false);
+    const [isPollUpdatedSuccessMessageVisible, setIsPollUpdatedSuccessMessageVisible] = useState(false);
+    const [isPollDeletedSuccessMessageVisible, setIsPollDeletedSuccessMessageVisible] = useState(false);
     
     const [isPostCommentSuccessMessageVisible, setIsPostCommentSuccessMessageVisible] = useState(false);
     const [isCommentUpdatedSuccessMessageVisible, setIsCommentUpdatedSuccessMessageVisible] = useState(false);
@@ -46,8 +47,8 @@ function App() {
         bottom: isEmailVerificationSuccessMessageVisible ? "0%" : "-100%"
     };
 
-    const stylePostQuestionSuccessMessage = {
-        bottom: isPostQuestionSuccessMessageVisible ? "0%" : "-100%"
+    const stylePostPollSuccessMessage = {
+        bottom: isPostPollSuccessMessageVisible ? "0%" : "-100%"
     };
 
     const styleLoginSuccessMessage = {
@@ -58,8 +59,8 @@ function App() {
         bottom: isPostCommentSuccessMessageVisible ? "0%" : "-100%"
     };
 
-    const styleQuestionUpdatedSuccessMessage = {
-        bottom: isQuestionUpdatedSuccessMessageVisible ? "0%" : "-100%"
+    const stylePollUpdatedSuccessMessage = {
+        bottom: isPollUpdatedSuccessMessageVisible ? "0%" : "-100%"
     };
 
     const styleCommentUpdatedSuccessMessage = {
@@ -78,8 +79,8 @@ function App() {
         bottom: isCommentDeletedErrorMessageVisible ? "0%" : "-100%"
     };
 
-    const styleQuestionDeletedSuccessMessage = {
-        bottom: isQuestionDeletedSuccessMessageVisible ? "0%" : "-100%"
+    const stylePollDeletedSuccessMessage = {
+        bottom: isPollDeletedSuccessMessageVisible ? "0%" : "-100%"
     };
 
     const styleUpdateProfileImageSuccessMessage = {
@@ -105,10 +106,11 @@ function App() {
                     path="/"
                     element={
                         <Home
+                            user={user}
                             category={category}
                             setCategory={setCategory}
-                            homepageQuestionPage={homepageQuestionPage}
-                            setHomepageQuestionPage={setHomepageQuestionPage}
+                            homepagePollPage={homepagePollPage}
+                            setHomepagePollPage={setHomepagePollPage}
                         />
                     }
                 />
@@ -143,19 +145,19 @@ function App() {
                 />
 
                 <Route
-                    path="/poll/:question_id"
+                    path="/poll/:poll_id"
                     element={
-                        <Question
+                        <Poll
                             user={user}
                             setCategory={setCategory}
-                            setHomepageQuestionPage={setHomepageQuestionPage}
+                            setHomepagePollPage={setHomepagePollPage}
                             setIsPostCommentSuccessMessageVisible={setIsPostCommentSuccessMessageVisible}
-                            setIsQuestionUpdatedSuccessMessageVisible={setIsQuestionUpdatedSuccessMessageVisible}
+                            setIsPollUpdatedSuccessMessageVisible={setIsPollUpdatedSuccessMessageVisible}
                             setIsCommentUpdatedSuccessMessageVisible={setIsCommentUpdatedSuccessMessageVisible}
                             setIsCommentUpdatedErrorMessageVisible={setIsCommentUpdatedErrorMessageVisible}
                             setIsCommentDeletedSuccessMessageVisible={setIsCommentDeletedSuccessMessageVisible}
                             setIsCommentDeletedErrorMessageVisible={setIsCommentDeletedErrorMessageVisible}
-                            setIsQuestionDeletedSuccessMessageVisible={setIsQuestionDeletedSuccessMessageVisible}
+                            setIsPollDeletedSuccessMessageVisible={setIsPollDeletedSuccessMessageVisible}
                         />
                     }
                 />
@@ -166,7 +168,7 @@ function App() {
                         user
                             ? <CreateAPoll
                                 user={user}
-                                setIsPostQuestionSuccessMessageVisible={setIsPostQuestionSuccessMessageVisible}
+                                setIsPostPollSuccessMessageVisible={setIsPostPollSuccessMessageVisible}
                             />
                             : <Navigate to="/login" />
                     }
@@ -193,7 +195,7 @@ function App() {
 
                 <Route
                     path="/about"
-                    element={<About />}
+                    element={<About user={user} />}
                 />
 
                 <Route
@@ -237,9 +239,9 @@ function App() {
             <div className="message-box success email-verification" style={styleEmailVerificationSuccessMessage}>Verification Email Sent</div>
             <div className="message-box success login" style={styleLoginSuccessMessage}>You have logged in successfully</div>
 
-            <div className="message-box success post-question" style={stylePostQuestionSuccessMessage}>Your question has been posted</div>
-            <div className="message-box success question-updated" style={styleQuestionUpdatedSuccessMessage}>Your question has been updated</div>
-            <div className="message-box success question-deleted" style={styleQuestionDeletedSuccessMessage}>Your question has been deleted</div>
+            <div className="message-box success post-poll" style={stylePostPollSuccessMessage}>Your poll has been created</div>
+            <div className="message-box success poll-updated" style={stylePollUpdatedSuccessMessage}>Your poll has been updated</div>
+            <div className="message-box success poll-deleted" style={stylePollDeletedSuccessMessage}>Your poll has been deleted</div>
             
             <div className="message-box success post-comment" style={stylePostCommentSuccessMessage}>Your comment has been posted</div>            
             <div className="message-box success comment-updated" style={styleCommentUpdatedSuccessMessage}>Your comment has been updated</div>

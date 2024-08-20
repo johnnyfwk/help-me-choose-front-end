@@ -5,7 +5,7 @@ import { db } from '../firebase';
 import { updateProfile } from 'firebase/auth';
 import { collection, query, where, getDocs, orderBy, deleteDoc, doc, updateDoc, getCountFromServer, limit, startAfter } from 'firebase/firestore';
 import { deleteUser, sendEmailVerification, reauthenticateWithCredential, EmailAuthProvider, updatePassword } from "firebase/auth";
-import QuestionCard from '../components/QuestionCard';
+import PollCard from '../components/PollCard';
 import CommentCard from '../components/CommentCard';
 import InputProfileImage from '../components/InputProfileImage';
 import InputPassword from '../components/InputPassword';
@@ -29,13 +29,12 @@ export default function Profile({
     const [userProfile, setUserProfile] = useState(null);
     const [getUserProfileError, setGetUserProfileError] = useState("");
 
-    const [questions, setQuestions] = useState([]);
+    const [polls, setPolls] = useState([]);
     const [comments, setComments] = useState([]);
-    const [getQuestionsError, setGetQuestionsError] = useState("");
 
     const [comment, setComment] = useState("");
     const [editingCommentId, setEditingCommentId] = useState(null);
-    const [isEditingQuestion, setIsEditingQuestion] = useState(false);
+    const [isEditingPoll, setIsEditingPoll] = useState(false);
 
     const [isEditingProfileImage, setIsEditingProfileImage] = useState(false);
     const [originalProfileImageUrl, setOriginalProfileImageUrl] = useState("");
@@ -54,11 +53,11 @@ export default function Profile({
 
     const cardsPerPage = 1;
 
-    const [isFetchingQuestions, setIsFetchingQuestions] = useState(false);
-    const [questionsPage, setQuestionsPage] = useState(1);
-    const [totalQuestions, setTotalQuestions] = useState(0);
-    const totalQuestionPages = Math.ceil(totalQuestions / cardsPerPage);   
-    const [fetchQuestionsMessage, setFetchQuestionsMessage] = useState("");
+    const [isFetchingPolls, setIsFetchingPolls] = useState(false);
+    const [pollsPage, setPollsPage] = useState(1);
+    const [totalPolls, setTotalPolls] = useState(0);
+    const totalPollPages = Math.ceil(totalPolls / cardsPerPage);   
+    const [fetchPollsMessage, setFetchPollsMessage] = useState("");
 
     const [isFetchingComments, setIsFetchingComments] = useState(false);
     const [commentsPage, setCommentsPage] = useState(1);
@@ -67,7 +66,7 @@ export default function Profile({
     const [fetchCommentsMessage, setFetchCommentsMessage] = useState("");
 
     useEffect(() => {
-        setQuestionsPage(1);
+        setPollsPage(1);
         setCommentsPage(1);
 
         const fetchUserProfile = () => {
@@ -90,10 +89,10 @@ export default function Profile({
                 });
         };
 
-        const fetchNumberOfQuestions = () => {
-            const questionsRef = collection(db, 'questions');
-            const questionsQuery = query(questionsRef, where("questionOwnerId", "==", profile_id));
-            utils.getDocumentCount(getCountFromServer, questionsQuery, setTotalQuestions);
+        const fetchNumberOfPolls = () => {
+            const pollsRef = collection(db, 'polls');
+            const pollsQuery = query(pollsRef, where("pollOwnerId", "==", profile_id));
+            utils.getDocumentCount(getCountFromServer, pollsQuery, setTotalPolls);
         };
 
         const fetchNumberOfComments = () => {
@@ -103,33 +102,33 @@ export default function Profile({
         }
 
         fetchUserProfile();
-        fetchNumberOfQuestions();
+        fetchNumberOfPolls();
         fetchNumberOfComments();
     }, [profile_id])
 
-    // Fetch questions
+    // Fetch polls
     useEffect(() => {
         utils.fetchPaginatedDocuments(
-            setIsFetchingQuestions,
+            setIsFetchingPolls,
             collection,
             db,
-            'questions',
-            questionsPage,
+            'polls',
+            pollsPage,
             query,
             profile_id,
             profile_id,
             where,
-            "questionOwnerId",
+            "pollOwnerId",
             orderBy,
-            'questionModified',
+            'pollModified',
             limit,
             cardsPerPage,
             getDocs,
             startAfter,
-            setQuestions,
-            setFetchQuestionsMessage,
+            setPolls,
+            setFetchPollsMessage,
         );
-    }, [questionsPage])
+    }, [pollsPage])
 
     // Fetch comments
     useEffect(() => {
@@ -194,23 +193,23 @@ export default function Profile({
                 return updateProfile(user, {photoURL: profileImageUrlTrimmed});
             })
             .then(() => {
-                const questionsRef = collection(db, 'questions');
-                const q = query(questionsRef, where("questionOwnerId", "==", user.uid));
+                const pollsRef = collection(db, 'polls');
+                const q = query(pollsRef, where("pollOwnerId", "==", user.uid));
                 return getDocs(q);
             })
             .then((querySnapshot) => {
                 const batchUpdates = [];
                 querySnapshot.forEach((docSnapshot) => {
-                    const docRef = doc(db, 'questions', docSnapshot.id);    
+                    const docRef = doc(db, 'polls', docSnapshot.id);    
                     const updatePromise = updateDoc(docRef, {
-                        questionOwnerImageUrl: profileImageUrlTrimmed,
+                        pollOwnerImageUrl: profileImageUrlTrimmed,
                     });    
                     batchUpdates.push(updatePromise);
                 });
             })
             .then(() => {
-                const questionsRef = collection(db, "comments");
-                const q = query(questionsRef, where("commentOwnerId", "==", user.uid));
+                const pollsRef = collection(db, "comments");
+                const q = query(pollsRef, where("commentOwnerId", "==", user.uid));
                 return getDocs(q);
             })
             .then((querySnapshot) => {
@@ -262,14 +261,15 @@ export default function Profile({
     }
 
     function handleDeleteAccountYes() {
+        setIsDeletingAccount(false);
         const usersQuery = query(
             collection(db, 'users'),
             where('userId', '==', user.uid)
         );
 
-        const questionsQuery = query(
-            collection(db, 'questions'),
-            where('questionOwnerId', '==', user.uid)
+        const pollsQuery = query(
+            collection(db, 'polls'),
+            where('pollOwnerId', '==', user.uid)
         );
 
         const commentsQuery = query(
@@ -285,15 +285,17 @@ export default function Profile({
                 return Promise.all(deleteCommentPromises);
             })
             .then((response) => {
-                return getDocs(questionsQuery);
+                console.log(response)
+                return getDocs(pollsQuery);
             })
-            .then((questionsSnapshot) => {
-                const deleteQuestiondsPromises = questionsSnapshot.docs.map((questionDoc) => {
-                    return deleteDoc(questionDoc.ref);
+            .then((pollsSnapshot) => {
+                const deletePollsPromises = pollsSnapshot.docs.map((pollDoc) => {
+                    return deleteDoc(pollDoc.ref);
                 });
-                return Promise.all(deleteQuestiondsPromises);
+                return Promise.all(deletePollsPromises);
             })
             .then((response) => {
+                console.log(response)
                 return getDocs(usersQuery);
             })
             .then((usersSnapshot) => {
@@ -303,6 +305,7 @@ export default function Profile({
                 return Promise.all(deleteUsersPromises);
             })
             .then((response) => {
+                console.log(response)
                 return deleteUser(user);
             })
             .then(() => {
@@ -314,6 +317,7 @@ export default function Profile({
                 navigate('/');
             })
             .catch((error) => {
+                console.log(error)
                 setDeleteAccountError("Your account could not be deleted.");
             });
     }
@@ -374,9 +378,9 @@ export default function Profile({
             })
     }
 
-    const handleQuestionPageChange = (newPage) => {
-        if (newPage > 0 && newPage <= totalQuestionPages) {
-            setQuestionsPage(newPage);
+    const handlePollPageChange = (newPage) => {
+        if (newPage > 0 && newPage <= totalPollPages) {
+            setPollsPage(newPage);
         }
     };
 
@@ -386,7 +390,7 @@ export default function Profile({
         }
     };
 
-    function handleQuestionCardCategory(category) {
+    function handlePollCardCategory(category) {
         setCategory(category);
     }
 
@@ -427,7 +431,7 @@ export default function Profile({
 
                     {user && profile_id === user.uid && !user.emailVerified
                         ? <>
-                            <p>Your email address has not been verified. Please check your email and verify it to post questions and comments, vote on other members' questions, and edit your profile.</p>
+                            <p>Your email address has not been verified. Please check your email and verify it to create polls and comments, vote on other members' polls, and edit your profile.</p>
                             <p>If you can't see the email in your Inbox, it may appear in your spam folder.</p>
                             <p>Once you have verified your account, refresh the page to gain full access to features.</p>
                             <div>{resendVerificationEmailMessage}</div>
@@ -487,41 +491,40 @@ export default function Profile({
 
                     {isDeletingAccount
                         ? <div>
-                            <div className="confirm">Delete profile? Your account, questions, and comments will be permanently deleted.</div>
+                            <div className="confirm">Delete account? Your polls and comments will be deleted permanently.</div>
                             <button onClick={handleDeleteAccountNo}>No</button>
                             <button onClick={handleDeleteAccountYes}>Yes</button>
                         </div>
                         : null
                     }
 
-                    <h2>Questions</h2>
+                    <h2>Polls</h2>
 
-                    <div className="error">{getQuestionsError}</div>
-                    <div className="error">{fetchQuestionsMessage}</div>
+                    <div className="error">{fetchPollsMessage}</div>
 
-                    {questions.length > 0
+                    {polls.length > 0
                         ? <>
-                            <div className="question-cards-wrapper">
-                                {questions.map((question, index) => {
+                            <div className="poll-cards-wrapper">
+                                {polls.map((poll, index) => {
                                     return (
-                                        <QuestionCard
+                                        <PollCard
                                             key={index}
-                                            question={question}
+                                            poll={poll}
                                             page="profile"
-                                            handleQuestionCardCategory={handleQuestionCardCategory}
+                                            handlePollCardCategory={handlePollCardCategory}
                                         />
                                     )
                                 })}
                             </div>
                             <div>
-                                <button onClick={() => handleQuestionPageChange(questionsPage - 1)} disabled={isFetchingQuestions || questionsPage === 1}>Previous</button>
-                                <span>Page {questionsPage} of {totalQuestionPages}</span>
-                                <button onClick={() => handleQuestionPageChange(questionsPage + 1)} disabled={isFetchingQuestions || questionsPage === totalQuestionPages}>Next</button>
+                                <button onClick={() => handlePollPageChange(pollsPage - 1)} disabled={isFetchingPolls || pollsPage === 1}>Previous</button>
+                                <span>Page {pollsPage} of {totalPollPages}</span>
+                                <button onClick={() => handlePollPageChange(pollsPage + 1)} disabled={isFetchingPolls || pollsPage === totalPollPages}>Next</button>
                             </div>
                         </>
                         : profile_id === user.uid
-                            ? <p>You haven't posted any questions yet.</p>
-                            : <p>This user hasn't posted any questions yet.</p>
+                            ? <p>You haven't created any polls yet.</p>
+                            : <p>This user hasn't created any polls yet.</p>
                     }
                 </section>
                 
@@ -543,8 +546,8 @@ export default function Profile({
                                             updateComment={updateComment}
                                             comment={comment}
                                             setComment={setComment}
-                                            isEditingQuestion={isEditingQuestion}
-                                            setIsEditingQuestion={setIsEditingQuestion}
+                                            isEditingPoll={isEditingPoll}
+                                            setIsEditingPoll={setIsEditingPoll}
                                             editingCommentId={editingCommentId}
                                             setEditingCommentId={setEditingCommentId}
                                             setComments={setComments}

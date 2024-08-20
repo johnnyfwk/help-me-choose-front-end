@@ -15,18 +15,18 @@
     --confirm: orange;
 
     --main-background: rgb(255, 227, 231);
-    --questions-wrapper-background: orange;
-    --question-wrapper-background: rgb(232, 128, 0);
-    --question-options-wrapper-background: rgb(0, 167, 167);
-    --question-option-wrapper-background: cyan;
+    --polls-wrapper-background: orange;
+    --poll-wrapper-background: rgb(232, 128, 0);
+    --poll-options-wrapper-background: rgb(0, 167, 167);
+    --poll-option-wrapper-background: cyan;
     --comments-wrapper: rgb(230, 77, 230);
     --comment-card-background-colour: violet;
 
     --max-height-image: 400px;
 
     --profile-image-dimensions: 200px;
-    --question-owner-image: 50px;
-    --question-card-user-image-dimensions: 50px;
+    --poll-owner-image: 50px;
+    --poll-card-user-image-dimensions: 50px;
     --comment-card-user-image-dimensions: 50px;
 }
 
@@ -99,25 +99,25 @@ main {
 }
 
 /************************ HOMEPAGE ************************/
-.question-cards-wrapper {
-    background-color: var(--questions-wrapper-background);
+.poll-cards-wrapper {
+    background-color: var(--polls-wrapper-background);
     display: grid;
     gap: 20px;
 }
 
-.question-card-wrapper {
-    background-color: var(--question-wrapper-background);
+.poll-card-wrapper {
+    background-color: var(--poll-wrapper-background);
 }
 
-.question-card-user-image-wrapper {
+.poll-card-user-image-wrapper {
     width: 100%;
-    max-width: var(--question-card-user-image-dimensions);
+    max-width: var(--poll-card-user-image-dimensions);
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     overflow: hidden; 
 }
 
-.question-card-user-image {
+.poll-card-user-image {
     height: 100%;
     object-fit: cover;  
 }
@@ -125,28 +125,28 @@ main {
 
 
 
-/************************ QUESTION PAGE ************************/
-.question-owner-image-wrapper {
+/************************ POLL PAGE ************************/
+.poll-owner-image-wrapper {
     width: 100%;
-    max-width: var(--question-owner-image);
+    max-width: var(--poll-owner-image);
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     overflow: hidden;  
 }
 
-.question-owner-image {
+.poll-owner-image {
     height: 100%;
     object-fit: cover;  
 }
 
-.question-options-wrapper {
-    background-color: var(--question-options-wrapper-background);
+.poll-options-wrapper {
+    background-color: var(--poll-options-wrapper-background);
     display: grid;
     gap: 20px;
 }
 
-.question-option-wrapper {
-    background-color: var(--question-option-wrapper-background);
+.poll-option-wrapper {
+    background-color: var(--poll-option-wrapper-background);
 }
 
 .comment-card-user-image-wrapper {
@@ -165,7 +165,7 @@ main {
 .like-comment-user-verified {
     cursor: pointer;
 }
-/************************ QUESTION PAGE ************************/
+/************************ POLL PAGE ************************/
 
 
 #input-options {
