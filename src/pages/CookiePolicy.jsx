@@ -1,6 +1,26 @@
 import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
 
 export default function CookiePolicy() {
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://helpmechoose.uk/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Cookie Policy",
+                "item": "https://helpmechoose.uk/cookie-policy"
+            }
+        ]
+    };
+
     return (
         <>
             <Helmet>
@@ -8,7 +28,14 @@ export default function CookiePolicy() {
                 <link rel="canonical" href="https://helpmechoose.uk/cookie-policy" />
                 <title>Cookie Policy • HelpMeChoose.uk</title>                
                 <meta name="description" content="Read the Cookie Policy for HelpMeChoose.uk." />
+                <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
             </Helmet>
+
+            <header>
+                <div aria-label="breadcrumb">
+                    <div><Link to="/">Home</Link> &gt; Cookie Policy</div>
+                </div>
+            </header>
 
             <main>
                 <h1>Cookie Policy</h1>

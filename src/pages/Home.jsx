@@ -88,6 +88,18 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
         setCategory(category);
     }
 
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Home",
+        "url": "https://helpmechoose.uk/",
+        "about": {
+            "@type": "Organization",
+            "name": "HelpMeChoose.uk",
+            "url": "https://helpmechoose.uk/"
+        }
+    }
+
     return (
         <>
             {!category_slug
@@ -96,12 +108,14 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
                     <link rel="canonical" href="https://helpmechoose.uk/" />
                     <title>{titleAndH1} • HelpMeChoose.uk</title>                
                     <meta name="description" content="Get help making a choice by creating a poll and getting suggestions and advice from the community." />
+                    <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
                 </Helmet>
                 : <Helmet>
                     <meta name="robots" content="index, follow" />
                     <link rel="canonical" href={`https://helpmechoose.uk/?category=${category_slug}`} />
                     <title>{utils.convertSlugToCategory(category_slug)} • HelpMeChoose.uk</title>                
                     <meta name="description" content={`Help others make a choice related to ${utils.convertSlugToCategory(category_slug)}.`} />
+                    <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
                 </Helmet>
             }
             

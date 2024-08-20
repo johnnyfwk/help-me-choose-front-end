@@ -39,6 +39,25 @@ export default function Login({setIsLoginSuccessMessageVisible}) {
             })
     }
 
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://helpmechoose.uk/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Login",
+                "item": "https://helpmechoose.uk/login"
+            }
+        ]
+    };
+
     return (
         <>
             <Helmet>
@@ -46,7 +65,14 @@ export default function Login({setIsLoginSuccessMessageVisible}) {
                 <link rel="canonical" href="https://helpmechoose.uk/login" />
                 <title>Login • HelpMeChoose.uk</title>                
                 <meta name="description" content="Login to your HelpMeChoose.uk account." />
+                <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
             </Helmet>
+
+            <header>
+                <div aria-label="breadcrumb">
+                    <div><Link to="/">Home</Link> &gt; Login</div>
+                </div>
+            </header>
 
             <main>
                 <h1>Login</h1>

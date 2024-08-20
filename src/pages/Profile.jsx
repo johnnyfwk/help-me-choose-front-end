@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { updateProfile } from 'firebase/auth';
 import { collection, query, where, getDocs, orderBy, deleteDoc, doc, updateDoc, getCountFromServer, limit, startAfter } from 'firebase/firestore';
@@ -406,6 +406,12 @@ export default function Profile({
                 <title>Profile: {userProfile[0].displayName} • HelpMeChoose.uk</title>                
                 <meta name="description" content={`Profile of ${userProfile[0].displayName} on HelpMeChoose.uk.`} />
             </Helmet>
+
+            <header>
+                <div aria-label="breadcrumb">
+                    <div><Link to="/">Home</Link> &gt; Profile</div>
+                </div>
+            </header>
 
             <main>
                 <section>

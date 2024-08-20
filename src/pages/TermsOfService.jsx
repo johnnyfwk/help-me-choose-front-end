@@ -1,6 +1,26 @@
 import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
 
 export default function TermsOfService() {
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://helpmechoose.uk/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Terms of Service",
+                "item": "https://helpmechoose.uk/terms-of-service"
+            }
+        ]
+    };
+
     return (
         <>
             <Helmet>
@@ -8,7 +28,14 @@ export default function TermsOfService() {
                 <link rel="canonical" href="https://helpmechoose.uk/terms-of-service" />
                 <title>Terms of Service • HelpMeChoose.uk</title>                
                 <meta name="description" content="Read the Terms of Service for HelpMeChoose.uk." />
+                <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
             </Helmet>
+
+            <header>
+                <div aria-label="breadcrumb">
+                    <div><Link to="/">Home</Link> &gt; Terms of Service</div>
+                </div>
+            </header>
 
             <main>
                 <h1>Terms of Service</h1>

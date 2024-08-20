@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import InputTitle from "../components/InputTitle";
 import InputDescription from "../components/InputDescription";
@@ -135,6 +135,25 @@ export default function CreateAPoll({
             })
     }
 
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://helpmechoose.uk/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Create a Poll",
+                "item": "https://helpmechoose.uk/create-a-poll"
+            }
+        ]
+    };
+
     return (
         <>
             <Helmet>
@@ -142,7 +161,14 @@ export default function CreateAPoll({
                 <link rel="canonical" href="https://helpmechoose.uk/create-a-poll" />
                 <title>Create a Poll • HelpMeChoose.uk</title>                
                 <meta name="description" content="Create a poll and get help making a choice." />
+                <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
             </Helmet>
+
+            <header>
+                <div aria-label="breadcrumb">
+                    <div><Link to="/">Home</Link> &gt; Create a Poll</div>
+                </div>
+            </header>
 
             <main>
                 <h1>Create a Poll</h1>

@@ -1,6 +1,26 @@
 import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
 
 export default function Disclaimer() {
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://helpmechoose.uk/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Disclaimer",
+                "item": "https://helpmechoose.uk/disclaimer"
+            }
+        ]
+    };
+
     return (
         <>
             <Helmet>
@@ -8,7 +28,14 @@ export default function Disclaimer() {
                 <link rel="canonical" href="https://helpmechoose.uk/disclaimer" />
                 <title>Disclaimer • HelpMeChoose.uk</title>                
                 <meta name="description" content="Read the Disclaimer for HelpMeChoose.uk." />
+                <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
             </Helmet>
+
+            <header>
+                <div aria-label="breadcrumb">
+                    <div><Link to="/">Home</Link> &gt; Disclaimer</div>
+                </div>
+            </header>
 
             <main>
                 <h1>Disclaimer</h1>

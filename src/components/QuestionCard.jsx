@@ -24,7 +24,7 @@ export default function QuestionCard({
                 </div> 
                 : null
             }
-            <Link to={`/question/${question.id}`} onClick={handleQuestionCardTitle}>{question.questionTitle}</Link>
+            <Link to={`/poll/${question.id}`} onClick={handleQuestionCardTitle}>{question.questionTitle}</Link>
             <p>{question.questionDescription}</p>
             <Link
                 to={`/?category=${utils.convertToSlug(question.questionCategory)}`}

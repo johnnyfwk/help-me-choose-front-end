@@ -143,7 +143,7 @@ function App() {
                 />
 
                 <Route
-                    path="/question/:question_id"
+                    path="/poll/:question_id"
                     element={
                         <Question
                             user={user}
