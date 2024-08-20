@@ -21,7 +21,9 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
     const totalPages = Math.ceil(totalQuestions / questionsPerPage);
     const [fetchQuestionsError, setFetchQuestionsError] = useState("");
 
-    // Get total number of questions to determine pagination
+    const titleAndH1 = "Get Help Making a Choice";
+
+    
     useEffect(() => {
         window.scrollTo(0, 0);
 
@@ -88,17 +90,30 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
 
     return (
         <>
-            <Helmet>
-                <meta name="robots" content="index, follow" />
-                <link rel="canonical" href="https://helpmechoose.uk/" />
-                <title>Let others help you make a choice • HelpMeChoose.uk</title>                
-                <meta name="description" content="Post a question and let others help you make a choice." />
-            </Helmet>
-
+            {!category_slug
+                ? <Helmet>
+                    <meta name="robots" content="index, follow" />
+                    <link rel="canonical" href="https://helpmechoose.uk/" />
+                    <title>{titleAndH1} • HelpMeChoose.uk</title>                
+                    <meta name="description" content="Post a question and get help from others to make a choice." />
+                </Helmet>
+                : <Helmet>
+                    <meta name="robots" content="index, follow" />
+                    <link rel="canonical" href={`https://helpmechoose.uk/?category=${category_slug}`} />
+                    <title>{utils.convertSlugToCategory(category_slug)} • HelpMeChoose.uk</title>                
+                    <meta name="description" content={`Help others make a choice related to ${utils.convertSlugToCategory(category_slug)}.`} />
+                </Helmet>
+            }
+            
             <main>
-                <h1>Let others help you make a choice</h1>
-
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin tincidunt tellus eu mattis gravida. Praesent et lacinia elit. Phasellus mauris orci, ultricies id ipsum quis, mollis aliquet diam. Curabitur sollicitudin, nisi vel rhoncus porta, ligula odio volutpat leo, vitae sodales dui justo non tortor.</p>
+                {!category_slug
+                    ? <>
+                        <h1>{titleAndH1}</h1>
+                        <p>Can't decide between pizza, curry, or tacos for dinner tonight? Not sure whether to get the latest Google Pixel or iPhone? Are you torn between visiting the Taj Mahal in India or the Colosseum in Italy?</p>
+                        <p></p>
+                    </>
+                    : <h1>{utils.convertSlugToCategory(category_slug)}</h1>
+                }
 
                 <InputCategory
                     category={category}

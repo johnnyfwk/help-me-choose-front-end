@@ -45,7 +45,7 @@ export default function Login({setIsLoginSuccessMessageVisible}) {
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://helpmechoose.uk/login" />
                 <title>Login • HelpMeChoose.uk</title>                
-                <meta name="description" content="Login to HelpMeChoose.uk." />
+                <meta name="description" content="Login to your HelpMeChoose.uk account." />
             </Helmet>
 
             <main>

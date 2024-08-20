@@ -401,10 +401,10 @@ export default function Profile({
     return (
         <>
             <Helmet>
-                <meta name="robots" content="noindex, nofollow" />
+                <meta name="robots" content="noindex, follow" />
                 <link rel="canonical" href="https://helpmechoose.uk/" />
                 <title>Profile: {userProfile[0].displayName} • HelpMeChoose.uk</title>                
-                <meta name="description" content="User's profile on HelpMeChoose.uk." />
+                <meta name="description" content={`Profile of ${userProfile[0].displayName} on HelpMeChoose.uk.`} />
             </Helmet>
 
             <main>
