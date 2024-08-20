@@ -15,7 +15,7 @@ export default function InputCategory({
                 value={category}
                 onChange={handleCategory}
             >
-                {page === "post a question"
+                {page === "create a poll"
                     ? <option value="" disabled>Select a Category</option>
                     : null
                 }                

@@ -9,7 +9,7 @@ import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import * as utils from '../../utils';
 
-export default function PostAQuestion({
+export default function CreateAPoll({
     user,
     setIsPostQuestionSuccessMessageVisible
 }) {
@@ -139,14 +139,14 @@ export default function PostAQuestion({
         <>
             <Helmet>
                 <meta name="robots" content="index, follow" />
-                <link rel="canonical" href="https://helpmechoose.uk/post-a-question" />
-                <title>Post a Question • HelpMeChoose.uk</title>                
-                <meta name="description" content="Post a question and get responses from other members to help you make a choice." />
+                <link rel="canonical" href="https://helpmechoose.uk/create-a-poll" />
+                <title>Create a Poll • HelpMeChoose.uk</title>                
+                <meta name="description" content="Create a poll and get help making a choice." />
             </Helmet>
 
             <main>
-                <h1>Post a Question</h1>
-                <p>If you need help making a choice, post a question and let other members vote on your options and offer suggestions and advice.</p>
+                <h1>Create a Poll</h1>
+                <p>If you need help making a choice, create a poll and let other members vote on your options and offer suggestions and advice.</p>
 
                 <div className="error">{postQuestionError}</div>
 
@@ -164,7 +164,7 @@ export default function PostAQuestion({
                     <InputCategory
                         category={category}
                         handleCategory={handleCategory}
-                        page={"post a question"}
+                        page={"create a poll"}
                     />
 
                     <div className="error">{optionsError}</div>
@@ -178,7 +178,7 @@ export default function PostAQuestion({
                     
                     <input
                         type="button"
-                        value="Post Question"
+                        value="Create Poll"
                         onClick={handlePostQuestion}
                         disabled={!title || !description || !category}
                     ></input>

@@ -10,7 +10,7 @@ export default function InputTitle({
             value={title}
             onChange={handleTitle}
             maxLength="100"
-            placeholder="Enter your question title"
+            placeholder="Poll Title"
             required
         ></input>
     )

@@ -7,7 +7,7 @@ export default function Nav({user}) {
     return (
         <nav>
             {user && user.emailVerified
-                ? <Link to="/post-a-question">Post a Question</Link>
+                ? <Link to="/create-a-poll">Create a Poll</Link>
                 : null
             }
 

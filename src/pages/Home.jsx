@@ -28,7 +28,7 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
         window.scrollTo(0, 0);
 
         const fetchQuestionCount = () => {
-            const questionsRef = collection(db, "questions");
+            const questionsRef = collection(db, 'questions');
 
             if (!category_slug) {
                 utils.getDocumentCount(getCountFromServer, questionsRef, setTotalQuestions);
@@ -95,7 +95,7 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
                     <meta name="robots" content="index, follow" />
                     <link rel="canonical" href="https://helpmechoose.uk/" />
                     <title>{titleAndH1} • HelpMeChoose.uk</title>                
-                    <meta name="description" content="Post a question and get help from others to make a choice." />
+                    <meta name="description" content="Get help making a choice by creating a poll and letting other members vote on your options and offer suggestions and advice." />
                 </Helmet>
                 : <Helmet>
                     <meta name="robots" content="index, follow" />
