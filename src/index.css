@@ -28,6 +28,7 @@
     --poll-owner-image: 50px;
     --poll-card-user-image-dimensions: 50px;
     --comment-card-user-image-dimensions: 50px;
+    --nav-button-dimensions: 30px;
 }
 
 * {
@@ -83,10 +84,50 @@ textarea {
 
 #logo {
     background-color: cyan;
+    font-size: 1.5rem;
+    display: grid;
+    position: sticky;
+    top: 0;
+}
+
+#nav-button {
+    background-color: lime;
+    cursor: pointer;
+    width: var(--nav-button-dimensions);
+    height: var(--nav-button-dimensions);
+    position: fixed;
+    top: 0;
+    right: 0;
+    transition: transform 0.3s ease;
+    z-index: 2;
+}
+
+#nav-button > div {
+    background-color: black;
+    width: 100%;
+    height: 5px;
+    position: absolute;
+    top: 50%;
+}
+
+#nav-button > div:first-of-type {
+    transform: translate(0%, -50%);
+}
+
+#nav-button > div:last-of-type {
+    transform: translate(0%, -50%) rotate(90deg);
 }
 
 nav {
     background-color: lightgrey;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    left: 100%;
+    display: grid;
+    align-content: start;
+    text-align: center;
+    transition: left 0.3s ease;
 }
 
 main {
@@ -203,4 +244,22 @@ footer {
 .links-section-heading {
     font-weight: bold;
 }
-  
+
+
+
+@media screen and (min-width: 769px) {
+    #nav-button {
+        display: none;
+    }
+
+    nav {
+        position: initial;
+        width: initial;
+        height: initial;
+        left: initial;
+        display: initial;
+        align-content: initial;
+        text-align: initial;
+        margin-left: 20px;
+    }
+}

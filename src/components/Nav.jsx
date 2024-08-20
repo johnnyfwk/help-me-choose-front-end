@@ -1,24 +1,33 @@
 import { Link } from "react-router-dom";
 import { useAuth } from '../AuthContext';
 
-export default function Nav({user}) {
+export default function Nav({user, isNavVisible, setIsNavVisible}) {
     const { logout } = useAuth();
 
+    function handleNav() {
+        setIsNavVisible((currentVisibility) => !currentVisibility);
+        window.scrollTo(0, 0);
+    }
+
+    const styleNav = {
+        left: isNavVisible ? "0%" : "100%"
+    };
+
     return (
-        <nav>
+        <nav style={styleNav} onClick={handleNav}>
             {user && user.emailVerified
-                ? <Link to="/create-a-poll">Create a Poll</Link>
+                ? <div><Link to="/create-a-poll">Create a Poll</Link></div>
                 : null
             }
 
             {user
                 ? <>
-                    <Link to={`/profile/${user.uid}`}>Profile</Link>
+                    <div><Link to={`/profile/${user.uid}`}>Profile</Link></div>
                     <span onClick={logout} id="logout-button">Logout</span>
                 </>
                 : <>
-                    <Link to="/sign-up">Sign Up</Link>
-                    <Link to="/login">Login</Link>
+                    <div><Link to="/sign-up">Sign Up</Link></div>
+                    <div><Link to="/login">Login</Link></div>
                 </>
             }
         </nav>
