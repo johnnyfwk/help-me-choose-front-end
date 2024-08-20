@@ -164,7 +164,7 @@ export default function CommentCard({
             }
             
             {page === "profile"
-                ? <Link to={`/question/${commentObject.questionId}`}>{commentObject.questionTitle}</Link>
+                ? <Link to={`/poll/${commentObject.questionId}`}>{commentObject.questionTitle}</Link>
                 : null
             }
 

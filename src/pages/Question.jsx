@@ -521,28 +521,54 @@ export default function Question({
         if (newPage > 0 && newPage <= totalCommentsPages) {
             setCommentsPage(newPage);
         }
-    }
+    }  
 
     if (isLoading) {
         return <p>Loading...</p>;
     }
 
     if (!question) {
-        return null;
+        return <div className="error">Could not retrieve question.</div>;
     }
 
     if (getQuestionError) {
-        return <p>{getQuestionError}</p>;
+        return <div className="error">Error: {getQuestionError}</div>;
     }
+
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://helpmechoose.uk/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": question.questionTitle,
+                "item": `https://helpmechoose.uk/poll/${question_id}`
+            }
+        ]
+    };
 
     return (
         <>
             <Helmet>
                 <meta name="robots" content="index, follow" />
-                <link rel="canonical" href={`https://helpmechoose.uk/question/${question_id}`} />
+                <link rel="canonical" href={`https://helpmechoose.uk/poll/${question_id}`} />
                 <title>{question.questionTitle} • HelpMeChoose.uk</title>                
                 <meta name="description" content={question.questionDescription} />
+                <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
             </Helmet>
+
+            <header>
+                <div aria-label="breadcrumb">
+                    <div><Link to="/">Home</Link> &gt; Poll &gt; {question.questionTitle}</div>
+                </div>
+            </header>
 
             <main>
                 <section>

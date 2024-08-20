@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Helmet } from 'react-helmet';
 import InputEmail from '../components/InputEmail';
 import { sendPasswordResetEmail } from "firebase/auth";
@@ -34,6 +34,25 @@ export default function ResetPassword() {
             })
     }
 
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://helpmechoose.uk/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Reset Password",
+                "item": "https://helpmechoose.uk/reset-password"
+            }
+        ]
+    };
+
     return (
         <>
             <Helmet>
@@ -41,7 +60,14 @@ export default function ResetPassword() {
                 <link rel="canonical" href="https://helpmechoose.uk/reset-password" />
                 <title>Reset Password • HelpMeChoose.uk</title>                
                 <meta name="description" content="Reset the password for your HelpMeChoose.uk account." />
+                <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
             </Helmet>
+
+            <header>
+                <div aria-label="breadcrumb">
+                    <div><Link to="/">Home</Link> &gt; Reset Password</div>
+                </div>
+            </header>
 
             <main>
                 <h1>Reset Password</h1>

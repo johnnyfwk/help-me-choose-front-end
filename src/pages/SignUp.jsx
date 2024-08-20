@@ -147,6 +147,25 @@ export default function SignUp({
         let userId;
     }
 
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://helpmechoose.uk/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Sign Up",
+                "item": "https://helpmechoose.uk/sign-up"
+            }
+        ]
+    };
+
     return (
         <>
             <Helmet>
@@ -154,7 +173,14 @@ export default function SignUp({
                 <link rel="canonical" href="https://helpmechoose.uk/sign-up" />
                 <title>Sign Up • HelpMeChoose.uk</title>                
                 <meta name="description" content="Sign up at HelpMeChoose.uk to create a poll and get help making a choice." />
+                <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
             </Helmet>
+
+            <header>
+                <div aria-label="breadcrumb">
+                    <div><Link to="/">Home</Link> &gt; Sign Up</div>
+                </div>
+            </header>
 
             <main>
                 <h1>Sign Up</h1>

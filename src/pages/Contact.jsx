@@ -1,6 +1,26 @@
 import { Helmet } from "react-helmet";
+import { Link } from "react-router-dom";
 
 export default function Contact() {
+    const schemaData = {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": "https://helpmechoose.uk/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Contact",
+                "item": "https://helpmechoose.uk/contact"
+            }
+        ]
+    };
+
     return (
         <>
             <Helmet>
@@ -8,7 +28,14 @@ export default function Contact() {
                 <link rel="canonical" href="https://helpmechoose.uk/contact" />
                 <title>Contact • HelpMeChoose.uk</title>                
                 <meta name="description" content="Contact us at HelpMeChoose.uk." />
+                <script type="application/ld+json">{JSON.stringify(schemaData)}</script>
             </Helmet>
+
+            <header>
+                <div aria-label="breadcrumb">
+                    <div><Link to="/">Home</Link> &gt; Contact</div>
+                </div>
+            </header>
 
             <main>
                 <h1>Contact</h1>
