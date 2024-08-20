@@ -115,6 +115,7 @@ export default function Poll({
                         return data;
                     } else {
                         console.log("Poll doesn't exist.");
+                        navigate("/");
                     }
                 })
                 .then((poll) => {
