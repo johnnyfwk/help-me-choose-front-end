@@ -141,12 +141,12 @@ export default function PostAQuestion({
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://helpmechoose.uk/post-a-question" />
                 <title>Post a Question • HelpMeChoose.uk</title>                
-                <meta name="description" content="Post a question and get responses from other members on HelpMeChoose.uk." />
+                <meta name="description" content="Post a question and get responses from other members to help you make a choice." />
             </Helmet>
 
             <main>
                 <h1>Post a Question</h1>
-                <p>Post a question and let other members vote on your options.</p>
+                <p>If you need help making a choice, post a question and let other members vote on your options and offer suggestions and advice.</p>
 
                 <div className="error">{postQuestionError}</div>
 

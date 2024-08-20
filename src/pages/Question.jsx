@@ -539,9 +539,9 @@ export default function Question({
         <>
             <Helmet>
                 <meta name="robots" content="index, follow" />
-                <link rel="canonical" href="https://helpmechoose.uk/question/post" />
+                <link rel="canonical" href={`https://helpmechoose.uk/question/${question_id}`} />
                 <title>{question.questionTitle} • HelpMeChoose.uk</title>                
-                <meta name="description" content="Question description." />
+                <meta name="description" content={question.questionDescription} />
             </Helmet>
 
             <main>
