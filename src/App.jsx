@@ -12,6 +12,11 @@ import PostAQuestion from './pages/PostAQuestion';
 import Profile from "./pages/Profile";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import TermsOfService from './pages/TermsOfService';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import CookiePolicy from './pages/CookiePolicy';
+import CommunityGuidelines from './pages/CommunityGuidelines';
+import Disclaimer from './pages/Disclaimer';
 import Footer from "./components/Footer";
 
 function App() {
@@ -194,6 +199,31 @@ function App() {
                 <Route
                     path="/contact"
                     element={<Contact />}
+                />
+
+                <Route
+                    path="/terms-of-service"
+                    element={<TermsOfService />}
+                />
+
+                <Route
+                    path="/privacy-policy"
+                    element={<PrivacyPolicy />}
+                />
+
+                <Route
+                    path="/cookie-policy"
+                    element={<CookiePolicy />}
+                />
+
+                <Route
+                    path="/community-guidelines"
+                    element={<CommunityGuidelines />}
+                />
+
+                <Route
+                    path="/disclaimer"
+                    element={<Disclaimer />}
                 />
 
                 <Route
