@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import Logo from "./components/Logo";
+import NavButton from './components/NavButton';
 import Nav from "./components/Nav";
 import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
@@ -22,7 +23,9 @@ import Erro404 from './pages/Error404';
 
 function App() {
     const { user, loading } = useAuth();
-    // console.log(user)
+    // console.log(user);
+
+    const [isNavVisible, setIsNavVisible] = useState(false);
 
     const [category, setCategory] = useState("");
     const [homepagePollPage, setHomepagePollPage] = useState(1);
@@ -98,9 +101,11 @@ function App() {
 
     return (
         <>
-            <Logo setCategory={setCategory} />
+            <Logo setCategory={setCategory} setIsNavVisible={setIsNavVisible} />
 
-            <Nav user={user} />
+            <NavButton isNavVisible={isNavVisible} setIsNavVisible={setIsNavVisible} />
+
+            <Nav user={user} isNavVisible={isNavVisible} setIsNavVisible={setIsNavVisible} />
 
             <Routes>
                 <Route
