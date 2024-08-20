@@ -22,13 +22,15 @@ export default function Footer({user}) {
                         {user
                             ? <>
                                 <Link to={`/profile/${user.uid}`}>Profile</Link>
-                                <span onClick={logout} id="logout-button">Logout</span>
                             </>
                             : <>
                                 <Link to="/sign-up">Sign Up</Link>
                                 <Link to="/login">Login</Link>
                             </>
                         }
+
+                        <Link to="/about">About</Link>
+                        <Link to="/contact">Contact</Link>
                     </div>          
                 </div>
 

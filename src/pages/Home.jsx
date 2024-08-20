@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet";
 import { useState, useEffect } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { db } from '../firebase';
 import { collection, getDocs, getCountFromServer, query, where, orderBy, limit, startAfter } from 'firebase/firestore';
 import QuestionCard from '../components/QuestionCard';
@@ -95,7 +95,7 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
                     <meta name="robots" content="index, follow" />
                     <link rel="canonical" href="https://helpmechoose.uk/" />
                     <title>{titleAndH1} • HelpMeChoose.uk</title>                
-                    <meta name="description" content="Get help making a choice by creating a poll and letting other members vote on your options and offer suggestions and advice." />
+                    <meta name="description" content="Get help making a choice by creating a poll and getting suggestions and advice from the community." />
                 </Helmet>
                 : <Helmet>
                     <meta name="robots" content="index, follow" />
@@ -108,9 +108,8 @@ export default function Home({category, setCategory, homepageQuestionPage, setHo
             <main>
                 {!category_slug
                     ? <>
-                        <h1>{titleAndH1}</h1>
-                        <p>Can't decide between pizza, curry, or tacos for dinner tonight? Not sure whether to get the latest Google Pixel or iPhone? Are you torn between visiting the Taj Mahal in India or the Colosseum in Italy?</p>
-                        <p></p>
+                        <h1>{titleAndH1}</h1>                        
+                        <p>Get help making a choice by <Link to="/create-a-poll">creating a poll</Link> and getting suggestions and advice from the community.</p>
                     </>
                     : <h1>{utils.convertSlugToCategory(category_slug)}</h1>
                 }
