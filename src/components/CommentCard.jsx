@@ -204,9 +204,11 @@ export default function CommentCard({
                 commentObject.commentOwnerId === user.uid &&
                 !isEditingComment &&
                 !isConfirmDeleteCommentVisible
-                    ? <button
-                        onClick={handleEditCommentButton}
-                    >Edit</button>
+                    ? <div>
+                        <button
+                            onClick={handleEditCommentButton}
+                        >Edit</button>
+                    </div>
                     : null
                 }
                 

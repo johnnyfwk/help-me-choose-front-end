@@ -65,7 +65,7 @@ export default function ResetPassword() {
 
             <header>
                 <section>
-                    <div aria-label="breadcrumb">
+                    <div aria-label="breadcrumb" className="nav-breadcrumbs">
                         <div><Link to="/">Home</Link> &gt; Reset Password</div>
                     </div>
                 </section>

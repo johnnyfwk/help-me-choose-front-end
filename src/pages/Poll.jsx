@@ -523,7 +523,11 @@ export default function Poll({
         if (newPage > 0 && newPage <= totalCommentsPages) {
             setCommentsPage(newPage);
         }
-    }  
+    }
+
+    function handleBreadcrumbCategoryLink() {
+        setCategory(poll.pollCategory);
+    }
 
     if (isLoading) {
         return <p>Loading...</p>;
@@ -552,6 +556,12 @@ export default function Poll({
                     {
                         "@type": "ListItem",
                         "position": 2,
+                        "name": poll.pollCategory,
+                        "item": `https://helpmechoose.uk/poll/${utils.convertToSlug(poll.pollCategory)}`
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 3,
                         "name": poll.pollTitle,
                         "item": `https://helpmechoose.uk/poll/${poll_id}`
                     }
@@ -583,7 +593,10 @@ export default function Poll({
             <header>
                 <section>
                     <div aria-label="breadcrumb" className="nav-breadcrumbs">
-                        <div><Link to="/">Home</Link> &gt; Poll &gt; {poll.pollTitle}</div>
+                        <div>
+                            <Link to="/">Home</Link> &gt; <Link to={`/?category=${utils.convertToSlug(poll.pollCategory)}`} onClick={handleBreadcrumbCategoryLink}
+                        >{poll.pollCategory}</Link> &gt; {poll.pollTitle}
+                        </div>
                     </div>
                 </section>
             </header>
@@ -619,26 +632,32 @@ export default function Poll({
                                 handleCategory={handleCategory}
                             />
                         </div>
-                        : <Link
-                            to={`/?category=${utils.convertToSlug(poll.pollCategory)}`}
-                            onClick={() => handlePollCategory(poll.pollCategory)}
-                        >{poll.pollCategory}</Link>
+                        : <div>
+                            <Link
+                                to={`/?category=${utils.convertToSlug(poll.pollCategory)}`}
+                                onClick={() => handlePollCategory(poll.pollCategory)}
+                                className="poll-category"
+                            >{poll.pollCategory}</Link>
+                        </div>
                     }              
                 
                     {isEditingPoll
                         ? null
                         : <>
-                            <Link to={`/profile/${poll.pollOwnerId}`}>
-                                <div className="poll-owner-image-wrapper">
-                                    <img
-                                        src={poll.pollOwnerImageUrl}
-                                        alt={`Profile image of ${poll.pollOwnerUsername}`}
-                                        className="poll-owner-image"
-                                    />
-                                </div>
-                            </Link>                                     
-                            <Link to={`/profile/${poll.pollOwnerId}`}>{poll.pollOwnerUsername}</Link>
                             <div>{utils.formatDate(poll.pollCreated)}</div>
+                            <div id="poll-owner-image-and-username">
+                                <Link to={`/profile/${poll.pollOwnerId}`}>
+                                    <div className="poll-owner-image-wrapper">
+                                        <img
+                                            src={poll.pollOwnerImageUrl}
+                                            alt={`Profile image of ${poll.pollOwnerUsername}`}
+                                            className="poll-owner-image"
+                                        />
+                                    </div>
+                                </Link>                                     
+                                <Link to={`/profile/${poll.pollOwnerId}`} className="poll-owner-username">{poll.pollOwnerUsername}</Link>
+                            </div>                            
+                            
                         </>
                     }
                     
@@ -688,15 +707,15 @@ export default function Poll({
                             {poll.pollOptions.map((option, index) => {
                                 return (
                                     <div key={index} className="poll-option-wrapper">
-                                        <div key={index}>{option.name}</div>
+                                        <div key={index} className="poll-option-name">{option.name}</div>
+
+                                        <div className="poll-option-votes">{option.votes.length} votes</div>
 
                                         {option.imageUrl
                                             ? <img src={option.imageUrl} alt={option.name} className="poll-option-image"/>
                                             : null
                                         }
                                         
-                                        <div>{option.votes.length} votes</div>
-
                                         {!user
                                             ? null
                                             : user.emailVerified && poll.pollOwnerId !== user.uid
@@ -717,7 +736,9 @@ export default function Poll({
                     user.uid === poll.pollOwnerId &&
                     !isEditingPoll &&
                     !isConfirmDeletePollVisible
-                        ? <button onClick={handleEditPoll}>Edit</button>
+                        ? <div>
+                            <button onClick={handleEditPoll}>Edit</button>
+                        </div>
                         : null
                     }
 
@@ -745,12 +766,12 @@ export default function Poll({
                                     handleComment={handleComment}
                                 />
 
-                                <input
-                                    type="button"
-                                    value="Post Comment"
-                                    onClick={handlePostComment}
-                                    disabled={!comment}
-                                ></input>
+                                <div>
+                                    <button
+                                        onClick={handlePostComment}
+                                        disabled={!comment}
+                                    >Post Comment</button>
+                                </div>
                             </>
                             : null
                     }

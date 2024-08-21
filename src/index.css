@@ -22,12 +22,11 @@
     --error: red;
     --confirm: orange;
 
-    --max-width: 800px;
+    --max-width: 1000px;
     --padding-left-and-right: 20px;
     --max-height-image: 400px;
     --profile-image-dimensions: 200px;
-    --poll-owner-image: 50px;
-    /* --card-profile-image-dimensions: 35px; */
+    --poll-owner-image: 40px;
     --nav-button-dimensions: 20px;
 
     background-color: var(--jet);
@@ -43,12 +42,24 @@ img {
     width: 100%;
 }
 
+h1 {
+    font-size: 1.5rem;
+}
+
 section {
     max-width: var(--max-width);
     margin: auto;
     width: 100%;
     display: grid;
     gap: 5px;
+}
+
+textarea {
+    resize: none;
+    min-height: 100px;
+    max-height: 200px;
+    overflow-y: visible;
+    resize: none;
 }
 
 .message-box {
@@ -148,7 +159,7 @@ textarea {
     height: 100%;
     left: 100%;
     display: grid;
-    gap: 20px;
+    gap: 30px;
     align-content: start;
     text-align: center;
     padding: var(--padding-left-and-right);
@@ -175,6 +186,21 @@ textarea {
 header {
     background-color: var(--white);
     padding: var(--padding-left-and-right) var(--padding-left-and-right) 0 var(--padding-left-and-right);
+}
+
+.nav-breadcrumbs {
+    font-size: 0.9rem;
+}
+
+.nav-breadcrumbs a:link,
+.nav-breadcrumbs a:active,
+.nav-breadcrumbs a:visited {
+    color: var(--night);
+    text-decoration: underline;
+}
+
+.nav-breadcrumbs a:hover {
+    color: var(--rose);
 }
 
 main {
@@ -302,6 +328,24 @@ main {
 
 
 /************************ POLL PAGE ************************/
+.poll-category:link,
+.poll-category:active,
+.poll-category:visited {
+    color: var(--night);
+    text-decoration: underline;
+}
+
+.poll-category:hover {
+    color: var(--rose);
+}
+
+#poll-owner-image-and-username {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
 .poll-owner-image-wrapper {
     width: 100%;
     max-width: var(--poll-owner-image);
@@ -315,14 +359,35 @@ main {
     object-fit: cover;  
 }
 
-.poll-options-wrapper {
-    background-color: var(--poll-options-wrapper-background);
-    display: grid;
-    gap: 20px;
+.poll-owner-username:link,
+.poll-owner-username:active,
+.poll-owner-username:visited {
+    color: var(--night);
+    text-decoration: underline;
 }
 
-.poll-option-wrapper {
-    background-color: var(--poll-option-wrapper-background);
+.poll-owner-username:hover {
+    color: var(--rose);
+}
+
+.poll-options-wrapper {
+    display: grid;
+    gap: 30px;
+}
+
+.poll-option-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.poll-option-votes {
+    font-weight: bold;
+}
+
+.poll-option-image {
+    max-height: var(--max-height-image);
+    object-fit: contain;
+    object-position: 0%;
 }
 /************************ POLL PAGE ************************/
 
@@ -403,6 +468,18 @@ footer a:hover {
         justify-content: center;
         text-align: initial;
         padding: 3px var(--padding-left-and-right);
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    .poll-card-title {
+        font-size: 1.2rem;
+    }
+
+    .poll-option-name {
+        font-size: 1.3rem;
     }
 
     .footer-links-wrapper {
