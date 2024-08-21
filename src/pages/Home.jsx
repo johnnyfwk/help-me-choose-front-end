@@ -144,7 +144,7 @@ export default function Home({user, category, setCategory, homepagePollPage, set
                     </form>
                     
                     {polls.length > 0
-                        ? <>
+                        ? <div className="cards-wrapper-and-pagination">
                             <div className="poll-cards-wrapper">
                                 {polls.map((poll, index) => {
                                     return (
@@ -157,12 +157,18 @@ export default function Home({user, category, setCategory, homepagePollPage, set
                                     )
                                 })}
                             </div>
-                            <div>
-                                <button onClick={() => handlePageChange(homepagePollPage - 1)} disabled={isFetching || homepagePollPage === 1}>Previous</button>
+                            <div className="pagination">
+                                <div>
+                                    <button onClick={() => handlePageChange(homepagePollPage - 1)} disabled={isFetching || homepagePollPage === 1}>Previous</button>
+                                </div>
+
                                 <span>Page {homepagePollPage} of {totalPages}</span>
-                                <button onClick={() => handlePageChange(homepagePollPage + 1)} disabled={isFetching || homepagePollPage === totalPages}>Next</button>
+
+                                <div>
+                                    <button onClick={() => handlePageChange(homepagePollPage + 1)} disabled={isFetching || homepagePollPage === totalPages}>Next</button>
+                                </div>
                             </div>
-                        </>
+                        </div>
                         : <div>There are no polls to display in this category.</div>
                     }
                 </section>

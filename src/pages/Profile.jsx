@@ -505,7 +505,7 @@ export default function Profile({
                     <div className="error">{fetchPollsMessage}</div>
 
                     {polls.length > 0
-                        ? <>
+                        ? <div className="cards-wrapper-and-pagination">
                             <div className="poll-cards-wrapper">
                                 {polls.map((poll, index) => {
                                     return (
@@ -518,12 +518,18 @@ export default function Profile({
                                     )
                                 })}
                             </div>
-                            <div>
-                                <button onClick={() => handlePollPageChange(pollsPage - 1)} disabled={isFetchingPolls || pollsPage === 1}>Previous</button>
+                            <div className="pagination">
+                                <div>
+                                    <button onClick={() => handlePollPageChange(pollsPage - 1)} disabled={isFetchingPolls || pollsPage === 1}>Previous</button>
+                                </div>
+                                
                                 <span>Page {pollsPage} of {totalPollPages}</span>
-                                <button onClick={() => handlePollPageChange(pollsPage + 1)} disabled={isFetchingPolls || pollsPage === totalPollPages}>Next</button>
+                                
+                                <div>
+                                    <button onClick={() => handlePollPageChange(pollsPage + 1)} disabled={isFetchingPolls || pollsPage === totalPollPages}>Next</button>
+                                </div>
                             </div>
-                        </>
+                        </div>
                         : profile_id === user.uid
                             ? <p>You haven't created any polls yet.</p>
                             : <p>This user hasn't created any polls yet.</p>
@@ -536,7 +542,7 @@ export default function Profile({
                     <div className="error">{fetchCommentsMessage}</div>
 
                     {comments.length > 0
-                        ? <>
+                        ? <div className="cards-wrapper-and-pagination">
                             <div className="comment-cards-wrapper">
                                 {comments.map((commentObject, index) => {
                                     return (
@@ -569,12 +575,18 @@ export default function Profile({
                                     )
                                 })}
                             </div>
-                            <div>
-                                <button onClick={() => handleCommentPageChange(commentsPage - 1)} disabled={isFetchingComments || commentsPage === 1}>Previous</button>
+                            <div className="pagination">
+                                <div>
+                                    <button onClick={() => handleCommentPageChange(commentsPage - 1)} disabled={isFetchingComments || commentsPage === 1}>Previous</button>
+                                </div>                                
+
                                 <span>Page {commentsPage} of {totalCommentPages}</span>
-                                <button onClick={() => handleCommentPageChange(commentsPage + 1)} disabled={isFetchingComments || commentsPage === totalCommentPages}>Next</button>
+
+                                <div>
+                                    <button onClick={() => handleCommentPageChange(commentsPage + 1)} disabled={isFetchingComments || commentsPage === totalCommentPages}>Next</button>
+                                </div>
                             </div>
-                        </>
+                        </div>
                         : profile_id === user.uid
                             ? <p>You haven't posted any comments yet.</p>
                             : <p>This user hasn't posted any comments yet.</p>
