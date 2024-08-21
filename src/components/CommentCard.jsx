@@ -148,10 +148,14 @@ export default function CommentCard({
         });
     }
 
+    function handleCommentCardLink() {
+        window.scrollTo(0, 0);
+    }
+
     return (
-        <div className="comment-card">
-            {page === "poll"
-                ? <Link to={`/profile/${commentObject.commentOwnerId}`}>
+        <div className="comment-card-wrapper">
+            <div>
+                <Link to={`/profile/${commentObject.commentOwnerId}`} onClick={handleCommentCardLink}>
                     <div className="comment-card-user-image-wrapper">
                         <img
                             src={commentObject.commentOwnerImageUrl}
@@ -160,64 +164,70 @@ export default function CommentCard({
                         />
                     </div>
                 </Link>
-                : null
-            }
-            
-            {page === "profile"
-                ? <Link to={`/poll/${commentObject.pollId}`}>{commentObject.pollTitle}</Link>
-                : null
-            }
+            </div>
 
-            {page === "poll"
-                ? <Link to={`/profile/${commentObject.commentOwnerId}`}>{commentObject.commentOwnerUsername}</Link>
-                : null
-            }
-
-            {isEditingComment
-                ? <InputComment
-                    comment={originalComment}
-                    handleComment={handleEditComment}
-                />
-                : <div>{commentObject.comment}</div>
-            }
-
-            {!user
-                ? <div className="like-comment-user-not-verified">&#128077;{commentObject.commentLikes.length}</div>
-                : user.emailVerified && page === "poll" && user.uid !== commentObject.commentOwnerId
-                    ? <div onClick={handleLikeComment}><span className="like-comment-user-verified">&#128077;</span>{commentObject.commentLikes.length}</div>
+            <div className="comment-card-details">
+                {page === "profile"
+                    ? <Link to={`/poll/${commentObject.pollId}`}>{commentObject.pollTitle}</Link>
                     : null
-            }
+                }
 
-            <div>{utils.formatDate(commentObject.commentCreated)}</div>
-            
-            {user &&
-            user.emailVerified &&
-            commentObject.commentOwnerId === user.uid &&
-            !isEditingComment &&
-            !isConfirmDeleteCommentVisible
-                ? <button
-                    onClick={handleEditCommentButton}
-                >Edit</button>
-                : null
-            }
-            
-            {isEditingComment
-                ? <div>
-                    <button onClick={handleCancelEditComment}>Cancel</button>
-                    <button onClick={handleUpdateComment} disabled={!originalComment}>Update</button>
-                    <button onClick={handleDeleteComment}>Delete</button>
-                </div>
-                : null
-            }
+                {page === "poll"
+                    ? <div className="comment-card-username">
+                        <Link
+                            to={`/profile/${commentObject.commentOwnerId}`}
+                            onClick={handleCommentCardLink}
+                        >{commentObject.commentOwnerUsername}</Link>
+                    </div>
+                    : null
+                }
 
-            {isConfirmDeleteCommentVisible
-                ? <div>
-                    <div className="confirm">Delete comment?</div>
-                    <button onClick={handleDeleteCommentNo}>No</button>
-                    <button onClick={handleDeleteCommentYes}>Yes</button>
-                </div>                
-                : null
-            }
+                {isEditingComment
+                    ? <InputComment
+                        comment={originalComment}
+                        handleComment={handleEditComment}
+                    />
+                    : <div>{commentObject.comment}</div>
+                }
+
+                {!user
+                    ? <div className="like-comment-user-not-verified">&#128077;{commentObject.commentLikes.length}</div>
+                    : user.emailVerified && page === "poll" && user.uid !== commentObject.commentOwnerId
+                        ? <div onClick={handleLikeComment}><span className="like-comment-user-verified">&#128077;</span>{commentObject.commentLikes.length}</div>
+                        : null
+                }
+
+                <div className="comment-card-created-date">{utils.formatDate(commentObject.commentCreated)}</div>
+                
+                {user &&
+                user.emailVerified &&
+                commentObject.commentOwnerId === user.uid &&
+                !isEditingComment &&
+                !isConfirmDeleteCommentVisible
+                    ? <button
+                        onClick={handleEditCommentButton}
+                    >Edit</button>
+                    : null
+                }
+                
+                {isEditingComment
+                    ? <div>
+                        <button onClick={handleCancelEditComment}>Cancel</button>
+                        <button onClick={handleUpdateComment} disabled={!originalComment}>Update</button>
+                        <button onClick={handleDeleteComment}>Delete</button>
+                    </div>
+                    : null
+                }
+
+                {isConfirmDeleteCommentVisible
+                    ? <div>
+                        <div className="confirm">Delete comment?</div>
+                        <button onClick={handleDeleteCommentNo}>No</button>
+                        <button onClick={handleDeleteCommentYes}>Yes</button>
+                    </div>                
+                    : null
+                }
+            </div>
         </div>
     )
 }

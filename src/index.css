@@ -27,8 +27,7 @@
     --max-height-image: 400px;
     --profile-image-dimensions: 200px;
     --poll-owner-image: 50px;
-    --poll-card-user-image-dimensions: 50px;
-    --comment-card-user-image-dimensions: 50px;
+    /* --card-profile-image-dimensions: 35px; */
     --nav-button-dimensions: 20px;
 
     background-color: var(--jet);
@@ -44,23 +43,12 @@ img {
     width: 100%;
 }
 
-a:link,
-a:active,
-a:visited {
-    color: var(--rose);
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
 section {
     max-width: var(--max-width);
     margin: auto;
     width: 100%;
     display: grid;
-    gap: 10px;
+    gap: 5px;
 }
 
 .message-box {
@@ -200,30 +188,116 @@ main {
     cursor: pointer;
 }
 
-/************************ HOMEPAGE ************************/
-.poll-cards-wrapper {
-    /* background-color: var(--battleship-gray); */
+#input-options {
     display: grid;
     gap: 20px;
 }
 
-.poll-card-wrapper {
-    background-color: var(--platinum);
+
+
+/************************ POLL & COMMENT CARDS ************************/
+.poll-cards-wrapper,
+.comment-cards-wrapper {
+    display: grid;
+    gap: 20px;
 }
 
-.poll-card-user-image-wrapper {
+.poll-card-wrapper,
+.comment-card-wrapper {
+    background-color: var(--platinum);
+    padding: 10px;
+    display: grid;
+    grid-template-columns: 40px auto;
+    gap: 10px;
+}
+
+.poll-card-profile-image-wrapper,
+.comment-card-user-image-wrapper {
     width: 100%;
-    max-width: var(--poll-card-user-image-dimensions);
+    max-width: var(--card-profile-image-dimensions);
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     overflow: hidden; 
 }
 
-.poll-card-user-image {
+.poll-card-user-image,
+.comment-card-user-image {
     height: 100%;
     object-fit: cover;  
 }
-/************************ HOMEPAGE ************************/
+
+.poll-card-username,
+.comment-card-username {
+    font-size: 0.8rem;
+}
+
+.poll-card-username a:link,
+.poll-card-username a:active,
+.poll-card-username a:visited,
+.comment-card-username a:link,
+.comment-card-username a:active,
+.comment-card-username a:visited {
+    color: var(--night);
+    text-decoration: underline;
+}
+
+.poll-card-username a:hover,
+.comment-card-username a:hover {
+    color: var(--rose);
+}
+
+.poll-card-details,
+.comment-card-details {
+    display: grid;
+    gap: 5px;
+}
+
+.poll-card-created-date,
+.comment-card-created-date {
+    font-size: 0.8rem;
+}
+/************************ POLL & COMMENT CARDS ************************/
+
+
+/************************ POLL CARDS ************************/
+.poll-card-title {
+    font-weight: bold;
+}
+
+.poll-card-title a:link,
+.poll-card-title a:active,
+.poll-card-title a:visited {
+    color: var(--rose);
+    text-decoration: none;
+}
+
+.poll-card-title a:hover {
+    text-decoration: underline;
+}
+
+.poll-card-category {
+    font-size: 0.8rem;
+}
+
+.poll-card-category a:link,
+.poll-card-category a:active,
+.poll-card-category a:visited {
+    color: var(--night);
+    text-decoration: underline;
+}
+
+.poll-card-category a:hover {
+    color: var(--rose);
+}
+/************************ POLL CARDS ************************/
+
+
+
+/************************ COMMENT CARDS ************************/
+.like-comment-user-verified {
+    cursor: pointer;
+}
+/************************ COMMENT CARDS ************************/
 
 
 
@@ -250,41 +324,11 @@ main {
 .poll-option-wrapper {
     background-color: var(--poll-option-wrapper-background);
 }
-
-.comment-card-user-image-wrapper {
-    width: 100%;
-    max-width: var(--comment-card-user-image-dimensions);
-    aspect-ratio: 1 / 1;
-    border-radius: 50%;
-    overflow: hidden;  
-}
-
-.comment-card-user-image {
-    height: 100%;
-    object-fit: cover;  
-}
-
-.like-comment-user-verified {
-    cursor: pointer;
-}
 /************************ POLL PAGE ************************/
 
 
-#input-options {
-    display: grid;
-    gap: 20px;
-}
 
-.comments-wrapper {
-    background-color: var(--comments-wrapper);
-    display: grid;
-    gap: 20px;
-}
-
-.comment-card {
-    background-color: var(--comment-card-background-colour);
-}
-
+/************************ PROFILE PAGE ************************/
 #profile-image-wrapper {
     width: 100%;
     max-width: var(--profile-image-dimensions);
@@ -297,7 +341,11 @@ main {
     height: 100%;
     object-fit: cover;  
 }
+/************************ PROFILE PAGE ************************/
 
+
+
+/************************ FOOTER ************************/
 #footer-wrapper {
     padding: var(--padding-left-and-right);
 }
@@ -335,6 +383,7 @@ footer a:hover {
 .footer-links-section-heading {
     font-weight: bold;
 }
+/************************ FOOTER ************************/
 
 
 

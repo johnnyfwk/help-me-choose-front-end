@@ -7,31 +7,43 @@ export default function PollCard({
     handlePollCardCategory,
     handlePollCardTitle
 }) {
+    function handlePollCardLink() {
+        window.scrollTo(0, 0);
+    }
+
     return (
         <div className="poll-card-wrapper">
-            {page === "home" || page === "poll"
-                ? <Link to={`/profile/${poll.pollOwnerId}`}>
-                    <div className="poll-card-user-image-wrapper">
+            <div className="poll-card-profile-image-section">
+                <Link to={`/profile/${poll.pollOwnerId}`} onClick={handlePollCardLink}>
+                    <div className="poll-card-profile-image-wrapper">
                         <img src={poll.pollOwnerImageUrl} alt={`Profile image of ${poll.pollOwnerUsername}`} className="poll-card-user-image"/>  
                     </div>
                 </Link>
-                : null
-            }
+            </div>
 
-            {page === "home" || page === "poll"
-                ? <div>
-                    <Link to={`/profile/${poll.pollOwnerId}`}>{poll.pollOwnerUsername}</Link>
-                </div> 
-                : null
-            }
-            <Link to={`/poll/${poll.id}`} onClick={handlePollCardTitle}>{poll.pollTitle}</Link>
-            <p>{poll.pollDescription}</p>
-            <Link
-                to={`/?category=${utils.convertToSlug(poll.pollCategory)}`}
-                onClick={() => handlePollCardCategory(poll.pollCategory)}
-            >{poll.pollCategory}</Link>
-                          
-            <div>{utils.formatDate(poll.pollCreated)}</div>
+            <div className="poll-card-details">
+                {page === "home" || page === "poll"
+                    ? <div className="poll-card-username">
+                        <Link to={`/profile/${poll.pollOwnerId}`} onClick={handlePollCardLink}>{poll.pollOwnerUsername}</Link>
+                    </div>
+                    : null
+                }
+
+                <div className="poll-card-title">
+                    <Link to={`/poll/${poll.id}`} onClick={handlePollCardTitle}>{poll.pollTitle}</Link>
+                </div>
+                
+                <p>{poll.pollDescription}</p>
+
+                <div className="poll-card-category">
+                    <Link
+                        to={`/?category=${utils.convertToSlug(poll.pollCategory)}`}
+                        onClick={() => handlePollCardCategory(poll.pollCategory)}
+                    >{poll.pollCategory}</Link>
+                </div>
+                            
+                <div className="poll-card-created-date">{utils.formatDate(poll.pollCreated)}</div>
+            </div>
         </div>
     )
 }
