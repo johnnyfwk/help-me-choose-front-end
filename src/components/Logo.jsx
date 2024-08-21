@@ -8,6 +8,8 @@ export default function Logo({setCategory, setIsNavVisible}) {
     }
 
     return (
-        <Link to="/" id="logo" onClick={handleLogo}>Help Me Choose</Link>
+        <div id="logo-wrapper">
+            <Link to="/" id="logo" onClick={handleLogo}>Help Me Choose</Link>
+        </div>
     )
 }

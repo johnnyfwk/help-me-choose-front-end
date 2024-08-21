@@ -1,34 +1,38 @@
-:root {
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  
-    /* color-scheme: light dark; */
-    /* color: rgba(255, 255, 255, 0.87); */
-    /* background-color: #242424; */
-  
+:root {  
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+
+    --night: #0C0F0A;
+    --eerie-black: #1C1E1A;
+    --jet: #2B2D29;
+    --outer-space: #494B48;
+    --battleship-gray: #868785;
+    --silver: #C3C3C2;
+    --platinum: #E1E1E1;
+    --white: #FFFFFF;
+    --rose: #FF206E;
+    --yellow: #FBFF12;
+    --turquoise: #41EAD4;
+
     --success: green;
     --error: red;
     --confirm: orange;
 
-    --main-background: rgb(255, 227, 231);
-    --polls-wrapper-background: orange;
-    --poll-wrapper-background: rgb(232, 128, 0);
-    --poll-options-wrapper-background: rgb(0, 167, 167);
-    --poll-option-wrapper-background: cyan;
-    --comments-wrapper: rgb(230, 77, 230);
-    --comment-card-background-colour: violet;
-
+    --max-width: 800px;
+    --padding-left-and-right: 20px;
     --max-height-image: 400px;
-
     --profile-image-dimensions: 200px;
     --poll-owner-image: 50px;
     --poll-card-user-image-dimensions: 50px;
     --comment-card-user-image-dimensions: 50px;
-    --nav-button-dimensions: 30px;
+    --nav-button-dimensions: 20px;
+
+    background-color: var(--jet);
+    color: var(--night);
 }
 
 * {
@@ -38,6 +42,25 @@
 
 img {
     width: 100%;
+}
+
+a:link,
+a:active,
+a:visited {
+    color: var(--rose);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+section {
+    max-width: var(--max-width);
+    margin: auto;
+    width: 100%;
+    display: grid;
+    gap: 10px;
 }
 
 .message-box {
@@ -77,33 +100,45 @@ textarea {
     width: 100%;
 }
 
-#logout-button:hover {
-    cursor: pointer;
-    text-decoration: underline;
+#logo-wrapper {
+    background: var(--night);
+    text-align: center;
+    padding: 3px;
 }
 
 #logo {
-    background-color: cyan;
+    /* background-color: var(--night); */
     font-size: 1.5rem;
-    display: grid;
     position: sticky;
     top: 0;
+    font-weight: bold;
+}
+
+#logo:link,
+#logo:active,
+#logo:visited {
+    color: var(--white);
+    text-decoration: none;
+}
+
+#logo:hover {
+    text-decoration: underline;
 }
 
 #nav-button {
-    background-color: lime;
+    /* background-color: lime; */
     cursor: pointer;
     width: var(--nav-button-dimensions);
     height: var(--nav-button-dimensions);
     position: fixed;
-    top: 0;
-    right: 0;
+    top: 10px;
+    right: var(--padding-left-and-right);
     transition: transform 0.3s ease;
     z-index: 2;
 }
 
 #nav-button > div {
-    background-color: black;
+    background-color: var(--white);
     width: 100%;
     height: 5px;
     position: absolute;
@@ -118,22 +153,48 @@ textarea {
     transform: translate(0%, -50%) rotate(90deg);
 }
 
-nav {
-    background-color: lightgrey;
+#nav-main {
+    background-color: var(--jet);
     position: fixed;
     width: 100%;
     height: 100%;
     left: 100%;
     display: grid;
+    gap: 20px;
     align-content: start;
     text-align: center;
+    padding: var(--padding-left-and-right);
     transition: left 0.3s ease;
 }
 
-main {
-    background-color: var(--main-background);
+#logout-button {
+    cursor: pointer;
 }
 
+#logout-button,
+#nav-main a:link,
+#nav-main a:active,
+#nav-main a:visited {
+    color: var(--white);
+    text-decoration: none;
+}
+
+#logout-button:hover,
+#nav-main a:hover {
+    text-decoration: underline;
+}
+
+header {
+    background-color: var(--white);
+    padding: var(--padding-left-and-right) var(--padding-left-and-right) 0 var(--padding-left-and-right);
+}
+
+main {
+    background-color: var(--white);
+    padding: var(--padding-left-and-right);
+    display: grid;
+    gap: 30px;
+}
 
 #reset-password {
     cursor: pointer;
@@ -141,13 +202,13 @@ main {
 
 /************************ HOMEPAGE ************************/
 .poll-cards-wrapper {
-    background-color: var(--polls-wrapper-background);
+    /* background-color: var(--battleship-gray); */
     display: grid;
     gap: 20px;
 }
 
 .poll-card-wrapper {
-    background-color: var(--poll-wrapper-background);
+    background-color: var(--platinum);
 }
 
 .poll-card-user-image-wrapper {
@@ -237,11 +298,41 @@ main {
     object-fit: cover;  
 }
 
-footer {
-    background-color: grey;
+#footer-wrapper {
+    padding: var(--padding-left-and-right);
 }
 
-.links-section-heading {
+footer {
+    /* background-color: grey; */
+    max-width: var(--max-width);
+    margin: auto;
+    color: var(--white);
+    display: grid;
+    gap: 40px;
+}
+
+footer a:link,
+footer a:active,
+footer a:visited {
+    color: var(--white);
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+.footer-links-wrapper {
+    display: grid;
+    gap: 40px;
+}
+
+.footer-links-section-wrapper {
+    display: grid;
+    gap: 20px;
+}
+
+.footer-links-section-heading {
     font-weight: bold;
 }
 
@@ -252,14 +343,23 @@ footer {
         display: none;
     }
 
-    nav {
+    #nav-main {
         position: initial;
         width: initial;
         height: initial;
         left: initial;
-        display: initial;
+        display: flex;
+        flex-wrap: wrap;
         align-content: initial;
+        justify-content: center;
         text-align: initial;
-        margin-left: 20px;
+        padding: 3px var(--padding-left-and-right);
+    }
+
+    .footer-links-wrapper {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: start;
+        gap: 100px;
     }
 }

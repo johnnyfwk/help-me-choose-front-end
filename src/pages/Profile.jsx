@@ -412,9 +412,11 @@ export default function Profile({
             </Helmet>
 
             <header>
-                <div aria-label="breadcrumb">
-                    <div><Link to="/">Home</Link> &gt; Profile</div>
-                </div>
+                <section>
+                    <div aria-label="breadcrumb">
+                        <div><Link to="/">Home</Link> &gt; Profile</div>
+                    </div>
+                </section>
             </header>
 
             <main>

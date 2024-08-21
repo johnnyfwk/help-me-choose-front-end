@@ -581,9 +581,11 @@ export default function Poll({
             </Helmet>
 
             <header>
-                <div aria-label="breadcrumb">
-                    <div><Link to="/">Home</Link> &gt; Poll &gt; {poll.pollTitle}</div>
-                </div>
+                <section>
+                    <div aria-label="breadcrumb" className="nav-breadcrumbs">
+                        <div><Link to="/">Home</Link> &gt; Poll &gt; {poll.pollTitle}</div>
+                    </div>
+                </section>
             </header>
 
             <main>
@@ -640,10 +642,25 @@ export default function Poll({
                         </>
                     }
                     
-                    <div className="error">{editOptionsError}</div>
-                    <div className="error">{updateVoteError}</div>
-                    <div className="error">{updatePollError}</div>   
-                    <div className="error">{deletePollError}</div>
+                    {editOptionsError
+                        ? <div className="error">{editOptionsError}</div>
+                        : null
+                    }
+
+                    {updateVoteError
+                        ? <div className="error">{updateVoteError}</div>
+                        : null
+                    }
+
+                    {updatePollError
+                        ? <div className="error">{updatePollError}</div> 
+                        : null
+                    }
+
+                    {deletePollError
+                        ? <div className="error">{deletePollError}</div>
+                        : null
+                    }
 
                     {isConfirmDeletePollVisible
                         ? <div>

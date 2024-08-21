@@ -9,42 +9,42 @@ export default function Footer({user}) {
     }
 
     return (
-        <footer>
-            <div className="links-wrapper">
-                <div className="links-section-wrapper">
-                    <div className="links-section-heading">HelpMeChoose.uk</div>
-                    <div className="footer-links" onClick={handleFooterLinks}>
+        <div id="footer-wrapper">
+            <footer>
+                <div className="footer-links-wrapper">
+                    <div className="footer-links-section-wrapper">
+                        <div className="footer-links-section-heading">HelpMeChoose.uk</div>
                         {user && user.emailVerified
-                            ? <Link to="/create-a-poll">Create a Poll</Link>
+                            ? <Link to="/create-a-poll" onClick={handleFooterLinks}>Create a Poll</Link>
                             : null
                         }
                         
                         {user
                             ? <>
-                                <Link to={`/profile/${user.uid}`}>Profile</Link>
+                                <Link to={`/profile/${user.uid}`} onClick={handleFooterLinks}>Profile</Link>
                             </>
                             : <>
-                                <Link to="/sign-up">Sign Up</Link>
-                                <Link to="/login">Login</Link>
+                                <Link to="/sign-up" onClick={handleFooterLinks}>Sign Up</Link>
+                                <Link to="/login" onClick={handleFooterLinks}>Login</Link>
                             </>
                         }
 
-                        <Link to="/about">About</Link>
-                        <Link to="/contact">Contact</Link>
-                    </div>          
-                </div>
+                        <Link to="/about" onClick={handleFooterLinks}>About</Link>
+                        <Link to="/contact" onClick={handleFooterLinks}>Contact</Link>     
+                    </div>
 
-                <div className="links-section-wrapper">
-                    <div className="links-section-heading">Legal Stuff</div>
-                    <Link to="/community-guidelines" onClick={handleFooterLinks}>Community Guidelines</Link>
-                    <Link to="/terms-of-service" onClick={handleFooterLinks}>Terms of Service</Link>
-                    <Link to="/privacy-policy" onClick={handleFooterLinks}>Privacy Policy</Link>
-                    <Link to="/cookie-policy" onClick={handleFooterLinks}>Cookie Policy</Link>
-                    <Link to="/disclaimer" onClick={handleFooterLinks}>Disclaimer</Link>
+                    <div className="footer-links-section-wrapper">
+                        <div className="footer-links-section-heading">Legal Stuff</div>
+                        <Link to="/community-guidelines" onClick={handleFooterLinks}>Community Guidelines</Link>
+                        <Link to="/terms-of-service" onClick={handleFooterLinks}>Terms of Service</Link>
+                        <Link to="/privacy-policy" onClick={handleFooterLinks}>Privacy Policy</Link>
+                        <Link to="/cookie-policy" onClick={handleFooterLinks}>Cookie Policy</Link>
+                        <Link to="/disclaimer" onClick={handleFooterLinks}>Disclaimer</Link>
+                    </div>
                 </div>
 
                 <div id="copyright">Copyright &copy; {new Date().getFullYear()} HelpMeChoose.uk. All Rights Reserved.</div>
-            </div>
-        </footer>
+            </footer>
+        </div>
     )
 }

@@ -32,17 +32,21 @@ export default function Contact() {
             </Helmet>
 
             <header>
-                <div aria-label="breadcrumb">
-                    <div><Link to="/">Home</Link> &gt; Contact</div>
-                </div>
+                <section>
+                    <div aria-label="breadcrumb" className="nav-breadcrumbs">
+                        <div><Link to="/">Home</Link> &gt; Contact</div>
+                    </div>
+                </section>
             </header>
 
             <main>
-                <h1>Contact</h1>
+                <section>
+                    <h1>Contact</h1>
 
-                <p>HelpMeChoose.uk is a community where members can help each other make choices.</p>
+                    <p>HelpMeChoose.uk is a community where members can help each other make choices.</p>
 
-                <p>If you have any questions or suggestions about how we can improve the site, get in touch with us at hi@helpmechoose.uk.</p>
+                    <p>If you have any questions or suggestions about how we can improve the site, get in touch with us at hi@helpmechoose.uk.</p>
+                </section>
             </main>
         </>
     )

@@ -165,50 +165,54 @@ export default function CreateAPoll({
             </Helmet>
 
             <header>
-                <div aria-label="breadcrumb">
-                    <div><Link to="/">Home</Link> &gt; Create a Poll</div>
-                </div>
+                <section>
+                    <div aria-label="breadcrumb" className="nav-breadcrumbs">
+                        <div><Link to="/">Home</Link> &gt; Create a Poll</div>
+                    </div>
+                </section>
             </header>
 
             <main>
-                <h1>Create a Poll</h1>
-                <p>If you need help making a choice, create a poll and let other members vote on your options and offer suggestions and advice.</p>
+                <section>
+                    <h1>Create a Poll</h1>
+                    <p>If you need help making a choice, create a poll and let other members vote on your options and offer suggestions and advice.</p>
 
-                <div className="error">{postPollError}</div>
+                    <div className="error">{postPollError}</div>
 
-                <form>
-                    <InputTitle
-                        title={title}
-                        handleTitle={handleTitle}
-                    />
+                    <form>
+                        <InputTitle
+                            title={title}
+                            handleTitle={handleTitle}
+                        />
 
-                    <InputDescription
-                        description={description}
-                        handleDescription={handleDescription}
-                    />
+                        <InputDescription
+                            description={description}
+                            handleDescription={handleDescription}
+                        />
 
-                    <InputCategory
-                        category={category}
-                        handleCategory={handleCategory}
-                        page={"create a poll"}
-                    />
+                        <InputCategory
+                            category={category}
+                            handleCategory={handleCategory}
+                            page={"create a poll"}
+                        />
 
-                    <div className="error">{optionsError}</div>
+                        <div className="error">{optionsError}</div>
 
-                    <InputOptions
-                        options={options}
-                        handleOptionNames={handleOptionNames}
-                        handleOptionImages={handleOptionImages}
-                        optionImageUrlError={optionImageUrlError}
-                    />
-                    
-                    <input
-                        type="button"
-                        value="Create Poll"
-                        onClick={handlePostPoll}
-                        disabled={!title || !description || !category}
-                    ></input>
-                </form>
+                        <InputOptions
+                            options={options}
+                            handleOptionNames={handleOptionNames}
+                            handleOptionImages={handleOptionImages}
+                            optionImageUrlError={optionImageUrlError}
+                        />
+                        
+                        <input
+                            type="button"
+                            value="Create Poll"
+                            onClick={handlePostPoll}
+                            disabled={!title || !description || !category}
+                        ></input>
+                    </form>
+                </section>
             </main>
         </>
     )

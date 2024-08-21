@@ -12,18 +12,20 @@ export default function Erro404() {
             </Helmet>
 
             <main>
-                <h1>404: Page does not exist</h1>
+                <section>
+                    <h1>404: Page does not exist</h1>
 
-                <p>This page does not exist, yet you managed to find it...You are the chosen one!</p>
+                    <p>This page does not exist, yet you managed to find it...You are the chosen one!</p>
 
-                <p>Check out some pages that do exist:</p>
+                    <p>Check out some pages that do exist:</p>
 
-                <ul>
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/create-a-poll">Create a Poll</Link></li>
-                    <li><Link to="/sign-up">Sign Up</Link></li>
-                    <li><Link to="/login">Login</Link></li>
-                </ul>
+                    <ul>
+                        <li><Link to="/">Home</Link></li>
+                        <li><Link to="/create-a-poll">Create a Poll</Link></li>
+                        <li><Link to="/sign-up">Sign Up</Link></li>
+                        <li><Link to="/login">Login</Link></li>
+                    </ul>
+                </section>
             </main>
         </>
     )
