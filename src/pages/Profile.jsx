@@ -537,7 +537,7 @@ export default function Profile({
 
                     {comments.length > 0
                         ? <>
-                            <div className="comments-wrapper">
+                            <div className="comment-cards-wrapper">
                                 {comments.map((commentObject, index) => {
                                     return (
                                         <CommentCard
