@@ -602,26 +602,34 @@ export default function Poll({
             </header>
 
             <main>
-                <section>
+                <section id="poll-details">
                     {isEditingPoll
-                        ? <div>
-                            <div className="error">{editTitleError}</div>
+                        ? <>
+                            {editTitleError
+                                ? <div className="error">{editTitleError}</div>
+                                : null
+                            }
+                
                             <InputTitle
                                 title={poll.pollTitle}
                                 handleTitle={handleTitle}
                             />
-                        </div>                        
+                        </>                        
                         : <h1>{poll.pollTitle}</h1>
                     }
 
                     {isEditingPoll
-                        ? <div>
-                            <div className="error">{editDescriptionError}</div>
+                        ? <>
+                            {editDescriptionError
+                                ? <div className="error">{editDescriptionError}</div>
+                                : null
+                            }
+                            
                             <InputDescription
                                 description={poll.pollDescription}
                                 handleDescription={handleDescription}
                             />
-                        </div>
+                        </>
                         : <p>{poll.pollDescription}</p>
                     }
 
@@ -691,7 +699,7 @@ export default function Poll({
                     }
 
                     {isEditingPoll
-                        ? <div>
+                        ? <div id="input-options-and-add-option-button">
                             <InputOptions
                                 options={poll.pollOptions}
                                 handleOptionNames={handleOptionNames}
@@ -699,7 +707,9 @@ export default function Poll({
                                 optionImageUrlError={optionImageUrlError}
                             />
                             {poll.pollOptions.length < 5
-                                ? <button onClick={handleAddOption}>Add Option</button>
+                                ? <div>
+                                    <button onClick={handleAddOption}>Add Option</button>
+                                </div>
                                 : null
                             }
                         </div>
@@ -743,7 +753,7 @@ export default function Poll({
                     }
 
                     {isEditingPoll
-                        ? <div>
+                        ? <div className="buttons">
                             <button onClick={handleCancelEditPoll}>Cancel</button>
                             <button onClick={handleUpdatePoll}>Update</button>
                             <button onClick={handleDeletePoll}>Delete</button>
@@ -780,7 +790,7 @@ export default function Poll({
                         <div className="error">{fetchCommentsError}</div>
 
                         {comments.length > 0
-                            ? <>
+                            ? <div className="cards-wrapper-and-pagination">
                                 <div className="comment-cards-wrapper">
                                     {comments.map((commentObject, index) => {
                                         return (
@@ -810,12 +820,18 @@ export default function Poll({
                                         )
                                     })}
                                 </div>
-                                <div>
-                                    <button onClick={() => handleCommentsPageChange(commentsPage - 1)} disabled={isFetchingComments || commentsPage === 1}>Previous</button>
+                                <div className="pagination">
+                                    <div>
+                                        <button onClick={() => handleCommentsPageChange(commentsPage - 1)} disabled={isFetchingComments || commentsPage === 1}>Previous</button>
+                                    </div>
+
                                     <span>Page {commentsPage} of {totalCommentsPages}</span>
-                                    <button onClick={() => handleCommentsPageChange(commentsPage + 1)} disabled={isFetchingComments || commentsPage === totalCommentsPages}>Next</button>
+
+                                    <div>
+                                        <button onClick={() => handleCommentsPageChange(commentsPage + 1)} disabled={isFetchingComments || commentsPage === totalCommentsPages}>Next</button>
+                                    </div>
                                 </div>
-                            </>
+                            </div>
                             : <div>There are no comments for this poll.</div>
                         }
                     </>

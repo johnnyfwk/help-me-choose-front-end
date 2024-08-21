@@ -213,12 +213,6 @@ main {
     cursor: pointer;
 }
 
-
-
-
-
-
-/************************ CREATE A POLL ************************/
 form {
     /* background: orange; */
     display: grid;
@@ -228,7 +222,8 @@ form {
 input,
 textarea,
 select {
-    padding: 10px;
+    padding: 8px;
+    border: 1px solid var(--platinum);
 }
 
 #input-options {
@@ -240,7 +235,25 @@ select {
     display: grid;
     gap: 5px;
 }
-/************************ CREATE A POLL ************************/
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.cards-wrapper-and-pagination {
+    display: grid;
+    gap: 10px;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
 
 
 
@@ -351,6 +364,12 @@ select {
 
 
 /************************ POLL PAGE ************************/
+#poll-details {
+    /* background: orange; */
+    display: grid;
+    gap: 10px
+}
+
 .poll-category:link,
 .poll-category:active,
 .poll-category:visited {
@@ -411,6 +430,11 @@ select {
     max-height: var(--max-height-image);
     object-fit: contain;
     object-position: 0%;
+}
+
+#input-options-and-add-option-button {
+    display: grid;
+    gap: 20px;
 }
 /************************ POLL PAGE ************************/
 
