@@ -5,7 +5,7 @@ export default function Nav({user, isNavVisible, setIsNavVisible}) {
     const { logout } = useAuth();
 
     function handleNav() {
-        setIsNavVisible((currentVisibility) => !currentVisibility);
+        setIsNavVisible(false);
         window.scrollTo(0, 0);
     }
 

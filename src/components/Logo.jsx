@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 export default function Logo({setCategory, setIsNavVisible}) {
     function handleLogo() {
         setCategory("");
-        setIsNavVisible((currentVisibility) => !currentVisibility);
+        setIsNavVisible(false);
         window.scrollTo(0, 0);
     }
 
