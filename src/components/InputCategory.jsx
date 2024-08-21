@@ -7,25 +7,28 @@ export default function InputCategory({
     page
 }) {
     return (
-        <select
-            id="category"
-            name="category"
-            value={category}
-            onChange={handleCategory}
-        >
-            {page === "create a poll"
-                ? <option value="" disabled>Select a Category</option>
-                : null
-            }                
+        <div>
+            <select
+                id="category"
+                name="category"
+                value={category}
+                onChange={handleCategory}
+            >
+                {page === "create a poll"
+                    ? <option value="" disabled>Select a Category</option>
+                    : null
+                }                
 
-            {page === "home"
-                ? <option value="">All</option>
-                : null
-            }
-            
-            {categoriesList.map((category, index) => {
-                return <option key={index} value={category}>{category}</option>
-            })}
-        </select>
+                {page === "home"
+                    ? <option value="">All</option>
+                    : null
+                }
+                
+                {categoriesList.map((category, index) => {
+                    return <option key={index} value={category}>{category}</option>
+                })}
+            </select>
+        </div>
+        
     )
 }

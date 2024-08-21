@@ -196,7 +196,10 @@ export default function CreateAPoll({
                             page={"create a poll"}
                         />
 
-                        <div className="error">{optionsError}</div>
+                        {optionsError
+                            ? <div className="error">{optionsError}</div>
+                            : null
+                        }
 
                         <InputOptions
                             options={options}
@@ -205,12 +208,12 @@ export default function CreateAPoll({
                             optionImageUrlError={optionImageUrlError}
                         />
                         
-                        <input
-                            type="button"
-                            value="Create Poll"
-                            onClick={handlePostPoll}
-                            disabled={!title || !description || !category}
-                        ></input>
+                        <div>
+                            <button
+                                onClick={handlePostPoll}
+                                disabled={!title || !description || !category}
+                            >Create Poll</button>
+                        </div>
                     </form>
                 </section>
             </main>
