@@ -64,33 +64,37 @@ export default function ResetPassword() {
             </Helmet>
 
             <header>
-                <div aria-label="breadcrumb">
-                    <div><Link to="/">Home</Link> &gt; Reset Password</div>
-                </div>
+                <section>
+                    <div aria-label="breadcrumb">
+                        <div><Link to="/">Home</Link> &gt; Reset Password</div>
+                    </div>
+                </section>
             </header>
 
             <main>
-                <h1>Reset Password</h1>
+                <section>
+                    <h1>Reset Password</h1>
 
-                <p>If you have forgotton your password, reset it by entering your email address.</p>
-                
-                <p>An email with a link will be sent to the address provided where you can create a new password.</p>
+                    <p>If you have forgotton your password, reset it by entering your email address.</p>
 
-                <div>{passwordResetMessage}</div>
+                    <p>An email with a link will be sent to the address provided where you can create a new password.</p>
 
-                <form>
-                    <InputEmail
-                        email={email}
-                        handleEmail={handleEmail}
-                    />
-                    
-                    <input
-                        type="button"
-                        value="Reset Password"
-                        onClick={handleResetPassword}
-                        disabled={!email}
-                    />
-                </form>
+                    <div>{passwordResetMessage}</div>
+
+                    <form>
+                        <InputEmail
+                            email={email}
+                            handleEmail={handleEmail}
+                        />
+                        
+                        <input
+                            type="button"
+                            value="Reset Password"
+                            onClick={handleResetPassword}
+                            disabled={!email}
+                        />
+                    </form>
+                </section>
             </main>
         </>
     )

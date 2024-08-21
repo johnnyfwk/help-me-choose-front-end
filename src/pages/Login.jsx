@@ -69,42 +69,46 @@ export default function Login({setIsLoginSuccessMessageVisible}) {
             </Helmet>
 
             <header>
-                <div aria-label="breadcrumb">
-                    <div><Link to="/">Home</Link> &gt; Login</div>
-                </div>
+                <section>
+                    <div aria-label="breadcrumb" className="nav-breadcrumbs">
+                        <div><Link to="/">Home</Link> &gt; Login</div>
+                    </div>
+                </section>
             </header>
 
             <main>
-                <h1>Login</h1>
+                <section>
+                    <h1>Login</h1>
 
-                <p>Login to your account to ask a question and get help making a choice from other members.</p>
+                    <p>Login to your account to ask a question and get help making a choice from other members.</p>
 
-                <p>If you don't have an account, <Link to="/sign-up">sign up</Link> for one.</p>
+                    <p>If you don't have an account, <Link to="/sign-up">sign up</Link> for one.</p>
 
-                <div className="error">{loginError}</div>
+                    <div className="error">{loginError}</div>
 
-                <form>
-                    <InputEmail
-                        email={email}
-                        handleEmail={handleEmail}
-                    />
+                    <form>
+                        <InputEmail
+                            email={email}
+                            handleEmail={handleEmail}
+                        />
 
-                    <InputPassword
-                        id={"password"}
-                        password={password}
-                        handlePassword={handlePassword}
-                        placeholder={"Password"}
-                    />
+                        <InputPassword
+                            id={"password"}
+                            password={password}
+                            handlePassword={handlePassword}
+                            placeholder={"Password"}
+                        />
 
-                    <input
-                        type="button"
-                        value="Login"
-                        onClick={handleLogin}
-                        disabled={!email || !password}
-                    />
-                </form>
+                        <input
+                            type="button"
+                            value="Login"
+                            onClick={handleLogin}
+                            disabled={!email || !password}
+                        />
+                    </form>
 
-                <Link to="/reset-password">Reset Password</Link>
+                    <Link to="/reset-password">Reset Password</Link>
+                </section>
             </main>
         </>
     )

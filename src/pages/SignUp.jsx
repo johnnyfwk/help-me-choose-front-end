@@ -177,71 +177,75 @@ export default function SignUp({
             </Helmet>
 
             <header>
-                <div aria-label="breadcrumb">
-                    <div><Link to="/">Home</Link> &gt; Sign Up</div>
-                </div>
+                <section>
+                    <div aria-label="breadcrumb">
+                        <div><Link to="/">Home</Link> &gt; Sign Up</div>
+                    </div>
+                </section>
             </header>
 
             <main>
-                <h1>Sign Up</h1>
+                <section>
+                    <h1>Sign Up</h1>
 
-                <p>Create an account to create a poll and get help making a choice from other members.</p>
+                    <p>Create an account to create a poll and get help making a choice from other members.</p>
 
-                <p>If you already have an account, <Link to="/login">login</Link> to your account.</p>
+                    <p>If you already have an account, <Link to="/login">login</Link> to your account.</p>
 
-                <div className="error">{emailVerificationError}</div>                
-                
-                <form>
-                    <div className="error">{emailErrorMessage}</div>
+                    <div className="error">{emailVerificationError}</div>                
 
-                    <InputEmail
-                        email={email}
-                        handleEmail={handleEmail}
-                    />
+                    <form>
+                        <div className="error">{emailErrorMessage}</div>
 
-                    <div className="error">{usernameErrorMessage}</div>                  
+                        <InputEmail
+                            email={email}
+                            handleEmail={handleEmail}
+                        />
 
-                    <InputUsername
-                        username={username}
-                        handleUsername={handleUsername}
-                    />
+                        <div className="error">{usernameErrorMessage}</div>                  
 
-                    <div className="error">{passwordErrorMessage}</div>
+                        <InputUsername
+                            username={username}
+                            handleUsername={handleUsername}
+                        />
 
-                    <InputPassword
-                        id={"password"}
-                        password={password}
-                        handlePassword={handlePassword}
-                        placeholder={"Password"}
-                    />
+                        <div className="error">{passwordErrorMessage}</div>
 
-                    <div className="error">{profileImageUrlErrorMessage}</div>
+                        <InputPassword
+                            id={"password"}
+                            password={password}
+                            handlePassword={handlePassword}
+                            placeholder={"Password"}
+                        />
 
-                    <InputProfileImage
-                        profileImageUrl={profileImageUrl}
-                        handleProfileImageUrl={handleProfileImageUrl}
-                    />
+                        <div className="error">{profileImageUrlErrorMessage}</div>
 
-                    <input
-                        type="button"
-                        value="Create Account"
-                        onClick={handleCreateAccount}
-                        disabled={!username || !password || !email}
-                    />
-                </form>
+                        <InputProfileImage
+                            profileImageUrl={profileImageUrl}
+                            handleProfileImageUrl={handleProfileImageUrl}
+                        />
 
-                <h2>Username and Password Criteria</h2>
+                        <input
+                            type="button"
+                            value="Create Account"
+                            onClick={handleCreateAccount}
+                            disabled={!username || !password || !email}
+                        />
+                    </form>
 
-                <h3>Username:</h3>
-                <ul>
-                    <li>Between 3 and 20 characters (inclusive).</li>
-                    <li>Can only contain letters (uppercase and lowercase) and numbers.</li>
-                </ul>
+                    <h2>Username and Password Criteria</h2>
 
-                <h3>Password:</h3>
-                <ul>
-                    <li>Between 6 and 128 characters (inclusive).</li>
-                </ul>
+                    <h3>Username:</h3>
+                    <ul>
+                        <li>Between 3 and 20 characters (inclusive).</li>
+                        <li>Can only contain letters (uppercase and lowercase) and numbers.</li>
+                    </ul>
+
+                    <h3>Password:</h3>
+                    <ul>
+                        <li>Between 6 and 128 characters (inclusive).</li>
+                    </ul>
+                </section>
             </main>
         </>
     )

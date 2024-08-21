@@ -14,7 +14,7 @@ export default function Nav({user, isNavVisible, setIsNavVisible}) {
     };
 
     return (
-        <nav style={styleNav} onClick={handleNav}>
+        <nav id="nav-main" style={styleNav} onClick={handleNav}>
             {user && user.emailVerified
                 ? <div><Link to="/create-a-poll">Create a Poll</Link></div>
                 : null

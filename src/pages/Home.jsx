@@ -21,7 +21,7 @@ export default function Home({user, category, setCategory, homepagePollPage, set
     const totalPages = Math.ceil(totalPolls / pollsPerPage);
     const [fetchPollsError, setFetchPollsError] = useState("");
 
-    const titleAndH1 = "Get Help Making a Choice";
+    const titleAndH1 = "Get help making choices from the community";
 
     
     useEffect(() => {
@@ -120,48 +120,52 @@ export default function Home({user, category, setCategory, homepagePollPage, set
             }
             
             <main>
-                <h1>{titleAndH1}</h1>
+                <section>
+                    <h1>{titleAndH1}</h1>
 
-                {!user || !user.emailVerified
-                    ? <p>Get help making a choice by creating a poll and getting suggestions and advice from the community.</p>
-                    : <p>Get help making a choice by <Link to="/create-a-poll">creating a poll</Link> and getting suggestions and advice from the community.</p>
-                }                  
-                
-                {category_slug
-                    ? <h2>{utils.convertSlugToCategory(category_slug)}</h2>
-                    : null
-                }
+                    {!user || !user.emailVerified
+                        ? <p>Get help making a choice by creating a poll and getting suggestions and advice from the community.</p>
+                        : <p>Get help making a choice by <Link to="/create-a-poll">creating a poll</Link> and getting suggestions and advice from the community.</p>
+                    }
 
-                <InputCategory
-                    category={category}
-                    handleCategory={handleCategory}
-                    page={"home"}
-                />
+                    {category_slug
+                        ? <h2>{utils.convertSlugToCategory(category_slug)}</h2>
+                        : null
+                    }
 
-                <div className="error">{fetchPollsError}</div>
+                    <div className="error">{fetchPollsError}</div>
 
-                {polls.length > 0
-                    ? <>
-                        <div className="poll-cards-wrapper">
-                            {polls.map((poll, index) => {
-                                return (
-                                    <PollCard
-                                        key={index}
-                                        poll={poll}
-                                        page="home"
-                                        handlePollCardCategory={handlePollCardCategory}
-                                    />
-                                )
-                            })}
-                        </div>
-                        <div>
-                            <button onClick={() => handlePageChange(homepagePollPage - 1)} disabled={isFetching || homepagePollPage === 1}>Previous</button>
-                            <span>Page {homepagePollPage} of {totalPages}</span>
-                            <button onClick={() => handlePageChange(homepagePollPage + 1)} disabled={isFetching || homepagePollPage === totalPages}>Next</button>
-                        </div>
-                    </>
-                    : <div>There are no polls to display in this category.</div>
-                }
+                    <form>
+                        <InputCategory
+                            category={category}
+                            handleCategory={handleCategory}
+                            page={"home"}
+                        />
+                    </form>
+                    
+                    {polls.length > 0
+                        ? <>
+                            <div className="poll-cards-wrapper">
+                                {polls.map((poll, index) => {
+                                    return (
+                                        <PollCard
+                                            key={index}
+                                            poll={poll}
+                                            page="home"
+                                            handlePollCardCategory={handlePollCardCategory}
+                                        />
+                                    )
+                                })}
+                            </div>
+                            <div>
+                                <button onClick={() => handlePageChange(homepagePollPage - 1)} disabled={isFetching || homepagePollPage === 1}>Previous</button>
+                                <span>Page {homepagePollPage} of {totalPages}</span>
+                                <button onClick={() => handlePageChange(homepagePollPage + 1)} disabled={isFetching || homepagePollPage === totalPages}>Next</button>
+                            </div>
+                        </>
+                        : <div>There are no polls to display in this category.</div>
+                    }
+                </section>
             </main>
         </>
     )
