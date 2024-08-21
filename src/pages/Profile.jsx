@@ -413,7 +413,7 @@ export default function Profile({
 
             <header>
                 <section>
-                    <div aria-label="breadcrumb">
+                    <div aria-label="breadcrumb" className="nav-breadcrumbs">
                         <div><Link to="/">Home</Link> &gt; Profile</div>
                     </div>
                 </section>

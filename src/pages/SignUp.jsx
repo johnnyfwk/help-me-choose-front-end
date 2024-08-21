@@ -178,7 +178,7 @@ export default function SignUp({
 
             <header>
                 <section>
-                    <div aria-label="breadcrumb">
+                    <div aria-label="breadcrumb" className="nav-breadcrumbs">
                         <div><Link to="/">Home</Link> &gt; Sign Up</div>
                     </div>
                 </section>

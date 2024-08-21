@@ -33,7 +33,7 @@ export default function TermsOfService() {
 
             <header>
                 <section>
-                    <div aria-label="breadcrumb">
+                    <div aria-label="breadcrumb" className="nav-breadcrumbs">
                         <div><Link to="/">Home</Link> &gt; Terms of Service</div>
                     </div>
                 </section>
