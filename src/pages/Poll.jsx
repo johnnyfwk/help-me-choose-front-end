@@ -690,10 +690,12 @@ export default function Poll({
                     }
 
                     {isConfirmDeletePollVisible
-                        ? <div>
+                        ? <div id="delete-poll">
                             <div className="confirm">Delete poll? All votes and comments will also be deleted and can't be recovered.</div>
-                            <button onClick={handleDeletePollNo}>No</button>
-                            <button onClick={handleDeletePollYes}>Yes</button>
+                            <div className="buttons">
+                                <button onClick={handleDeletePollNo}>No</button>
+                                <button onClick={handleDeletePollYes}>Yes</button>
+                            </div>
                         </div>
                         : null
                     }

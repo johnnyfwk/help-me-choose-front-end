@@ -17,8 +17,8 @@
     --turquoise: #41EAD4;
 
     --success: green;
-    --error: red;
-    --confirm: orange;
+    --error: var(--rose);
+    --confirm: var(--rose);
 
     --max-width: 1000px;
     --padding-left-and-right: 20px;
@@ -311,7 +311,7 @@ select {
 .poll-card-details,
 .comment-card-details {
     display: grid;
-    gap: 5px;
+    gap: 10px;
 }
 
 .poll-card-created-date,
@@ -351,6 +351,19 @@ select {
 .poll-card-category a:hover {
     color: var(--rose);
 }
+
+.comment-card-poll-title:link,
+.comment-card-poll-title:active,
+.comment-card-poll-title:visited {
+    color: var(--rose);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.2rem;
+}
+
+.comment-card-poll-title:hover {
+    text-decoration: underline;
+}
 /************************ POLL CARDS ************************/
 
 
@@ -358,6 +371,11 @@ select {
 /************************ COMMENT CARDS ************************/
 .like-comment-user-verified {
     cursor: pointer;
+}
+
+#delete-comment {
+    display: grid;
+    gap: 10px;
 }
 /************************ COMMENT CARDS ************************/
 
@@ -436,11 +454,23 @@ select {
     display: grid;
     gap: 20px;
 }
+
+#delete-poll {
+    display: grid;
+    gap: 10px
+}
 /************************ POLL PAGE ************************/
 
 
 
 /************************ PROFILE PAGE ************************/
+#profile-main {
+    display: grid;
+    gap: 20px;
+    justify-content: center;
+    justify-items: center;
+}
+
 #profile-image-wrapper {
     width: 100%;
     max-width: var(--profile-image-dimensions);
@@ -452,6 +482,29 @@ select {
 #profile-image {
     height: 100%;
     object-fit: cover;  
+}
+
+#change-password {
+    display: grid;
+    gap: 10px;
+    justify-items: center;
+}
+
+#profile-image-url {
+    width: 100%;
+}
+
+#delete-account {
+    display: grid;
+    gap: 10px;
+    justify-items: center;
+}
+
+.profile.buttons {
+    /* display: flex;
+    flex-wrap: wrap;
+    gap: 10px; */
+    justify-content: center;
 }
 /************************ PROFILE PAGE ************************/
 

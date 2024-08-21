@@ -168,7 +168,9 @@ export default function CommentCard({
 
             <div className="comment-card-details">
                 {page === "profile"
-                    ? <Link to={`/poll/${commentObject.pollId}`}>{commentObject.pollTitle}</Link>
+                    ? <div>
+                        <Link to={`/poll/${commentObject.pollId}`} className="comment-card-poll-title">{commentObject.pollTitle}</Link>
+                    </div>
                     : null
                 }
 
@@ -213,7 +215,7 @@ export default function CommentCard({
                 }
                 
                 {isEditingComment
-                    ? <div>
+                    ? <div className="buttons">
                         <button onClick={handleCancelEditComment}>Cancel</button>
                         <button onClick={handleUpdateComment} disabled={!originalComment}>Update</button>
                         <button onClick={handleDeleteComment}>Delete</button>
@@ -222,10 +224,12 @@ export default function CommentCard({
                 }
 
                 {isConfirmDeleteCommentVisible
-                    ? <div>
+                    ? <div id="delete-comment">
                         <div className="confirm">Delete comment?</div>
-                        <button onClick={handleDeleteCommentNo}>No</button>
-                        <button onClick={handleDeleteCommentYes}>Yes</button>
+                        <div className="buttons">
+                            <button onClick={handleDeleteCommentNo}>No</button>
+                            <button onClick={handleDeleteCommentYes}>Yes</button>
+                        </div>
                     </div>                
                     : null
                 }
