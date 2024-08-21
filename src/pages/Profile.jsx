@@ -420,25 +420,36 @@ export default function Profile({
             </header>
 
             <main>
-                <section>
+                <section id="profile-main">
                     <div id="profile-image-wrapper">
                         <img src={userProfile[0].photoURL} alt={`Profile image of ${userProfile[0].displayName}`} id="profile-image"/>
                     </div>
                     
                     <h1>{userProfile[0].displayName}</h1>
 
-                    <div className="error">{deleteAccountError}</div>
-                    <div className="error">{updateProfileImageError}</div>
-                    <div className="error">{changePasswordError}</div>                    
+                    {deleteAccountError
+                        ? <div className="error">{deleteAccountError}</div>
+                        : null
+                    }
+
+                    {updateProfileImageError
+                        ? <div className="error">{updateProfileImageError}</div>
+                        : null
+                    }
+                    
+                    {changePasswordError
+                        ? <div className="error">{changePasswordError}</div>  
+                        : null
+                    }    
 
                     {user && profile_id === user.uid && !user.emailVerified
-                        ? <>
+                        ? <div>
                             <p>Your email address has not been verified. Please check your email and verify it to create polls and comments, vote on other members' polls, and edit your profile.</p>
                             <p>If you can't see the email in your Inbox, it may appear in your spam folder.</p>
                             <p>Once you have verified your account, refresh the page to gain full access to features.</p>
                             <div>{resendVerificationEmailMessage}</div>
                             <button onClick={handleResendVerificationEmail}>Resend Verification Email</button>
-                        </>
+                        </div>
                         : null
                     }
                     
@@ -455,7 +466,7 @@ export default function Profile({
                     !isEditingProfileImage &&
                     !isDeletingAccount &&
                     !isChangingPassword
-                        ? <div>
+                        ? <div className="profile buttons">
                             <button onClick={handleChangeProfileImage}>Change Profile Image</button>
                             <button onClick={handleChangePassword}>Change Password</button>
                             <button onClick={handleDeleteAccount}>Delete Account</button>
@@ -464,7 +475,7 @@ export default function Profile({
                     }
                     
                     {isEditingProfileImage
-                        ? <div>
+                        ? <div className="buttons">
                             <button onClick={handleCancelChangeProfileImage}>Cancel</button>
                             <button onClick={handleUpdateProfileImage}>Update</button>
                         </div>
@@ -472,7 +483,7 @@ export default function Profile({
                     }
 
                     {isChangingPassword
-                        ? <div>
+                        ? <div id="change-password">
                             <InputPassword
                                 id={"current-password"}
                                 password={currentPassword}
@@ -485,21 +496,27 @@ export default function Profile({
                                 handlePassword={handleNewPassword}
                                 placeholder={"New Password"}
                             />
-                            <button onClick={handleCancelChangePassword}>Cancel</button>
-                            <button onClick={handleConfirmChangePassword}>Confirm</button>
+                            <div className="buttons">
+                                <button onClick={handleCancelChangePassword}>Cancel</button>
+                                <button onClick={handleConfirmChangePassword}>Confirm</button>
+                            </div>
                         </div>
                         : null
                     }
 
                     {isDeletingAccount
-                        ? <div>
+                        ? <div id="delete-account">
                             <div className="confirm">Delete account? Your polls and comments will be deleted permanently.</div>
-                            <button onClick={handleDeleteAccountNo}>No</button>
-                            <button onClick={handleDeleteAccountYes}>Yes</button>
+                            <div className="buttons">
+                                <button onClick={handleDeleteAccountNo}>No</button>
+                                <button onClick={handleDeleteAccountYes}>Yes</button>
+                            </div>
                         </div>
                         : null
                     }
+                </section>
 
+                <section>
                     <h2>Polls</h2>
 
                     <div className="error">{fetchPollsMessage}</div>
