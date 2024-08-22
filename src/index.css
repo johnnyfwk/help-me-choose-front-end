@@ -44,7 +44,7 @@ img {
 }
 
 h1 {
-    font-size: 1.5rem;
+    font-size: 2rem;
 }
 
 p,
@@ -127,7 +127,7 @@ textarea {
 }
 
 #logo {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     font-weight: bold;
 }
 
@@ -147,7 +147,7 @@ textarea {
     width: var(--nav-button-dimensions);
     height: var(--nav-button-dimensions);
     position: fixed;
-    top: 7px;
+    top: 10px;
     right: var(--padding-left-and-right);
     transition: transform 0.3s ease;
     z-index: 2;
@@ -208,6 +208,7 @@ header {
 
 .nav-breadcrumbs {
     font-size: 0.9rem;
+    line-height: 1.5rem
 }
 
 .nav-breadcrumbs a:link,
