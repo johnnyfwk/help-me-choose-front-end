@@ -56,7 +56,7 @@ export default function Poll({
     const [comment, setComment] = useState("");
     const [postCommentError, setPostCommentError] = useState("");
 
-    const commentsPerPage = 3;
+    const commentsPerPage = 10;
     const [comments, setComments] = useState([]);    
     const [isFetchingComments, setIsFetchingComments] = useState(false);
     const [commentsPage, setCommentsPage] = useState(1);
@@ -630,7 +630,7 @@ export default function Poll({
                                 handleDescription={handleDescription}
                             />
                         </>
-                        : <p className="copy-output">{poll.pollDescription}</p>
+                        : <p id="poll-description" className="copy-output">{poll.pollDescription}</p>
                     }
 
                     {isEditingPoll

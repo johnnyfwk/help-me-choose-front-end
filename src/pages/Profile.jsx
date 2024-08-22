@@ -51,7 +51,7 @@ export default function Profile({
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [deleteAccountError, setDeleteAccountError] = useState("");
 
-    const cardsPerPage = 3;
+    const cardsPerPage = 10;
 
     const [isFetchingPolls, setIsFetchingPolls] = useState(false);
     const [pollsPage, setPollsPage] = useState(1);
