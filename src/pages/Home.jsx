@@ -121,20 +121,26 @@ export default function Home({user, category, setCategory, homepagePollPage, set
             
             <main>
                 <section>
-                    <h1>{titleAndH1}</h1>
+                    <div className="copy">
+                        <h1>{titleAndH1}</h1>
 
-                    {!user || !user.emailVerified
-                        ? <p>Get help making a choice by creating a poll and getting suggestions and advice from the community.</p>
-                        : <p>Get help making a choice by <Link to="/create-a-poll">creating a poll</Link> and getting suggestions and advice from the community.</p>
-                    }
+                        {!user || !user.emailVerified
+                            ? <p>Get help making a choice by creating a poll and getting suggestions and advice from the community.</p>
+                            : <p>Get help making a choice by <Link to="/create-a-poll">creating a poll</Link> and getting suggestions and advice from the community.</p>
+                        }
 
-                    {category_slug
-                        ? <h2>{utils.convertSlugToCategory(category_slug)}</h2>
+                        {category_slug
+                            ? <h2>{utils.convertSlugToCategory(category_slug)}</h2>
+                            : null
+                        }
+                    </div>
+                    
+
+                    {fetchPollsError
+                        ? <div className="error">{fetchPollsError}</div>
                         : null
                     }
-
-                    <div className="error">{fetchPollsError}</div>
-
+                    
                     <form>
                         <InputCategory
                             category={category}

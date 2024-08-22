@@ -65,7 +65,8 @@ export default function SignUp({
         setEmailVerificationError("");
     }
 
-    function handleCreateAccount() {
+    function handleCreateAccount(event) {
+        event.preventDefault();
         const emailCheck = utils.validateEmail(email);
         if (!emailCheck.isValid) {
             setEmailErrorMessage(emailCheck.msg);
@@ -186,13 +187,18 @@ export default function SignUp({
 
             <main>
                 <section>
-                    <h1>Sign Up</h1>
+                    <div className="copy">
+                        <h1>Sign Up</h1>
 
-                    <p>Create an account to create a poll and get help making a choice from other members.</p>
+                        <p>Create an account to create a poll and get help making a choice from other members.</p>
 
-                    <p>If you already have an account, <Link to="/login">login</Link> to your account.</p>
-
-                    <div className="error">{emailVerificationError}</div>                
+                        <p>If you already have an account, <Link to="/login">login</Link> to your account.</p>
+                    </div>
+                    
+                    {emailVerificationError
+                        ? <div className="error">{emailVerificationError}</div>   
+                        : null
+                    } 
 
                     <form id="sign-up">
                         {emailErrorMessage
@@ -247,15 +253,17 @@ export default function SignUp({
                 </section>
 
                 <section>
-                    <h2>To create an account:</h2>
+                    <div className="copy">
+                        <h2>To create an account:</h2>
 
-                    <ul>
-                        <li>A valid email address must be used as a verification email will be sent containing a link that must be clicked in order to create polls and post comments.</li>
-                        <li>Username must be between 3 and 20 characters (inclusive).</li>
-                        <li>Username can only contain letters (uppercase and lowercase) and numbers.</li>
-                        <li>Password must be between 6 and 128 characters (inclusive).</li>
-                        <li>A valid image URL must be entered if you wish to personalise your profile image.</li>
-                    </ul>
+                        <ul>
+                            <li>A valid email address must be used as a verification email will be sent containing a link that must be clicked in order to create polls and post comments.</li>
+                            <li>Username must be between 3 and 20 characters (inclusive).</li>
+                            <li>Username can only contain letters (uppercase and lowercase) and numbers.</li>
+                            <li>Password must be between 6 and 128 characters (inclusive).</li>
+                            <li>A valid image URL must be entered if you wish to personalise your profile image.</li>
+                        </ul>
+                    </div>
                 </section>
             </main>
         </>

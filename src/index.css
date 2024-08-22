@@ -45,12 +45,22 @@ h1 {
     font-size: 1.5rem;
 }
 
+p,
+ul,
+ol {
+    line-height: 1.5rem;
+}
+
+.copy-output {
+    white-space: pre-wrap;
+}
+
 section {
     max-width: var(--max-width);
     margin: auto;
     width: 100%;
     display: grid;
-    gap: 5px;
+    gap: 10px;
 }
 
 textarea {
@@ -220,8 +230,9 @@ main a:hover {
     text-decoration: underline;
 }
 
-#reset-password {
-    cursor: pointer;
+.copy {
+    display: grid;
+    gap: 10px;
 }
 
 form#create-a-poll {
@@ -278,6 +289,10 @@ button {
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
+}
+
+#reset-password {
+    cursor: pointer;
 }
 
 
