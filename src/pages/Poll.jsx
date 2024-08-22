@@ -730,10 +730,12 @@ export default function Poll({
                                         {!user
                                             ? null
                                             : user.emailVerified && poll.pollOwnerId !== user.uid
-                                                ? <button
-                                                    onClick={() => handleVote(option.name)}
-                                                    disabled={userVote === option.name}
-                                                >{userVote === option.name ? 'Voted' : 'Vote'}</button>
+                                                ? <div>
+                                                    <button
+                                                        onClick={() => handleVote(option.name)}
+                                                        disabled={userVote === option.name}
+                                                    >{userVote === option.name ? 'Voted' : 'Vote'}</button>
+                                                </div>
                                                 : null
                                         }
                                     </div>
