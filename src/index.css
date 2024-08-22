@@ -55,6 +55,14 @@ ol {
     white-space: pre-wrap;
 }
 
+.truncate-text {
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 100px;
+    cursor: pointer;
+}
+
 section {
     max-width: var(--max-width);
     margin: auto;
@@ -417,6 +425,16 @@ button {
 #delete-comment {
     display: grid;
     gap: 10px;
+}
+
+.show-more-button {
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--battleship-gray);
+}
+
+.show-more-button:hover {
+    text-decoration: underline;
 }
 /************************ COMMENT CARDS ************************/
 

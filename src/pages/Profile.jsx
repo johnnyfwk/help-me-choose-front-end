@@ -1,5 +1,5 @@
 import { Helmet } from 'react-helmet';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { db } from '../firebase';
 import { updateProfile } from 'firebase/auth';
@@ -51,7 +51,7 @@ export default function Profile({
     const [isDeletingAccount, setIsDeletingAccount] = useState(false);
     const [deleteAccountError, setDeleteAccountError] = useState("");
 
-    const cardsPerPage = 1;
+    const cardsPerPage = 3;
 
     const [isFetchingPolls, setIsFetchingPolls] = useState(false);
     const [pollsPage, setPollsPage] = useState(1);
@@ -64,6 +64,8 @@ export default function Profile({
     const [totalComments, setTotalComments] = useState(0);
     const totalCommentPages = Math.ceil(totalComments / cardsPerPage);
     const [fetchCommentsMessage, setFetchCommentsMessage] = useState("");
+
+    const commentsRef = useRef(null);
 
     useEffect(() => {
         setPollsPage(1);
@@ -381,17 +383,21 @@ export default function Profile({
             })
     }
 
-    const handlePollPageChange = (newPage) => {
+    function handlePollPageChange(newPage) {
         if (newPage > 0 && newPage <= totalPollPages) {
             setPollsPage(newPage);
         }
-    };
+    }
 
-    const handleCommentPageChange = (newPage) => {
+    function handleCommentPageChange(newPage) {
         if (newPage > 0 && newPage <= totalCommentPages) {
             setCommentsPage(newPage);
         }
-    };
+
+        if (commentsRef.current) {
+            commentsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+    }
 
     function handlePollCardCategory(category) {
         setCategory(category);
@@ -562,7 +568,7 @@ export default function Profile({
                 </section>
                 
                 <section>
-                    <h2>Comments</h2>
+                    <h2 ref={commentsRef}>Comments</h2>
 
                     <div className="error">{fetchCommentsMessage}</div>
 

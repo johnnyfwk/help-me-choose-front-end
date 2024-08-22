@@ -56,7 +56,7 @@ export default function Poll({
     const [comment, setComment] = useState("");
     const [postCommentError, setPostCommentError] = useState("");
 
-    const commentsPerPage = 1;
+    const commentsPerPage = 3;
     const [comments, setComments] = useState([]);    
     const [isFetchingComments, setIsFetchingComments] = useState(false);
     const [commentsPage, setCommentsPage] = useState(1);
