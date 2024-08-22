@@ -142,13 +142,13 @@ export default function Home({user, category, setCategory, homepagePollPage, set
                         : null
                     }
                     
-                    <form>
+                    {/* <form>
                         <InputCategory
                             category={category}
                             handleCategory={handleCategory}
                             page={"home"}
                         />
-                    </form>
+                    </form> */}
                     
                     {polls.length > 0
                         ? <div className="cards-wrapper-and-pagination">
