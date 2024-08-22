@@ -147,7 +147,7 @@ textarea {
     width: var(--nav-button-dimensions);
     height: var(--nav-button-dimensions);
     position: fixed;
-    top: 10px;
+    top: 8px;
     right: var(--padding-left-and-right);
     transition: transform 0.3s ease;
     z-index: 2;
