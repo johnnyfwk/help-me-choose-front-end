@@ -84,9 +84,14 @@ export default function Login({setIsLoginSuccessMessageVisible}) {
 
                     <p>If you don't have an account, <Link to="/sign-up">sign up</Link> for one.</p>
 
-                    <div className="error">{loginError}</div>
+                    <p>If you have forgotton your password, reset it <Link to="/reset-password">here</Link>.</p>
 
-                    <form>
+                    {loginError
+                        ? <div className="error">{loginError}</div>
+                        : null
+                    }
+
+                    <form id="login">
                         <InputEmail
                             email={email}
                             handleEmail={handleEmail}
@@ -99,15 +104,13 @@ export default function Login({setIsLoginSuccessMessageVisible}) {
                             placeholder={"Password"}
                         />
 
-                        <input
-                            type="button"
-                            value="Login"
-                            onClick={handleLogin}
-                            disabled={!email || !password}
-                        />
+                        <div>
+                            <button
+                                onClick={handleLogin}
+                                disabled={!email || !password}
+                            >Login</button>
+                        </div>
                     </form>
-
-                    <Link to="/reset-password">Reset Password</Link>
                 </section>
             </main>
         </>

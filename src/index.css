@@ -229,7 +229,9 @@ form#create-a-poll {
     gap: 20px;
 }
 
-form#sign-up {
+form#sign-up,
+form#login,
+form#reset-password {
     display: grid;
     gap: 10px;
     max-width: 300px;
