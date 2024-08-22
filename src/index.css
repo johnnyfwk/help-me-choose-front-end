@@ -369,30 +369,29 @@ button {
     gap: 10px;
 }
 
-.poll-card-created-date,
-.comment-card-created-date {
-    font-size: 0.8rem;
-}
-/************************ POLL & COMMENT CARDS ************************/
-
-
-/************************ POLL CARDS ************************/
-.poll-card-title {
+.poll-card-title,
+.comment-card-poll-title {
     font-weight: bold;
+    font-size: 1.2rem;
 }
 
 .poll-card-title a:link,
 .poll-card-title a:active,
-.poll-card-title a:visited {
+.poll-card-title a:visited,
+.comment-card-poll-title:link,
+.comment-card-poll-title:active,
+.comment-card-poll-title:visited {
     color: var(--rose);
     text-decoration: none;
 }
 
-.poll-card-title a:hover {
+.poll-card-title a:hover,
+.comment-card-poll-title:hover {
     text-decoration: underline;
 }
 
-.poll-card-category {
+.poll-card-created-date,
+.comment-card-created-date {
     font-size: 0.8rem;
 }
 
@@ -402,22 +401,16 @@ button {
     color: var(--night);
     text-decoration: underline;
 }
+/************************ POLL & COMMENT CARDS ************************/
+
+
+/************************ POLL CARDS ************************/
+.poll-card-category {
+    font-size: 0.8rem;
+}
 
 .poll-card-category a:hover {
     color: var(--rose);
-}
-
-.comment-card-poll-title:link,
-.comment-card-poll-title:active,
-.comment-card-poll-title:visited {
-    color: var(--rose);
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.2rem;
-}
-
-.comment-card-poll-title:hover {
-    text-decoration: underline;
 }
 /************************ POLL CARDS ************************/
 
