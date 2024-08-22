@@ -452,9 +452,9 @@ export default function Profile({
                     }    
 
                     {user && profile_id === user.uid && !user.emailVerified
-                        ? <div>
+                        ? <div id="email-verification-message-and-button">
                             <div className="copy">
-                                <p>Your email address has not been verified. Please check your email and verify it to create polls and comments, vote on other members' polls, and edit your profile.</p>
+                                <p>Your email address has not been verified. Please check your email and verify it to create polls, post comments, vote on other members' polls, and edit your profile.</p>
                                 <p>If you can't see the email in your Inbox, it may appear in your spam folder.</p>
                                 <p>Once you have verified your account, refresh the page to gain full access to features.</p>
                             </div>
@@ -464,7 +464,9 @@ export default function Profile({
                                 : null
                             }
 
-                            <button onClick={handleResendVerificationEmail}>Resend Verification Email</button>
+                            <div>
+                                <button onClick={handleResendVerificationEmail}>Resend Verification Email</button>
+                            </div>
                         </div>
                         : null
                     }
@@ -491,7 +493,7 @@ export default function Profile({
                         ? <div className="profile buttons">
                             <button onClick={handleChangeProfileImage}>Change Profile Image</button>
                             <button onClick={handleChangePassword}>Change Password</button>
-                            <button onClick={handleDeleteAccount}>Delete Account</button>
+                            {/* <button onClick={handleDeleteAccount}>Delete Account</button> */}
                         </div>
                         : null
                     }

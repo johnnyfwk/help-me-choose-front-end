@@ -761,7 +761,7 @@ export default function Poll({
                         ? <div className="buttons">
                             <button onClick={handleCancelEditPoll}>Cancel</button>
                             <button onClick={handleUpdatePoll}>Update</button>
-                            <button onClick={handleDeletePoll}>Delete</button>
+                            {/* <button onClick={handleDeletePoll}>Delete</button> */}
                         </div>
                         : null
                     }

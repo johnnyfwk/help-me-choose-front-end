@@ -578,6 +578,11 @@ button:hover {
 .profile.buttons {
     justify-content: center;
 }
+
+#email-verification-message-and-button {
+    display: grid;
+    gap: 10px;
+}
 /************************ PROFILE PAGE ************************/
 
 
