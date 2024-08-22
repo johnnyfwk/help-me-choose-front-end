@@ -647,27 +647,29 @@ export default function Poll({
                                 className="poll-category"
                             >{poll.pollCategory}</Link>
                         </div>
-                    }              
-                
+                    }
+
                     {isEditingPoll
                         ? null
-                        : <>
-                            <div>{utils.formatDate(poll.pollCreated)}</div>
-                            <div id="poll-owner-image-and-username">
-                                <Link to={`/profile/${poll.pollOwnerId}`}>
-                                    <div className="poll-owner-image-wrapper">
-                                        <img
-                                            src={poll.pollOwnerImageUrl}
-                                            alt={`Profile image of ${poll.pollOwnerUsername}`}
-                                            className="poll-owner-image"
-                                        />
-                                    </div>
-                                </Link>                                     
-                                <Link to={`/profile/${poll.pollOwnerId}`} className="poll-owner-username">{poll.pollOwnerUsername}</Link>
-                            </div>
-                        </>
+                        : <div>{utils.formatDate(poll.pollCreated)}</div>
                     }
-                    
+
+                    {isEditingPoll
+                        ? null
+                        : <div id="poll-owner-image-and-username">
+                            <Link to={`/profile/${poll.pollOwnerId}`}>
+                                <div className="poll-owner-image-wrapper">
+                                    <img
+                                        src={poll.pollOwnerImageUrl}
+                                        alt={`Profile image of ${poll.pollOwnerUsername}`}
+                                        className="poll-owner-image"
+                                    />
+                                </div>
+                            </Link>                                     
+                            <Link to={`/profile/${poll.pollOwnerId}`} className="poll-owner-username">{poll.pollOwnerUsername}</Link>
+                        </div>
+                    }
+
                     {editOptionsError
                         ? <div className="error">{editOptionsError}</div>
                         : null
