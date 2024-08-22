@@ -13,6 +13,7 @@ export default function ResetPassword() {
 
     function handleEmail(event) {
         setEmail(event.target.value);
+        setPasswordResetMessage("");
     }
 
     function handleResetPassword() {
@@ -77,22 +78,25 @@ export default function ResetPassword() {
 
                     <p>If you have forgotton your password, reset it by entering your email address.</p>
 
-                    <p>An email with a link will be sent to the address provided where you can create a new password.</p>
+                    <p>An email with a link will be sent to the address provided where you can create a new password and <Link to="/login">login</Link>.</p>
 
-                    <div>{passwordResetMessage}</div>
+                    {passwordResetMessage
+                        ? <div className="error">{passwordResetMessage}</div>
+                        : null
+                    }
 
-                    <form>
+                    <form id="reset-password">
                         <InputEmail
                             email={email}
                             handleEmail={handleEmail}
                         />
                         
-                        <input
-                            type="button"
-                            value="Reset Password"
-                            onClick={handleResetPassword}
-                            disabled={!email}
-                        />
+                        <div>
+                            <button
+                                onClick={handleResetPassword}
+                                disabled={!email}
+                            >Reset Password</button>
+                        </div>
                     </form>
                 </section>
             </main>
