@@ -25,7 +25,8 @@ export default function Login({setIsLoginSuccessMessageVisible}) {
         setLoginError("");
     }
 
-    function handleLogin() {
+    function handleLogin(event) {
+        event.preventDefault();
         signInWithEmailAndPassword(auth, email, password)
             .then(() => {
                 setIsLoginSuccessMessageVisible(true);
@@ -35,6 +36,7 @@ export default function Login({setIsLoginSuccessMessageVisible}) {
                 setLoginError("");
             })
             .catch((error) => {
+                console.log(error)
                 setLoginError("Email or password is invalid.");
             })
     }
@@ -78,13 +80,15 @@ export default function Login({setIsLoginSuccessMessageVisible}) {
 
             <main>
                 <section>
-                    <h1>Login</h1>
+                    <div className="copy">
+                        <h1>Login</h1>
 
-                    <p>Login to your account to ask a question and get help making a choice from other members.</p>
+                        <p>Login to your account to ask a question and get help making a choice from other members.</p>
 
-                    <p>If you don't have an account, <Link to="/sign-up">sign up</Link> for one.</p>
+                        <p>If you don't have an account, <Link to="/sign-up">sign up</Link> for one.</p>
 
-                    <p>If you have forgotton your password, reset it <Link to="/reset-password">here</Link>.</p>
+                        <p>If you have forgotton your password, reset it <Link to="/reset-password">here</Link>.</p>
+                    </div>
 
                     {loginError
                         ? <div className="error">{loginError}</div>

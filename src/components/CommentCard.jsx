@@ -189,7 +189,7 @@ export default function CommentCard({
                         comment={originalComment}
                         handleComment={handleEditComment}
                     />
-                    : <div>{commentObject.comment}</div>
+                    : <p className="copy-output">{commentObject.comment}</p>
                 }
 
                 {!user

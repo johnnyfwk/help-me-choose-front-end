@@ -260,8 +260,11 @@ export default function Profile({
         setIsDeletingAccount(false);
     }
 
-    function handleDeleteAccountYes() {
+    function handleDeleteAccountYes(event) {
+        event.preventDefault();
+
         setIsDeletingAccount(false);
+        
         const usersQuery = query(
             collection(db, 'users'),
             where('userId', '==', user.uid)
@@ -444,10 +447,17 @@ export default function Profile({
 
                     {user && profile_id === user.uid && !user.emailVerified
                         ? <div>
-                            <p>Your email address has not been verified. Please check your email and verify it to create polls and comments, vote on other members' polls, and edit your profile.</p>
-                            <p>If you can't see the email in your Inbox, it may appear in your spam folder.</p>
-                            <p>Once you have verified your account, refresh the page to gain full access to features.</p>
-                            <div>{resendVerificationEmailMessage}</div>
+                            <div className="copy">
+                                <p>Your email address has not been verified. Please check your email and verify it to create polls and comments, vote on other members' polls, and edit your profile.</p>
+                                <p>If you can't see the email in your Inbox, it may appear in your spam folder.</p>
+                                <p>Once you have verified your account, refresh the page to gain full access to features.</p>
+                            </div>
+                            
+                            {resendVerificationEmailMessage
+                                ? <div>{resendVerificationEmailMessage}</div>
+                                : null
+                            }
+
                             <button onClick={handleResendVerificationEmail}>Resend Verification Email</button>
                         </div>
                         : null
@@ -479,14 +489,6 @@ export default function Profile({
                         </div>
                         : null
                     }
-                    
-                    {/* {isEditingProfileImage
-                        ? <div className="buttons">
-                            <button onClick={handleCancelChangeProfileImage}>Cancel</button>
-                            <button onClick={handleUpdateProfileImage}>Update</button>
-                        </div>
-                        : null
-                    } */}
 
                     {isChangingPassword
                         ? <div id="change-password">

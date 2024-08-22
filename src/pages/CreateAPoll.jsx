@@ -63,7 +63,8 @@ export default function CreateAPoll({
         setOptionsError("");
     }
 
-    function handlePostPoll() {
+    function handlePostPoll(event) {
+        event.preventDefault();
         const filteredOptions = options.filter((option) => option.name);
 
         const newOptions = filteredOptions.map((option) => {
@@ -174,8 +175,11 @@ export default function CreateAPoll({
 
             <main>
                 <section>
-                    <h1>Create a Poll</h1>
-                    <p>If you need help making a choice, create a poll and let other members vote on your options and offer suggestions and advice.</p>
+                    <div className="copy">
+                        <h1>Create a Poll</h1>
+                        
+                        <p>If you need help making a choice, create a poll and let other members vote on your options and offer suggestions and advice.</p>
+                    </div>                    
 
                     <div className="error">{postPollError}</div>
 

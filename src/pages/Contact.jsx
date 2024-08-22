@@ -41,11 +41,13 @@ export default function Contact() {
 
             <main>
                 <section>
-                    <h1>Contact</h1>
+                    <div className="copy">
+                        <h1>Contact</h1>
 
-                    <p>HelpMeChoose.uk is a community where members can help each other make choices.</p>
+                        <p>HelpMeChoose.uk is a community where members can help each other make choices.</p>
 
-                    <p>If you have any questions or suggestions about how we can improve the site, get in touch with us at hi@helpmechoose.uk.</p>
+                        <p>If you have any questions or suggestions about how we can improve the site, get in touch with us at hi@helpmechoose.uk.</p>
+                    </div>
                 </section>
             </main>
         </>

@@ -630,7 +630,7 @@ export default function Poll({
                                 handleDescription={handleDescription}
                             />
                         </>
-                        : <p>{poll.pollDescription}</p>
+                        : <p className="copy-output">{poll.pollDescription}</p>
                     }
 
                     {isEditingPoll
@@ -664,8 +664,7 @@ export default function Poll({
                                     </div>
                                 </Link>                                     
                                 <Link to={`/profile/${poll.pollOwnerId}`} className="poll-owner-username">{poll.pollOwnerUsername}</Link>
-                            </div>                            
-                            
+                            </div>
                         </>
                     }
                     
