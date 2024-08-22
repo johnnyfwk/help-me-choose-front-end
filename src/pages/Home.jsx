@@ -125,8 +125,8 @@ export default function Home({user, category, setCategory, homepagePollPage, set
                         <h1>{titleAndH1}</h1>
 
                         {!user || !user.emailVerified
-                            ? <p>Get help making a choice by creating a poll and getting suggestions and advice from the community.</p>
-                            : <p>Get help making a choice by <Link to="/create-a-poll">creating a poll</Link> and getting suggestions and advice from the community.</p>
+                            ? <p>If you need help making a choice, create a poll to get suggestions and advice from the community.</p>
+                            : <p>If you need help making a choice, <Link to="/create-a-poll">create a poll</Link> to get suggestions and advice from the community.</p>
                         }
 
                         {category_slug
@@ -141,13 +141,13 @@ export default function Home({user, category, setCategory, homepagePollPage, set
                         : null
                     }
                     
-                    {/* <form>
+                    <form>
                         <InputCategory
                             category={category}
                             handleCategory={handleCategory}
                             page={"home"}
                         />
-                    </form> */}
+                    </form>
                     
                     {polls.length > 0
                         ? <div className="cards-wrapper-and-pagination">

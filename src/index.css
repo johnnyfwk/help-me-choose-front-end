@@ -127,7 +127,7 @@ textarea {
 }
 
 #logo {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
 }
 
@@ -147,7 +147,7 @@ textarea {
     width: var(--nav-button-dimensions);
     height: var(--nav-button-dimensions);
     position: fixed;
-    top: 10px;
+    top: 7px;
     right: var(--padding-left-and-right);
     transition: transform 0.3s ease;
     z-index: 2;
@@ -223,7 +223,7 @@ header {
 
 main {
     background-color: var(--white);
-    padding: var(--padding-left-and-right);
+    padding: var(--padding-left-and-right) var(--padding-left-and-right) 40px var(--padding-left-and-right);
     display: grid;
     gap: 30px;
 }
@@ -285,15 +285,10 @@ select {
 }
 
 button {
-    background-color: var(--night);
-    color: var(--white);
     border: 0px;
     padding: 5px 10px;
+    border: 1px solid var(--silver);
     cursor: pointer;
-}
-
-button:hover {
-    background-color: var(--rose);
 }
 
 .cards-wrapper-and-pagination {
@@ -453,7 +448,7 @@ button:hover {
 /************************ POLL PAGE ************************/
 #poll-details {
     display: grid;
-    gap: 10px
+    gap: 15px
 }
 
 #poll-description {
@@ -654,6 +649,11 @@ footer a:hover {
         text-align: initial;
         padding: 3px var(--padding-left-and-right);
         font-size: initial;
+    }
+
+    #nav-about,
+    #nav-contact {
+        display: none;
     }
 
     h1 {

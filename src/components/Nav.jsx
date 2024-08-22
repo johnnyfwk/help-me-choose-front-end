@@ -30,6 +30,9 @@ export default function Nav({user, isNavVisible, setIsNavVisible}) {
                     <div><Link to="/login">Login</Link></div>
                 </>
             }
+
+            <Link to="/about" id="nav-about">About</Link>
+            <Link to="/contact" id="nav-contact">Contact</Link>
         </nav>
     )
 }
