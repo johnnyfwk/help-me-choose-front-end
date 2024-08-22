@@ -38,6 +38,12 @@ export default function CommentCard({
     const [isEditingComment, setIsEditingComment] = useState(false);
     const [originalComment, setOriginalComment] = useState("");
     const [isConfirmDeleteCommentVisible, setIsConfirmDeleteCommentVisible] = useState(false);
+    const [isReadMoreButtonVisible, setIsReadMoreButtonVisible] = useState(false);
+
+    const truncatedCommentLength = 300;
+    const [truncatedComment, setTruncatedComment] = useState("");
+    const [isCommentExpanded, setIsCommentExpanded] = useState(false);
+    const [visibleComment, setVisibleComment] = useState("");
 
     useEffect(() => {
         if (comment || isEditingPoll || isEditingProfileImage || isChangingPassword || isDeletingAccount) {
@@ -47,6 +53,19 @@ export default function CommentCard({
             setIsEditingComment(false);
         }
     }, [comment, isEditingPoll, editingCommentId, isEditingProfileImage, isChangingPassword, isDeletingAccount])
+
+    useEffect(() => {
+        setOriginalComment(commentObject.comment);
+        setIsCommentExpanded(false); 
+        if (commentObject.comment.length > truncatedCommentLength) {
+            setTruncatedComment(commentObject.comment.slice(0, truncatedCommentLength) + "...");
+            setVisibleComment(commentObject.comment.slice(0, truncatedCommentLength) + "...");
+            setIsReadMoreButtonVisible(true);      
+        } else {
+            setVisibleComment(commentObject.comment);
+            setIsReadMoreButtonVisible(false);
+        }
+    }, [commentObject.comment, page])
 
     function handleEditCommentButton() {
         setEditingCommentId(commentObject.id)
@@ -152,6 +171,19 @@ export default function CommentCard({
         window.scrollTo(0, 0);
     }
 
+    function handleReadMoreButton(value) {
+        setIsCommentExpanded((currentValue) => !currentValue);
+        if (!value) {
+            setVisibleComment(originalComment);
+        } else {
+            setVisibleComment(truncatedComment);
+        }
+    }
+
+    const styleReadMoreButton = {
+        display: isReadMoreButtonVisible ? "inline" : "none"
+    };
+
     return (
         <div className="comment-card-wrapper">
             <div>
@@ -189,8 +221,13 @@ export default function CommentCard({
                         comment={originalComment}
                         handleComment={handleEditComment}
                     />
-                    : <p className="copy-output">{commentObject.comment}</p>
+                    : <p className="copy-output">{visibleComment}</p> // change
                 }
+
+                <div>
+                    <span className="show-more-button" onClick={() => handleReadMoreButton(isCommentExpanded)} style={styleReadMoreButton}>{isCommentExpanded ? "Hide" : "Show More"}</span>
+                </div>
+                
 
                 {!user
                     ? <div className="like-comment-user-not-verified">&#128077;{commentObject.commentLikes.length}</div>

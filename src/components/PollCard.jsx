@@ -33,7 +33,7 @@ export default function PollCard({
                     <Link to={`/poll/${poll.id}`} onClick={handlePollCardTitle}>{poll.pollTitle}</Link>
                 </div>
                 
-                <p>{poll.pollDescription}</p>
+                <p className="truncate-text">{poll.pollDescription}</p>
 
                 <div className="poll-card-category">
                     <Link
