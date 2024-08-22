@@ -29,7 +29,7 @@
     --poll-owner-image: 40px;
     --nav-button-dimensions: 20px;
 
-    background-color: var(--jet);
+    background-color: var(--night);
     color: var(--night);
 }
 
@@ -122,13 +122,12 @@ textarea {
     background: var(--night);
     text-align: center;
     padding: 3px;
+    position: sticky;
+    top: 0;
 }
 
 #logo {
-    /* background-color: var(--night); */
     font-size: 1.5rem;
-    position: sticky;
-    top: 0;
     font-weight: bold;
 }
 
@@ -144,7 +143,6 @@ textarea {
 }
 
 #nav-button {
-    /* background-color: lime; */
     cursor: pointer;
     width: var(--nav-button-dimensions);
     height: var(--nav-button-dimensions);
@@ -156,7 +154,7 @@ textarea {
 }
 
 #nav-button > div {
-    background-color: var(--white);
+    background-color: var(--rose);
     width: 100%;
     height: 5px;
     position: absolute;
@@ -172,16 +170,17 @@ textarea {
 }
 
 #nav-main {
-    background-color: var(--jet);
+    background-color: var(--night);
     position: fixed;
     width: 100%;
     height: 100%;
     left: 100%;
     display: grid;
-    gap: 30px;
+    gap: 20px;
     align-content: start;
     text-align: center;
     padding: var(--padding-left-and-right);
+    font-size: 1.2rem;
     transition: left 0.3s ease;
 }
 
@@ -199,7 +198,7 @@ textarea {
 
 #logout-button:hover,
 #nav-main a:hover {
-    text-decoration: underline;
+    color: var(--rose);
 }
 
 header {
@@ -453,9 +452,12 @@ button:hover {
 
 /************************ POLL PAGE ************************/
 #poll-details {
-    /* background: orange; */
     display: grid;
     gap: 10px
+}
+
+#poll-description {
+    font-size: 1.1rem;
 }
 
 .poll-category:link,
@@ -617,6 +619,10 @@ footer a:hover {
 .footer-links-section-heading {
     font-weight: bold;
 }
+
+#copyright {
+    font-size: 0.9rem;
+}
 /************************ FOOTER ************************/
 
 
@@ -637,6 +643,7 @@ footer a:hover {
         justify-content: center;
         text-align: initial;
         padding: 3px var(--padding-left-and-right);
+        font-size: initial;
     }
 
     h1 {

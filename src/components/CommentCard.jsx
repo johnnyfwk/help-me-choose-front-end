@@ -221,7 +221,7 @@ export default function CommentCard({
                         comment={originalComment}
                         handleComment={handleEditComment}
                     />
-                    : <p className="copy-output">{visibleComment}</p> // change
+                    : <p className="copy-output">{visibleComment}</p>
                 }
 
                 <div>
