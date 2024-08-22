@@ -23,6 +23,7 @@ export default function Home({user, category, setCategory, homepagePollPage, set
 
     const titleAndH1 = "Get help making choices from the community";
 
+console.log(category)
     
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -142,13 +143,13 @@ export default function Home({user, category, setCategory, homepagePollPage, set
                         : null
                     }
                     
-                    {/* <form>
+                    <form>
                         <InputCategory
                             category={category}
                             handleCategory={handleCategory}
                             page={"home"}
                         />
-                    </form> */}
+                    </form>
                     
                     {polls.length > 0
                         ? <div className="cards-wrapper-and-pagination">
