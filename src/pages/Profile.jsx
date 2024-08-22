@@ -239,7 +239,7 @@ export default function Profile({
                 setIsEditingProfileImage(false);
             })
             .catch((error) => {
-                setUpdateProfileImageError("Your profile image could not be updated.");
+                setUpdateProfileImageError("Profile image URL is not valid.");
             })
     }
 
@@ -423,7 +423,7 @@ export default function Profile({
                 <section id="profile-main">
                     <div id="profile-image-wrapper">
                         <img src={userProfile[0].photoURL} alt={`Profile image of ${userProfile[0].displayName}`} id="profile-image"/>
-                    </div>
+                    </div>             
                     
                     <h1>{userProfile[0].displayName}</h1>
 
@@ -454,10 +454,16 @@ export default function Profile({
                     }
                     
                     {isEditingProfileImage
-                        ? <InputProfileImage
-                            profileImageUrl={profileImageUrl}
-                            handleProfileImageUrl={handleProfileImageUrl}
-                        />
+                        ? <div id="profile-input-image-url-and-buttons">
+                            <InputProfileImage
+                                profileImageUrl={profileImageUrl}
+                                handleProfileImageUrl={handleProfileImageUrl}
+                            />
+                            <div className="buttons">
+                                <button onClick={handleCancelChangeProfileImage}>Cancel</button>
+                                <button onClick={handleUpdateProfileImage}>Update</button>
+                            </div>
+                        </div>
                         : null
                     }
 
@@ -474,13 +480,13 @@ export default function Profile({
                         : null
                     }
                     
-                    {isEditingProfileImage
+                    {/* {isEditingProfileImage
                         ? <div className="buttons">
                             <button onClick={handleCancelChangeProfileImage}>Cancel</button>
                             <button onClick={handleUpdateProfileImage}>Update</button>
                         </div>
                         : null
-                    }
+                    } */}
 
                     {isChangingPassword
                         ? <div id="change-password">

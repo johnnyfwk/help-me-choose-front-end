@@ -9,13 +9,14 @@ export default function InputOptions({
             {options.map((option, index) => {
                 return (
                     <div key={index} className="option">
+                        <div className="option-label">Option {index + 1}</div>
                         <input                            
                             type="text"
                             id={`option-${index}-name`}
                             name={`option-${index}-name`}
                             value={option.name}
                             onChange={(event) => handleOptionNames(index, event.target.value)}
-                            placeholder={`Option ${index + 1}`}
+                            placeholder={`Option ${index + 1} Name`}
                             className="input-option"
                         />
 

@@ -194,22 +194,31 @@ export default function SignUp({
 
                     <div className="error">{emailVerificationError}</div>                
 
-                    <form>
-                        <div className="error">{emailErrorMessage}</div>
-
+                    <form id="sign-up">
+                        {emailErrorMessage
+                            ? <div className="error">{emailErrorMessage}</div>
+                            : null
+                        }
+                        
                         <InputEmail
                             email={email}
                             handleEmail={handleEmail}
                         />
 
-                        <div className="error">{usernameErrorMessage}</div>                  
+                        {usernameErrorMessage
+                            ? <div className="error">{usernameErrorMessage}</div> 
+                            : null
+                        }       
 
                         <InputUsername
                             username={username}
                             handleUsername={handleUsername}
                         />
 
-                        <div className="error">{passwordErrorMessage}</div>
+                        {passwordErrorMessage
+                            ? <div className="error">{passwordErrorMessage}</div>
+                            : null
+                        }
 
                         <InputPassword
                             id={"password"}
@@ -218,32 +227,34 @@ export default function SignUp({
                             placeholder={"Password"}
                         />
 
-                        <div className="error">{profileImageUrlErrorMessage}</div>
-
+                        {profileImageUrlErrorMessage
+                            ? <div className="error">{profileImageUrlErrorMessage}</div>
+                            : null
+                        }
+                        
                         <InputProfileImage
                             profileImageUrl={profileImageUrl}
                             handleProfileImageUrl={handleProfileImageUrl}
                         />
 
-                        <input
-                            type="button"
-                            value="Create Account"
-                            onClick={handleCreateAccount}
-                            disabled={!username || !password || !email}
-                        />
+                        <div>
+                            <button
+                                onClick={handleCreateAccount}
+                                disabled={!username || !password || !email}
+                            >Create Account</button>
+                        </div>
                     </form>
+                </section>
 
-                    <h2>Username and Password Criteria</h2>
+                <section>
+                    <h2>To create an account:</h2>
 
-                    <h3>Username:</h3>
                     <ul>
-                        <li>Between 3 and 20 characters (inclusive).</li>
-                        <li>Can only contain letters (uppercase and lowercase) and numbers.</li>
-                    </ul>
-
-                    <h3>Password:</h3>
-                    <ul>
-                        <li>Between 6 and 128 characters (inclusive).</li>
+                        <li>A valid email address must be used as a verification email will be sent containing a link that must be clicked in order to create polls and post comments.</li>
+                        <li>Username must be between 3 and 20 characters (inclusive).</li>
+                        <li>Username can only contain letters (uppercase and lowercase) and numbers.</li>
+                        <li>Password must be between 6 and 128 characters (inclusive).</li>
+                        <li>A valid image URL must be entered if you wish to personalise your profile image.</li>
                     </ul>
                 </section>
             </main>

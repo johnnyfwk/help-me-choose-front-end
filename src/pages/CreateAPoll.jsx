@@ -179,7 +179,7 @@ export default function CreateAPoll({
 
                     <div className="error">{postPollError}</div>
 
-                    <form>
+                    <form id="create-a-poll">
                         <InputTitle
                             title={title}
                             handleTitle={handleTitle}

@@ -209,14 +209,30 @@ main {
     gap: 30px;
 }
 
+main a:link,
+main a:active,
+main a:visited {
+    color: var(--rose);
+    text-decoration: none;
+}
+
+main a:hover {
+    text-decoration: underline;
+}
+
 #reset-password {
     cursor: pointer;
 }
 
-form {
-    /* background: orange; */
+form#create-a-poll {
     display: grid;
     gap: 20px;
+}
+
+form#sign-up {
+    display: grid;
+    gap: 10px;
+    max-width: 300px;
 }
 
 input,
@@ -236,10 +252,18 @@ select {
     gap: 5px;
 }
 
+.option-label {
+    font-weight: bold;
+}
+
 .buttons {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+}
+
+button {
+    cursor: pointer;
 }
 
 .cards-wrapper-and-pagination {
@@ -476,12 +500,12 @@ select {
     max-width: var(--profile-image-dimensions);
     aspect-ratio: 1 / 1;
     border-radius: 50%;
-    overflow: hidden;  
+    overflow: hidden;
 }
 
 #profile-image {
     height: 100%;
-    object-fit: cover;  
+    object-fit: cover;
 }
 
 #change-password {
@@ -490,8 +514,10 @@ select {
     justify-items: center;
 }
 
-#profile-image-url {
-    width: 100%;
+#profile-input-image-url-and-buttons {
+    display: grid;
+    gap: 10px;
+    justify-items: center;
 }
 
 #delete-account {
@@ -501,9 +527,6 @@ select {
 }
 
 .profile.buttons {
-    /* display: flex;
-    flex-wrap: wrap;
-    gap: 10px; */
     justify-content: center;
 }
 /************************ PROFILE PAGE ************************/
@@ -516,7 +539,6 @@ select {
 }
 
 footer {
-    /* background-color: grey; */
     max-width: var(--max-width);
     margin: auto;
     color: var(--white);
