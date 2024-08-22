@@ -71,6 +71,7 @@ export default function Home({user, category, setCategory, homepagePollPage, set
         if (newPage > 0 && newPage <= totalPages) {
             setHomepagePollPage(newPage);
         }
+        window.scrollTo(0, 0);
     };
 
     function handleCategory(event) {

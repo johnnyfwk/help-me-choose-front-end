@@ -11,6 +11,8 @@
     --battleship-gray: #868785;
     --silver: #C3C3C2;
     --platinum: #E1E1E1;
+    --anti-flash-white: #F0F0F0;
+    --seasalt: #F8F8F8;
     --white: #FFFFFF;
     --rose: #FF206E;
     --yellow: #FBFF12;
@@ -284,7 +286,15 @@ select {
 }
 
 button {
+    background-color: var(--night);
+    color: var(--white);
+    border: 0px;
+    padding: 5px 10px;
     cursor: pointer;
+}
+
+button:hover {
+    background-color: var(--rose);
 }
 
 .cards-wrapper-and-pagination {
@@ -297,6 +307,7 @@ button {
     flex-wrap: wrap;
     gap: 10px;
     justify-content: center;
+    align-items: center;
 }
 
 #reset-password {
@@ -315,7 +326,7 @@ button {
 
 .poll-card-wrapper,
 .comment-card-wrapper {
-    background-color: var(--platinum);
+    background-color: var(--anti-flash-white);
     padding: 10px;
     display: grid;
     grid-template-columns: 40px auto;
@@ -494,13 +505,14 @@ button {
     gap: 30px;
 }
 
+.poll-option-wrapper {
+    display: grid;
+    gap: 5px;
+}
+
 .poll-option-name {
     font-weight: bold;
     font-size: 1.2rem;
-}
-
-.poll-option-votes {
-    font-weight: bold;
 }
 
 .poll-option-image {
