@@ -27,7 +27,7 @@
     --max-height-image: 400px;
     --profile-image-dimensions: 200px;
     --poll-owner-image: 40px;
-    --nav-button-dimensions: 20px;
+    --nav-button-dimensions: 25px;
 
     background-color: var(--night);
     color: var(--night);
@@ -125,10 +125,14 @@ textarea {
 
 #logo-wrapper {
     background: var(--night);
-    text-align: center;
-    padding: 3px;
     position: sticky;
     top: 0;
+    padding: 8px;
+    display: grid;
+    justify-content: center;
+    /* text-align: center;
+    padding: 5px; */
+    
 }
 
 #logo {
@@ -152,7 +156,7 @@ textarea {
     width: var(--nav-button-dimensions);
     height: var(--nav-button-dimensions);
     position: fixed;
-    top: 8px;
+    top: 11px;
     right: var(--padding-left-and-right);
     transition: transform 0.3s ease;
     z-index: 2;
@@ -161,7 +165,7 @@ textarea {
 #nav-button > div {
     background-color: var(--rose);
     width: 100%;
-    height: 5px;
+    height: 6px;
     position: absolute;
     top: 50%;
 }
@@ -659,8 +663,9 @@ footer a:hover {
         align-content: initial;
         justify-content: center;
         text-align: initial;
-        padding: 3px var(--padding-left-and-right);
+        padding: 0px var(--padding-left-and-right) 8px var(--padding-left-and-right);
         font-size: initial;
+        gap: 40px;
     }
 
     #nav-about,
