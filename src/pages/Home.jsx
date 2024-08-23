@@ -21,7 +21,7 @@ export default function Home({user, category, setCategory, homepagePollPage, set
     const totalPages = Math.ceil(totalPolls / pollsPerPage);
     const [fetchPollsError, setFetchPollsError] = useState("");
 
-    const titleAndH1 = "Get help making choices from the community";
+    const titleAndH1 = "Get Help Making Choices";
     
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -135,19 +135,18 @@ export default function Home({user, category, setCategory, homepagePollPage, set
                         }
                     </div>
                     
-
-                    {fetchPollsError
-                        ? <div className="error">{fetchPollsError}</div>
-                        : null
-                    }
-                    
-                    <form>
+                    {/* <form>
                         <InputCategory
                             category={category}
                             handleCategory={handleCategory}
                             page={"home"}
                         />
-                    </form>
+                    </form> */}
+
+                    {fetchPollsError
+                        ? <div className="error">{fetchPollsError}</div>
+                        : null
+                    }
                     
                     {polls.length === 0
                         ? <div>There are no polls to display in this category.</div>
@@ -164,6 +163,7 @@ export default function Home({user, category, setCategory, homepagePollPage, set
                                     )
                                 })}
                             </div>
+
                             <div className="pagination">
                                 <div>
                                     <button onClick={() => handlePageChange(homepagePollPage - 1)} disabled={isFetching || homepagePollPage === 1}>Previous</button>

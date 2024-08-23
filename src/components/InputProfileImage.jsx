@@ -11,7 +11,6 @@ export default function InputProfileImage({
             onChange={handleProfileImageUrl}
             maxLength="2083"
             placeholder="Profile Image URL (optional)"
-            required
         ></input>
     )
 }

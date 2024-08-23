@@ -606,9 +606,8 @@ export default function Poll({
 
             <main>
                 <section>
-
                     {isEditingPoll
-                        ? <div id="poll-details-editing">
+                        ? <div id="poll-main-editing">
                             {updatePollError
                                 ? <div className="error">{updatePollError}</div> 
                                 : null
@@ -619,29 +618,25 @@ export default function Poll({
                                 : null
                             }
 
-                            <div>
-                                {editTitleError
-                                    ? <div className="error">{editTitleError}</div>
-                                    : null
-                                }
-                    
-                                <InputTitle
-                                    title={poll.pollTitle}
-                                    handleTitle={handleTitle}
-                                />
-                            </div>
+                            {editTitleError
+                                ? <div className="error">{editTitleError}</div>
+                                : null
+                            }
+                
+                            <InputTitle
+                                title={poll.pollTitle}
+                                handleTitle={handleTitle}
+                            />
                             
-                            <div>
-                                {editDescriptionError
-                                    ? <div className="error">{editDescriptionError}</div>
-                                    : null
-                                }
-                                
-                                <InputDescription
-                                    description={poll.pollDescription}
-                                    handleDescription={handleDescription}
-                                />
-                            </div>
+                            {editDescriptionError
+                                ? <div className="error">{editDescriptionError}</div>
+                                : null
+                            }
+                            
+                            <InputDescription
+                                description={poll.pollDescription}
+                                handleDescription={handleDescription}
+                            />
 
                             <InputCategory
                                 category={poll.pollCategory}
@@ -688,31 +683,45 @@ export default function Poll({
                                 : null
                             }
                         </div>
-                        : <div id="poll-details-current">
-                            <h1>{poll.pollTitle}</h1>
+                        : <div id="poll-main-current">
+                            <div id="poll-main-current-details">
+                                <h1>{poll.pollTitle}</h1>
 
-                            <p id="poll-description" className="copy-output">{poll.pollDescription}</p>
+                                <p id="poll-description" className="copy-output">{poll.pollDescription}</p>
 
-                            <Link
-                                to={`/?category=${utils.convertToSlug(poll.pollCategory)}`}
-                                onClick={() => handlePollCategory(poll.pollCategory)}
-                                className="poll-category"
-                            >{poll.pollCategory}</Link>
+                                <div>
+                                    <Link
+                                        to={`/?category=${utils.convertToSlug(poll.pollCategory)}`}
+                                        onClick={() => handlePollCategory(poll.pollCategory)}
+                                        className="poll-category"
+                                    >{poll.pollCategory}</Link>
+                                </div>
+                                
+                                <div>{utils.formatDate(poll.pollCreated)}</div>
 
-                            <div>{utils.formatDate(poll.pollCreated)}</div>
-
-                            <div id="poll-owner-image-and-username">
-                                <Link to={`/profile/${poll.pollOwnerId}`}>
-                                    <div className="poll-owner-image-wrapper">
-                                        <img
-                                            src={poll.pollOwnerImageUrl}
-                                            alt={`Profile image of ${poll.pollOwnerUsername}`}
-                                            className="poll-owner-image"
-                                        />
-                                    </div>
-                                </Link>                                     
-                                <Link to={`/profile/${poll.pollOwnerId}`} className="poll-owner-username">{poll.pollOwnerUsername}</Link>
+                                <div id="poll-owner-image-and-username">
+                                    <Link to={`/profile/${poll.pollOwnerId}`}>
+                                        <div className="poll-owner-image-wrapper">
+                                            <img
+                                                src={poll.pollOwnerImageUrl}
+                                                alt={`Profile image of ${poll.pollOwnerUsername}`}
+                                                className="poll-owner-image"
+                                            />
+                                        </div>
+                                    </Link>                                     
+                                    <Link to={`/profile/${poll.pollOwnerId}`} className="poll-owner-username">{poll.pollOwnerUsername}</Link>
+                                </div>
                             </div>
+
+                            {user &&
+                            user.emailVerified &&
+                            user.uid === poll.pollOwnerId &&
+                            !isConfirmDeletePollVisible
+                                ? <div>
+                                    <button onClick={handleEditPoll}>Edit</button>
+                                </div>
+                                : null
+                            }                            
 
                             <div className="poll-options-wrapper">
                                 {updateVoteError
@@ -748,16 +757,6 @@ export default function Poll({
                                     )
                                 })}
                             </div>
-
-                            {user &&
-                            user.emailVerified &&
-                            user.uid === poll.pollOwnerId &&
-                            !isConfirmDeletePollVisible
-                                ? <div>
-                                    <button onClick={handleEditPoll}>Edit</button>
-                                </div>
-                                : null
-                            }
                         </div>
                     }
                 </section>
@@ -769,7 +768,10 @@ export default function Poll({
                         ? null
                         : user.emailVerified
                             ? <div id="input-comment-error-field-and-button">
-                                <div className="error">{postCommentError}</div>
+                                {postCommentError
+                                    ? <div className="error">{postCommentError}</div>
+                                    : null
+                                }
 
                                 <InputComment
                                     comment={comment}
@@ -787,7 +789,10 @@ export default function Poll({
                     }
 
                     <div id="comments-error-cards-and-pagination">
-                        <div className="error">{fetchCommentsError}</div>
+                        {fetchCommentsError
+                            ? <div className="error">{fetchCommentsError}</div>
+                            : null
+                        }
 
                         {comments.length > 0
                             ? <div className="cards-wrapper-and-pagination">
@@ -841,7 +846,10 @@ export default function Poll({
                 <section>
                     <h2>Latest Polls</h2>
 
-                    <div className="error">{fetchLatestPollsError}</div>
+                    {fetchLatestPollsError
+                        ? <div className="error">{fetchLatestPollsError}</div>
+                        : null
+                    }
 
                     {latestPolls.length === 0
                         ? <div>There are no polls to display.</div>
@@ -864,7 +872,10 @@ export default function Poll({
                 <section>
                     <h2>Related Polls</h2>
 
-                    <div className="error">{fetchRelatedPollsError}</div>
+                    {fetchRelatedPollsError
+                        ? <div className="error">{fetchRelatedPollsError}</div>
+                        : null
+                    }
 
                     {relatedPolls.length === 0
                         ? <div>There are no related polls.</div>

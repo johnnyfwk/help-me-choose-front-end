@@ -50,7 +50,12 @@ h1 {
 p,
 ul,
 ol {
-    line-height: 1.5rem;
+    line-height: 1.7rem;
+}
+
+.copy {
+    display: grid;
+    gap: 15px;
 }
 
 .copy-output {
@@ -70,7 +75,7 @@ section {
     margin: auto;
     width: 100%;
     display: grid;
-    gap: 0px;
+    gap: 15px;
 }
 
 textarea {
@@ -226,7 +231,7 @@ main {
     background-color: var(--white);
     padding: var(--padding-left-and-right) var(--padding-left-and-right) 40px var(--padding-left-and-right);
     display: grid;
-    gap: 0px;
+    gap: 40px;
 }
 
 main a:link,
@@ -240,21 +245,14 @@ main a:hover {
     text-decoration: underline;
 }
 
-.copy {
+form {
     display: grid;
-    gap: 10px;
-}
-
-form#create-a-poll {
-    display: grid;
-    gap: 0px;
+    gap: 20px;
 }
 
 form#sign-up,
 form#login,
 form#reset-password {
-    display: grid;
-    gap: 0px;
     max-width: 300px;
 }
 
@@ -267,12 +265,12 @@ select {
 
 #input-options {
     display: grid;
-    gap: 0px;
+    gap: 20px;
 }
 
-.option {
+.input-option {
     display: grid;
-    gap: 0px;
+    gap: 10px;
 }
 
 .option-label {
@@ -282,7 +280,7 @@ select {
 .buttons {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 15px;
 }
 
 button {
@@ -440,9 +438,19 @@ button {
 
 
 /************************ POLL PAGE ************************/
-#poll-details {
+#poll-main-current {
     display: grid;
-    gap: 15px
+    gap:20px;
+}
+
+#poll-main-current-details {
+    display: grid;
+    gap: 10px;
+}
+
+#poll-main-editing {
+    display: grid;
+    gap: 20px;
 }
 
 #poll-description {
@@ -514,27 +522,31 @@ button {
 
 #input-options-and-add-option-button {
     display: grid;
-    gap: 0px;
+    gap: 20px;
 }
 
 .vote-button {
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 0.9rem;
 }
 
 #delete-poll {
     display: grid;
     gap: 10px
 }
+
+#input-comment-error-field-and-button {
+    display: grid;
+    gap: 10px;
+}
 /************************ POLL PAGE ************************/
 
 
 
 /************************ PROFILE PAGE ************************/
-#profile-main {
+#profile-image-username-and-options-wrapper {
     display: grid;
     gap: 20px;
-    justify-content: center;
     justify-items: center;
 }
 
@@ -551,13 +563,13 @@ button {
     object-fit: cover;
 }
 
-#change-password {
+#profile-input-image-url-and-buttons {
     display: grid;
     gap: 10px;
     justify-items: center;
 }
 
-#profile-input-image-url-and-buttons {
+#change-password {
     display: grid;
     gap: 10px;
     justify-items: center;
@@ -621,6 +633,7 @@ footer a:hover {
 
 #copyright {
     font-size: 0.9rem;
+    line-height: 1.5rem;
 }
 /************************ FOOTER ************************/
 

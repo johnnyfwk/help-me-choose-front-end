@@ -181,9 +181,12 @@ export default function CreateAPoll({
                         <p>If you need help making a choice, create a poll and let other members vote on your options and offer suggestions and advice.</p>
                     </div>                    
 
-                    <div className="error">{postPollError}</div>
+                    {postPollError
+                        ? <div className="error">{postPollError}</div>
+                        : null
+                    }
 
-                    <form id="create-a-poll">
+                    <form>
                         <InputTitle
                             title={title}
                             handleTitle={handleTitle}
