@@ -660,7 +660,7 @@ footer a:hover {
         left: initial;
         display: flex;
         flex-wrap: wrap;
-        gap: 40px;
+        gap: 30px;
         justify-content: center;
         align-content: initial;
         padding: 0px var(--padding-left-and-right) 8px var(--padding-left-and-right);
