@@ -194,13 +194,13 @@ export default function SignUp({
 
                         <p>If you already have an account, <Link to="/login">login</Link> to your account.</p>
                     </div>
-                    
-                    {emailVerificationError
-                        ? <div className="error">{emailVerificationError}</div>   
-                        : null
-                    } 
 
                     <form id="sign-up">
+                        {emailVerificationError
+                            ? <div className="error">{emailVerificationError}</div>   
+                            : null
+                        }
+
                         {emailErrorMessage
                             ? <div className="error">{emailErrorMessage}</div>
                             : null
@@ -250,9 +250,7 @@ export default function SignUp({
                             >Create Account</button>
                         </div>
                     </form>
-                </section>
 
-                <section>
                     <div className="copy">
                         <h2>To create an account:</h2>
 

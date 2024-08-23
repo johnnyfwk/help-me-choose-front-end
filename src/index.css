@@ -70,7 +70,7 @@ section {
     margin: auto;
     width: 100%;
     display: grid;
-    gap: 10px;
+    gap: 0px;
 }
 
 textarea {
@@ -226,7 +226,7 @@ main {
     background-color: var(--white);
     padding: var(--padding-left-and-right) var(--padding-left-and-right) 40px var(--padding-left-and-right);
     display: grid;
-    gap: 30px;
+    gap: 0px;
 }
 
 main a:link,
@@ -247,14 +247,14 @@ main a:hover {
 
 form#create-a-poll {
     display: grid;
-    gap: 20px;
+    gap: 0px;
 }
 
 form#sign-up,
 form#login,
 form#reset-password {
     display: grid;
-    gap: 10px;
+    gap: 0px;
     max-width: 300px;
 }
 
@@ -267,12 +267,12 @@ select {
 
 #input-options {
     display: grid;
-    gap: 20px;
+    gap: 0px;
 }
 
 .option {
     display: grid;
-    gap: 5px;
+    gap: 0px;
 }
 
 .option-label {
@@ -514,7 +514,12 @@ button {
 
 #input-options-and-add-option-button {
     display: grid;
-    gap: 20px;
+    gap: 0px;
+}
+
+.vote-button {
+    font-weight: bold;
+    font-size: 1rem;
 }
 
 #delete-poll {

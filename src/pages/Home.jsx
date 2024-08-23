@@ -149,8 +149,9 @@ export default function Home({user, category, setCategory, homepagePollPage, set
                         />
                     </form>
                     
-                    {polls.length > 0
-                        ? <div className="cards-wrapper-and-pagination">
+                    {polls.length === 0
+                        ? <div>There are no polls to display in this category.</div>
+                        : <div className="cards-wrapper-and-pagination">
                             <div className="poll-cards-wrapper">
                                 {polls.map((poll, index) => {
                                     return (
@@ -175,7 +176,6 @@ export default function Home({user, category, setCategory, homepagePollPage, set
                                 </div>
                             </div>
                         </div>
-                        : <div>There are no polls to display in this category.</div>
                     }
                 </section>
             </main>

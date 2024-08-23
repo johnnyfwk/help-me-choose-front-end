@@ -83,12 +83,12 @@ export default function ResetPassword() {
                         <p>An email with a link will be sent to the address provided where you can create a new password and <Link to="/login">login</Link>.</p>
                     </div>
 
-                    {passwordResetMessage
-                        ? <div className="error">{passwordResetMessage}</div>
-                        : null
-                    }
-
                     <form id="reset-password">
+                        {passwordResetMessage
+                            ? <div className="error">{passwordResetMessage}</div>
+                            : null
+                        }
+
                         <InputEmail
                             email={email}
                             handleEmail={handleEmail}
