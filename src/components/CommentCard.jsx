@@ -33,38 +33,57 @@ export default function CommentCard({
     setIsCommentDeletedSuccessMessageVisible,
     setIsCommentDeletedErrorMessageVisible,
     setCommentsPage,
-    setTotalComments
+    setTotalComments,
+    setIsConfirmDeletePollVisible
 }) {
     const [isEditingComment, setIsEditingComment] = useState(false);
     const [originalComment, setOriginalComment] = useState("");
     const [isConfirmDeleteCommentVisible, setIsConfirmDeleteCommentVisible] = useState(false);
-    const [isReadMoreButtonVisible, setIsReadMoreButtonVisible] = useState(false);
 
     const truncatedCommentLength = 300;
+    const [fullComment, setFullComment] = useState("");
+    const [isCommentTooLong, setIsCommentTooLong] = useState(false);
     const [truncatedComment, setTruncatedComment] = useState("");
+    const [commentBeforeEditing, setCommentBeforeEditing] = useState("");
+    const [isShowMoreButtonVisible, setIsShowMoreButtonVisible] = useState(false);
     const [isCommentExpanded, setIsCommentExpanded] = useState(false);
-    const [visibleComment, setVisibleComment] = useState("");
+    const [commentToDisplay, setCommentToDisplay] = useState("");
 
     useEffect(() => {
         if (comment || isEditingPoll || isEditingProfileImage || isChangingPassword || isDeletingAccount) {
             setIsEditingComment(false);
+            setCommentToDisplay(truncatedComment);
+            setIsCommentExpanded(false);
+            setIsConfirmDeleteCommentVisible(false);
+            setIsShowMoreButtonVisible(true);
         }
         if (editingCommentId !== commentObject.id) {
             setIsEditingComment(false);
+            setIsConfirmDeleteCommentVisible(false);
+            setIsShowMoreButtonVisible(true);
+            setCommentToDisplay(truncatedComment);
+            setIsCommentExpanded(false);
         }
     }, [comment, isEditingPoll, editingCommentId, isEditingProfileImage, isChangingPassword, isDeletingAccount])
 
     useEffect(() => {
-        setOriginalComment(commentObject.comment);
-        setIsCommentExpanded(false); 
+        setFullComment(commentObject.comment);
+
+        let displayedComment;
+
         if (commentObject.comment.length > truncatedCommentLength) {
-            setTruncatedComment(commentObject.comment.slice(0, truncatedCommentLength) + "...");
-            setVisibleComment(commentObject.comment.slice(0, truncatedCommentLength) + "...");
-            setIsReadMoreButtonVisible(true);      
+            setIsCommentTooLong(true);
+            setIsShowMoreButtonVisible(true);
+            displayedComment = commentObject.comment.slice(0, truncatedCommentLength) + "...";
+            setTruncatedComment(displayedComment);
         } else {
-            setVisibleComment(commentObject.comment);
-            setIsReadMoreButtonVisible(false);
+            setIsCommentTooLong(false);
+            setIsShowMoreButtonVisible(false);
+            displayedComment = commentObject.comment.slice(0, truncatedCommentLength);
+            setTruncatedComment(displayedComment);
         }
+
+        setCommentToDisplay(displayedComment);
     }, [commentObject.comment, page])
 
     function handleEditCommentButton() {
@@ -76,13 +95,24 @@ export default function CommentCard({
         setIsEditingProfileImage(false);
         setIsChangingPassword(false);
         setIsDeletingAccount(false);
+        setIsShowMoreButtonVisible(false);
+        setCommentBeforeEditing(commentToDisplay);
+        setCommentToDisplay(truncatedComment);
+        setIsConfirmDeletePollVisible(false);
     }
 
     function handleCancelEditComment() {
         setIsEditingComment(false);
+        setIsShowMoreButtonVisible(true);
+        setCommentToDisplay(commentBeforeEditing);
+        setIsCommentExpanded(false);
+        setCommentToDisplay(truncatedComment);
     }
 
     function handleUpdateComment() {
+        setIsCommentExpanded(false);
+        setIsShowMoreButtonVisible(true);
+
         const docRef = doc(db, 'comments', commentObject.id);
         updateDoc(docRef, {
             comment: originalComment,
@@ -108,19 +138,32 @@ export default function CommentCard({
     function handleDeleteComment() {
         setIsEditingComment(false);
         setIsConfirmDeleteCommentVisible(true);
+        setIsShowMoreButtonVisible(false);
+        setIsCommentExpanded(false);
+        setCommentToDisplay(truncatedComment);
     }
 
     function handleEditComment(event) {
         let updatedComment = event.target.value;
         setOriginalComment(updatedComment);
+        setComment("");
     }
 
     function handleDeleteCommentNo() {
         setIsConfirmDeleteCommentVisible(false);
+        setIsShowMoreButtonVisible(true);
+        setCommentToDisplay(commentBeforeEditing);
+        setIsCommentExpanded(false);
+        setCommentToDisplay(truncatedComment);
     }
 
     function handleDeleteCommentYes() {
+        setIsShowMoreButtonVisible(true);
+        setCommentToDisplay(truncatedComment);
+        setIsCommentExpanded(false);
+
         setIsConfirmDeleteCommentVisible(false);
+
         deleteDoc(doc(db, "comments", editingCommentId))
             .then(() => {
                 setIsCommentDeletedSuccessMessageVisible(true);
@@ -171,18 +214,20 @@ export default function CommentCard({
         window.scrollTo(0, 0);
     }
 
-    function handleReadMoreButton(value) {
-        setIsCommentExpanded((currentValue) => !currentValue);
-        if (!value) {
-            setVisibleComment(originalComment);
+    function handleShowMoreButton(isCommentFullyDisplayed) {
+        setComment("");
+        setIsEditingPoll(false);
+        setIsEditingComment(false);
+        setIsConfirmDeletePollVisible(false);
+
+        if (isCommentFullyDisplayed) {
+            setIsCommentExpanded(false);
+            setCommentToDisplay(truncatedComment);
         } else {
-            setVisibleComment(truncatedComment);
+            setIsCommentExpanded(true);
+            setCommentToDisplay(fullComment);
         }
     }
-
-    const styleReadMoreButton = {
-        display: isReadMoreButtonVisible ? "inline" : "none"
-    };
 
     return (
         <div className="comment-card-wrapper">
@@ -221,14 +266,16 @@ export default function CommentCard({
                         comment={originalComment}
                         handleComment={handleEditComment}
                     />
-                    : <p className="copy-output">{visibleComment}</p>
+                    : <p className="copy-output">{commentToDisplay}</p>
                 }
 
-                <div>
-                    <span className="show-more-button" onClick={() => handleReadMoreButton(isCommentExpanded)} style={styleReadMoreButton}>{isCommentExpanded ? "Hide" : "Show More"}</span>
-                </div>
+                {isCommentTooLong && isShowMoreButtonVisible
+                    ? <div>
+                        <span className="show-more-button" onClick={() => handleShowMoreButton(isCommentExpanded)}>{isCommentExpanded ? "Hide" : "Show More"}</span>
+                    </div>
+                    : null
+                }
                 
-
                 {!user
                     ? <div className="like-comment-user-not-verified">&#128077;{commentObject.commentLikes.length}</div>
                     : user.emailVerified && page === "poll" && user.uid !== commentObject.commentOwnerId

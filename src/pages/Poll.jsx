@@ -455,6 +455,7 @@ export default function Poll({
     function handleComment(event) {
         setIsEditingPoll(false);
         setComment(event.target.value);
+        setIsConfirmDeletePollVisible(false);
     }
 
     function updateComment(updatedComment) {
@@ -820,6 +821,7 @@ export default function Poll({
                                                 setIsCommentDeletedErrorMessageVisible={setIsCommentDeletedErrorMessageVisible}
                                                 setCommentsPage={setCommentsPage}
                                                 setTotalComments={setTotalComments}
+                                                setIsConfirmDeletePollVisible={setIsConfirmDeletePollVisible}
                                             />
                                         )
                                     })}
