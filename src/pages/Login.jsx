@@ -90,12 +90,12 @@ export default function Login({setIsLoginSuccessMessageVisible}) {
                         <p>If you have forgotton your password, reset it <Link to="/reset-password">here</Link>.</p>
                     </div>
 
-                    {loginError
-                        ? <div className="error">{loginError}</div>
-                        : null
-                    }
-
                     <form id="login">
+                        {loginError
+                            ? <div className="error">{loginError}</div>
+                            : null
+                        }
+
                         <InputEmail
                             email={email}
                             handleEmail={handleEmail}

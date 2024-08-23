@@ -357,6 +357,9 @@ export default function Poll({
         setIsEditingPoll(false);
         setPoll(structuredClone(originalPoll));
         setEditOptionsError("");
+        setEditTitleError("");
+        setEditDescriptionError("");
+        setIsConfirmDeletePollVisible(false);
     }
 
     function handleUpdatePoll() {
@@ -412,7 +415,7 @@ export default function Poll({
                 if (invalidImageUrls.length > 0) {
                     setOptionImageUrlError({
                         imageUrls: invalidImageUrls,
-                        msg: "Image URL is not valid."
+                        msg: "Image URL is not valid"
                     });
                     return;
                 }
@@ -465,7 +468,7 @@ export default function Poll({
     }
 
     function handleDeletePoll() {
-        setIsEditingPoll(false);
+        // setIsEditingPoll(false);
         setIsConfirmDeletePollVisible(true);
     }
 
@@ -602,168 +605,160 @@ export default function Poll({
             </header>
 
             <main>
-                <section id="poll-details">
-                    {isEditingPoll
-                        ? <>
-                            {editTitleError
-                                ? <div className="error">{editTitleError}</div>
-                                : null
-                            }
-                
-                            <InputTitle
-                                title={poll.pollTitle}
-                                handleTitle={handleTitle}
-                            />
-                        </>                        
-                        : <h1>{poll.pollTitle}</h1>
-                    }
+                <section>
 
                     {isEditingPoll
-                        ? <>
-                            {editDescriptionError
-                                ? <div className="error">{editDescriptionError}</div>
+                        ? <div id="poll-details-editing">
+                            {updatePollError
+                                ? <div className="error">{updatePollError}</div> 
                                 : null
                             }
+
+                            {deletePollError
+                                ? <div className="error">{deletePollError}</div>
+                                : null
+                            }
+
+                            <div>
+                                {editTitleError
+                                    ? <div className="error">{editTitleError}</div>
+                                    : null
+                                }
+                    
+                                <InputTitle
+                                    title={poll.pollTitle}
+                                    handleTitle={handleTitle}
+                                />
+                            </div>
                             
-                            <InputDescription
-                                description={poll.pollDescription}
-                                handleDescription={handleDescription}
-                            />
-                        </>
-                        : <p id="poll-description" className="copy-output">{poll.pollDescription}</p>
-                    }
+                            <div>
+                                {editDescriptionError
+                                    ? <div className="error">{editDescriptionError}</div>
+                                    : null
+                                }
+                                
+                                <InputDescription
+                                    description={poll.pollDescription}
+                                    handleDescription={handleDescription}
+                                />
+                            </div>
 
-                    {isEditingPoll
-                        ? <div>
                             <InputCategory
                                 category={poll.pollCategory}
                                 handleCategory={handleCategory}
                             />
+
+                            <div id="input-options-and-add-option-button">
+                                {editOptionsError
+                                    ? <div className="error">{editOptionsError}</div>
+                                    : null
+                                }
+
+                                <InputOptions
+                                    options={poll.pollOptions}
+                                    handleOptionNames={handleOptionNames}
+                                    handleOptionImages={handleOptionImages}
+                                    optionImageUrlError={optionImageUrlError}
+                                />
+                                {poll.pollOptions.length < 5
+                                    ? <div>
+                                        <button onClick={handleAddOption}>Add Option</button>
+                                    </div>
+                                    : null
+                                }
+                            </div>
+
+                            {!isConfirmDeletePollVisible
+                                ? <div className="buttons">
+                                    <button onClick={handleCancelEditPoll}>Cancel</button>
+                                    <button onClick={handleUpdatePoll}>Update</button>
+                                    <button onClick={handleDeletePoll}>Delete</button>
+                                </div>
+                                : null
+                            }
+
+                            {isConfirmDeletePollVisible
+                                ? <div id="delete-poll">
+                                    <div className="confirm">Delete poll? All votes and comments will also be deleted and can't be recovered.</div>
+                                    <div className="buttons">
+                                        <button onClick={handleDeletePollNo}>No</button>
+                                        <button onClick={handleDeletePollYes}>Yes</button>
+                                    </div>
+                                </div>
+                                : null
+                            }
                         </div>
-                        : <div>
+                        : <div id="poll-details-current">
+                            <h1>{poll.pollTitle}</h1>
+
+                            <p id="poll-description" className="copy-output">{poll.pollDescription}</p>
+
                             <Link
                                 to={`/?category=${utils.convertToSlug(poll.pollCategory)}`}
                                 onClick={() => handlePollCategory(poll.pollCategory)}
                                 className="poll-category"
                             >{poll.pollCategory}</Link>
-                        </div>
-                    }
 
-                    {isEditingPoll
-                        ? null
-                        : <div>{utils.formatDate(poll.pollCreated)}</div>
-                    }
+                            <div>{utils.formatDate(poll.pollCreated)}</div>
 
-                    {isEditingPoll
-                        ? null
-                        : <div id="poll-owner-image-and-username">
-                            <Link to={`/profile/${poll.pollOwnerId}`}>
-                                <div className="poll-owner-image-wrapper">
-                                    <img
-                                        src={poll.pollOwnerImageUrl}
-                                        alt={`Profile image of ${poll.pollOwnerUsername}`}
-                                        className="poll-owner-image"
-                                    />
-                                </div>
-                            </Link>                                     
-                            <Link to={`/profile/${poll.pollOwnerId}`} className="poll-owner-username">{poll.pollOwnerUsername}</Link>
-                        </div>
-                    }
-
-                    {editOptionsError
-                        ? <div className="error">{editOptionsError}</div>
-                        : null
-                    }
-
-                    {updateVoteError
-                        ? <div className="error">{updateVoteError}</div>
-                        : null
-                    }
-
-                    {updatePollError
-                        ? <div className="error">{updatePollError}</div> 
-                        : null
-                    }
-
-                    {deletePollError
-                        ? <div className="error">{deletePollError}</div>
-                        : null
-                    }
-
-                    {isConfirmDeletePollVisible
-                        ? <div id="delete-poll">
-                            <div className="confirm">Delete poll? All votes and comments will also be deleted and can't be recovered.</div>
-                            <div className="buttons">
-                                <button onClick={handleDeletePollNo}>No</button>
-                                <button onClick={handleDeletePollYes}>Yes</button>
+                            <div id="poll-owner-image-and-username">
+                                <Link to={`/profile/${poll.pollOwnerId}`}>
+                                    <div className="poll-owner-image-wrapper">
+                                        <img
+                                            src={poll.pollOwnerImageUrl}
+                                            alt={`Profile image of ${poll.pollOwnerUsername}`}
+                                            className="poll-owner-image"
+                                        />
+                                    </div>
+                                </Link>                                     
+                                <Link to={`/profile/${poll.pollOwnerId}`} className="poll-owner-username">{poll.pollOwnerUsername}</Link>
                             </div>
-                        </div>
-                        : null
-                    }
 
-                    {isEditingPoll
-                        ? <div id="input-options-and-add-option-button">
-                            <InputOptions
-                                options={poll.pollOptions}
-                                handleOptionNames={handleOptionNames}
-                                handleOptionImages={handleOptionImages}
-                                optionImageUrlError={optionImageUrlError}
-                            />
-                            {poll.pollOptions.length < 5
+                            <div className="poll-options-wrapper">
+                                {updateVoteError
+                                    ? <div className="error">{updateVoteError}</div>
+                                    : null
+                                }
+
+                                {poll.pollOptions.map((option, index) => {
+                                    return (
+                                        <div key={index} className="poll-option-wrapper">
+                                            <div key={index} className="poll-option-name">{option.name}</div>
+
+                                            <div className="poll-option-votes">{option.votes.length} votes</div>
+                                            
+                                            {!user
+                                                ? null
+                                                : user.emailVerified && poll.pollOwnerId !== user.uid
+                                                    ? <div>
+                                                        <button
+                                                            onClick={() => handleVote(option.name)}
+                                                            disabled={userVote === option.name}
+                                                            className="vote-button"
+                                                        >{userVote === option.name ? 'Voted' : 'Vote'}</button>
+                                                    </div>
+                                                    : null
+                                            }
+
+                                            {option.imageUrl
+                                                ? <img src={option.imageUrl} alt={option.name} className="poll-option-image"/>
+                                                : null
+                                            }
+                                        </div>
+                                    )
+                                })}
+                            </div>
+
+                            {user &&
+                            user.emailVerified &&
+                            user.uid === poll.pollOwnerId &&
+                            !isConfirmDeletePollVisible
                                 ? <div>
-                                    <button onClick={handleAddOption}>Add Option</button>
+                                    <button onClick={handleEditPoll}>Edit</button>
                                 </div>
                                 : null
                             }
                         </div>
-                        : <div className="poll-options-wrapper">
-                            {poll.pollOptions.map((option, index) => {
-                                return (
-                                    <div key={index} className="poll-option-wrapper">
-                                        <div key={index} className="poll-option-name">{option.name}</div>
-
-                                        <div className="poll-option-votes">{option.votes.length} votes</div>
-
-                                        {option.imageUrl
-                                            ? <img src={option.imageUrl} alt={option.name} className="poll-option-image"/>
-                                            : null
-                                        }
-                                        
-                                        {!user
-                                            ? null
-                                            : user.emailVerified && poll.pollOwnerId !== user.uid
-                                                ? <div>
-                                                    <button
-                                                        onClick={() => handleVote(option.name)}
-                                                        disabled={userVote === option.name}
-                                                    >{userVote === option.name ? 'Voted' : 'Vote'}</button>
-                                                </div>
-                                                : null
-                                        }
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    }
-
-                    {user &&
-                    user.emailVerified &&
-                    user.uid === poll.pollOwnerId &&
-                    !isEditingPoll &&
-                    !isConfirmDeletePollVisible
-                        ? <div>
-                            <button onClick={handleEditPoll}>Edit</button>
-                        </div>
-                        : null
-                    }
-
-                    {isEditingPoll
-                        ? <div className="buttons">
-                            <button onClick={handleCancelEditPoll}>Cancel</button>
-                            <button onClick={handleUpdatePoll}>Update</button>
-                            {/* <button onClick={handleDeletePoll}>Delete</button> */}
-                        </div>
-                        : null
                     }
                 </section>
 
@@ -773,7 +768,7 @@ export default function Poll({
                     {!user
                         ? null
                         : user.emailVerified
-                            ? <>
+                            ? <div id="input-comment-error-field-and-button">
                                 <div className="error">{postCommentError}</div>
 
                                 <InputComment
@@ -787,11 +782,11 @@ export default function Poll({
                                         disabled={!comment}
                                     >Post Comment</button>
                                 </div>
-                            </>
+                            </div>
                             : null
                     }
 
-                    <>
+                    <div id="comments-error-cards-and-pagination">
                         <div className="error">{fetchCommentsError}</div>
 
                         {comments.length > 0
@@ -825,6 +820,7 @@ export default function Poll({
                                         )
                                     })}
                                 </div>
+
                                 <div className="pagination">
                                     <div>
                                         <button onClick={() => handleCommentsPageChange(commentsPage - 1)} disabled={isFetchingComments || commentsPage === 1}>Previous</button>
@@ -839,7 +835,7 @@ export default function Poll({
                             </div>
                             : <div>There are no comments for this poll.</div>
                         }
-                    </>
+                    </div>
                 </section>
 
                 <section>
