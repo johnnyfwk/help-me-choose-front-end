@@ -65,6 +65,8 @@ export default function Profile({
     const totalCommentPages = Math.ceil(totalComments / cardsPerPage);
     const [fetchCommentsMessage, setFetchCommentsMessage] = useState("");
 
+    const [isConfirmDeletePollVisible, setIsConfirmDeletePollVisible] = useState(false);
+
     const commentsRef = useRef(null);
 
     useEffect(() => {
@@ -624,6 +626,7 @@ export default function Profile({
                                             setIsCommentDeletedErrorMessageVisible={setIsCommentDeletedErrorMessageVisible}
                                             setCommentsPage={setCommentsPage}
                                             setTotalComments={setTotalComments}
+                                            setIsConfirmDeletePollVisible={setIsConfirmDeletePollVisible}
                                         />
                                     )
                                 })}
