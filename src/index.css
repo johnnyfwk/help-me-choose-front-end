@@ -186,8 +186,8 @@ textarea {
     left: 100%;
     display: grid;
     gap: 20px;
-    align-content: start;
     text-align: center;
+    align-content: start;
     padding: var(--padding-left-and-right);
     font-size: 1.2rem;
     transition: left 0.3s ease;
@@ -660,12 +660,11 @@ footer a:hover {
         left: initial;
         display: flex;
         flex-wrap: wrap;
-        align-content: initial;
+        gap: 40px;
         justify-content: center;
-        text-align: initial;
+        align-content: initial;
         padding: 0px var(--padding-left-and-right) 8px var(--padding-left-and-right);
         font-size: initial;
-        gap: 40px;
     }
 
     #nav-about,

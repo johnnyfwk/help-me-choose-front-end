@@ -41,12 +41,12 @@ export default function Nav({user, isNavVisible, setIsNavVisible}) {
                 </>
             }
 
-            <div>
-                <Link to="/about" id="nav-about">About</Link>
+            <div id="nav-about">
+                <Link to="/about">About</Link>
             </div>
 
-            <div>
-                <Link to="/contact" id="nav-contact">Contact</Link>
+            <div id="nav-contact">
+                <Link to="/contact">Contact</Link>
             </div>
         </nav>
     )

@@ -468,7 +468,6 @@ export default function Poll({
     }
 
     function handleDeletePoll() {
-        // setIsEditingPoll(false);
         setIsConfirmDeletePollVisible(true);
     }
 

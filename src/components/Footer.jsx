@@ -1,9 +1,6 @@
 import { Link } from "react-router-dom";
-import { useAuth } from '../AuthContext';
 
 export default function Footer({user}) {
-    const { logout } = useAuth();
-
     function handleFooterLinks() {
         window.scrollTo(0,0);
     }
