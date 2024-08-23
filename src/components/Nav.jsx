@@ -1,12 +1,28 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from '../AuthContext';
 
-export default function Nav({user, isNavVisible, setIsNavVisible}) {
+export default function Nav({
+    user,
+    isNavVisible,
+    setIsNavVisible,
+    setIsLogoutSuccessMessageVisible
+}) {
     const { logout } = useAuth();
+
+    const navigate = useNavigate();
 
     function handleNav() {
         setIsNavVisible(false);
         window.scrollTo(0, 0);
+    }
+
+    function handleLogout() {
+        logout();
+        setIsLogoutSuccessMessageVisible(true);
+        setTimeout(() => {
+            setIsLogoutSuccessMessageVisible(false);
+        }, 3000);
+        navigate("/");
     }
 
     const styleNav = {
@@ -28,7 +44,8 @@ export default function Nav({user, isNavVisible, setIsNavVisible}) {
                         <Link to={`/profile/${user.uid}`}>Profile</Link>
                     </div>
                     <div>
-                        <span onClick={logout} id="logout-button">Logout</span>
+                        {/* <span onClick={logout} id="logout-button">Logout</span> */}
+                        <span onClick={handleLogout} id="logout-button">Logout</span>
                     </div>
                 </>
                 : <>

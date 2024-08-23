@@ -47,6 +47,8 @@ function App() {
     const [isChangePasswordSuccessMessageVisible, setIsChangePasswordSuccessMessageVisible] = useState(false);
     const [isDeleteAccountSuccessMessageVisible, setIsDeleteAccountSuccessMessageVisible] = useState(false);
 
+    const [isLogoutSuccessMessageVisible, setIsLogoutSuccessMessageVisible] = useState(false);
+
     const styleEmailVerificationSuccessMessage = {
         bottom: isEmailVerificationSuccessMessageVisible ? "0%" : "-100%"
     };
@@ -99,13 +101,22 @@ function App() {
         bottom: isDeleteAccountSuccessMessageVisible ? "0%" : "-100%"
     };
 
+    const styleLogoutSuccessMessage = {
+        bottom: isLogoutSuccessMessageVisible ? "0%" : "-100%"
+    }
+
     return (
         <>
             <Logo setCategory={setCategory} setIsNavVisible={setIsNavVisible} />
 
             <NavButton isNavVisible={isNavVisible} setIsNavVisible={setIsNavVisible} />
 
-            <Nav user={user} isNavVisible={isNavVisible} setIsNavVisible={setIsNavVisible} />
+            <Nav
+                user={user}
+                isNavVisible={isNavVisible}
+                setIsNavVisible={setIsNavVisible}
+                setIsLogoutSuccessMessageVisible={setIsLogoutSuccessMessageVisible}
+            />
 
             <Routes>
                 <Route
@@ -258,6 +269,8 @@ function App() {
             <div className="message-box success update-profile-image" style={styleUpdateProfileImageSuccessMessage}>Your profile image has been updated</div>
             <div className="message-box success change-password" style={styleChangePasswordSuccessMessage}>Your password has been changed</div>
             <div className="message-box success delete-account" style={styleDeleteAccountSuccessMessage}>Your account has been deleted</div>
+
+            <div className="message-box success logout" style={styleLogoutSuccessMessage}>You have logged out successfully</div>
         </>
     )
 }

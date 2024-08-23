@@ -224,12 +224,10 @@ export default function CommentCard({
                     : <p className="copy-output">{visibleComment}</p>
                 }
 
-                {isReadMoreButtonVisible
-                    ? <div>
-                        <span className="show-more-button" onClick={() => handleReadMoreButton(isCommentExpanded)} style={styleReadMoreButton}>{isCommentExpanded ? "Hide" : "Show More"}</span>
-                    </div>
-                    : null
-                }                
+                <div>
+                    <span className="show-more-button" onClick={() => handleReadMoreButton(isCommentExpanded)} style={styleReadMoreButton}>{isCommentExpanded ? "Hide" : "Show More"}</span>
+                </div>
+                
 
                 {!user
                     ? <div className="like-comment-user-not-verified">&#128077;{commentObject.commentLikes.length}</div>
