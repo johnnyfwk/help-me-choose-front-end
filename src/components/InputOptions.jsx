@@ -8,8 +8,9 @@ export default function InputOptions({
         <div id="input-options">
             {options.map((option, index) => {
                 return (
-                    <div key={index} className="option">
+                    <div key={index} className="input-option">
                         <div className="option-label">Option {index + 1}</div>
+                        
                         <input                            
                             type="text"
                             id={`option-${index}-name`}
