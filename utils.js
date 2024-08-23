@@ -82,15 +82,24 @@ export function formatDate(timestamp) {
     if (timestamp) {
         const milliseconds = (timestamp.seconds * 1000) + (timestamp.nanoseconds / 1000000);
         const date = new Date(milliseconds);
-    
-        const formatter = new Intl.DateTimeFormat('en-UK', {
+
+        const timeFormatter = new Intl.DateTimeFormat('en-UK', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: false
+        });
+
+        const dateFormatter = new Intl.DateTimeFormat('en-UK', {
             weekday: 'long',
             year: 'numeric',
             month: 'short',
             day: 'numeric',
         });
-    
-        return formatter.format(date);
+
+        const timeString = timeFormatter.format(date);
+        const dateString = dateFormatter.format(date);
+
+        return `${timeString} ${dateString}`;
     } else {
         return null;
     }
