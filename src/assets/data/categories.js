@@ -50,5 +50,6 @@ export const categories = [
     "Bags & Backpacks",
     "Watches",
     "Suitcases",
-    "Baby Products"
+    "Baby Products",
+    "DIY & Tools"
 ];
