@@ -197,7 +197,7 @@ export default function Poll({
         fetchCommentCount();
 
         return () => unsubscribe();
-    }, [poll_id]);
+    }, [poll_id, user]);
 
     useEffect(() => {
         utils.fetchPaginatedDocuments(
@@ -225,17 +225,38 @@ export default function Poll({
     function handleVote(vote) {
         if (!poll || !user) return;
 
-        const updatedPollOptions = poll.pollOptions.map((option) => {
-            const updatedOption = { ...option };
-            if (updatedOption.votes.includes(user.uid)) {
-                updatedOption.votes = updatedOption.votes.filter(uid => uid !== user.uid);
-            }
-            if (vote === updatedOption.name) {
-                updatedOption.votes = [...updatedOption.votes, user.uid];
-            }
-            return updatedOption;
-        });
+        const votesCopy = structuredClone(poll.pollOptions);
 
+        const hasUserVoted = votesCopy.some((option) => option.votes.includes(user.uid));
+
+        let updatedPollOptions;
+        let votedOption;
+        if (hasUserVoted) {
+            votedOption = "";
+            updatedPollOptions = votesCopy.map((option) => {
+                if (option.name === vote) {
+                    return {
+                        ...option,
+                        votes: option.votes.filter((optionVote) => optionVote !== user.uid)
+                    }
+                } else {
+                    return option;
+                }
+            })
+        } else {
+            votedOption = vote;
+            updatedPollOptions = votesCopy.map((option) => {
+                if (option.name === vote) {
+                    return {
+                        ...option,
+                        votes: [...option.votes, user.uid]
+                    }
+                } else {
+                    return option;
+                }
+            })
+        }
+        
         const pollsRef = doc(db, 'polls', poll_id);
 
         updateDoc(pollsRef, {
@@ -247,7 +268,7 @@ export default function Poll({
                     ...prevPoll,
                     pollOptions: updatedPollOptions,
                 }));
-                setUserVote(vote);
+                setUserVote(votedOption);
             })
             .catch((error) => {
                 setUpdateVoteError(error.message);
@@ -742,7 +763,7 @@ export default function Poll({
                                                     ? <div>
                                                         <button
                                                             onClick={() => handleVote(option.name)}
-                                                            disabled={userVote === option.name}
+                                                            disabled={userVote && userVote !== option.name}
                                                             className="vote-button"
                                                         >{userVote === option.name ? 'Voted' : 'Vote'}</button>
                                                     </div>
