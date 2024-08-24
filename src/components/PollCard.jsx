@@ -7,6 +7,8 @@ export default function PollCard({
     handlePollCardCategory,
     handlePollCardTitle
 }) {
+    const truncatedDescriptionLength = 200;
+
     function handlePollCardLink() {
         window.scrollTo(0, 0);
     }
@@ -33,7 +35,10 @@ export default function PollCard({
                     <Link to={`/poll/${poll.id}`} onClick={handlePollCardTitle}>{poll.pollTitle}</Link>
                 </div>
                 
-                <p className="truncate-text">{poll.pollDescription}</p>
+                <p className="copy-output">{poll.pollDescription.length > truncatedDescriptionLength ?
+                    poll.pollDescription.slice(0, truncatedDescriptionLength) + "..."
+                    : poll.pollDescription}
+                </p>
 
                 <div className="poll-card-category">
                     <Link

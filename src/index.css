@@ -62,14 +62,6 @@ ol {
     white-space: pre-wrap;
 }
 
-.truncate-text {
-    white-space: wrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-height: 100px;
-    cursor: pointer;
-}
-
 section {
     max-width: var(--max-width);
     margin: auto;
