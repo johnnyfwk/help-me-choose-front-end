@@ -22,10 +22,14 @@ export default function Footer({user}) {
                             ? <div>
                                 <Link to={`/profile/${user.uid}`} onClick={handleFooterLinks}>Profile</Link>
                             </div>
-                            : <div>
-                                <Link to="/sign-up" onClick={handleFooterLinks}>Sign Up</Link>
-                                <Link to="/login" onClick={handleFooterLinks}>Login</Link>
-                            </div>
+                            : <>
+                                <div>
+                                    <Link to="/sign-up" onClick={handleFooterLinks}>Sign Up</Link>
+                                </div>
+                                <div>
+                                    <Link to="/login" onClick={handleFooterLinks}>Login</Link>
+                                </div>
+                            </>
                         }
 
                         <div>

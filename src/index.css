@@ -1,4 +1,4 @@
-:root {  
+:root {
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -33,6 +33,27 @@
     color: var(--night);
 }
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+@font-face {
+    font-family: TitanOne;
+    src: url(./assets/fonts/TitanOne-Regular.ttf);
+}
+
+@font-face {
+    font-family: PassionOne;
+    src: url(./assets/fonts/PassionOne-Regular.ttf);
+}
+
+@font-face {
+    font-family: PaytoneOne;
+    src: url(./assets/fonts/PaytoneOne-Regular.ttf);
+}
+
 #cookie-consent-banner {
     background-color: var(--rose);
     color: var(--white);
@@ -64,12 +85,6 @@
     padding: 10px;
     width: 100px;
     cursor: pointer;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
 img {
@@ -152,20 +167,21 @@ textarea {
     background: var(--night);
     position: sticky;
     top: 0;
-    padding: 8px;
+    padding: 5px var(--padding-left-and-right);
     display: grid;
     justify-content: center;
 }
 
 #logo {
-    font-size: 1.5rem;
+    font-family: PaytoneOne;
+    font-size: 1.7rem;
     font-weight: bold;
 }
 
 #logo:link,
 #logo:active,
 #logo:visited {
-    color: var(--white);
+    color: var(--rose);
     text-decoration: none;
 }
 
@@ -174,14 +190,14 @@ textarea {
     width: var(--nav-button-dimensions);
     height: var(--nav-button-dimensions);
     position: fixed;
-    top: 10px;
+    top: 12px;
     right: var(--padding-left-and-right);
     transition: transform 0.3s ease;
     z-index: 2;
 }
 
 #nav-button > div {
-    background-color: var(--rose);
+    background-color: var(--white);
     width: 100%;
     height: 6px;
     position: absolute;
