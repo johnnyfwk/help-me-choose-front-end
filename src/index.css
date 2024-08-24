@@ -33,6 +33,38 @@
     color: var(--night);
 }
 
+#cookie-consent-banner {
+    background-color: var(--rose);
+    color: var(--white);
+    position: fixed;
+    bottom: 0;
+    width: 100%;    
+    padding: 20px;
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+}
+
+#cookie-consent-message:link,
+#cookie-consent-message:active,
+#cookie-consent-message:visited {
+    color: var(--white);
+    text-decoration: underline;
+}
+
+#cookie-consent-message:hover {
+    color: var(--night);
+}
+
+#accept-cookies {
+    background-color: var(--night);
+    color: var(--white);
+    border: none;
+    padding: 10px;
+    width: 100px;
+    cursor: pointer;
+}
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -122,9 +154,6 @@ textarea {
     padding: 8px;
     display: grid;
     justify-content: center;
-    /* text-align: center;
-    padding: 5px; */
-    
 }
 
 #logo {
@@ -137,10 +166,6 @@ textarea {
 #logo:visited {
     color: var(--white);
     text-decoration: none;
-}
-
-#logo:hover {
-    text-decoration: underline;
 }
 
 #nav-button {

@@ -20,6 +20,7 @@ import CommunityGuidelines from './pages/CommunityGuidelines';
 import Disclaimer from './pages/Disclaimer';
 import Footer from "./components/Footer";
 import Erro404 from './pages/Error404';
+import CookieConsent from './components/CookieConsent';
 
 function App() {
     const { user, loading } = useAuth();
@@ -252,6 +253,8 @@ function App() {
             </Routes>
             
             <Footer user={user} />
+
+            <CookieConsent />
 
             <div className="message-box success email-verification" style={styleEmailVerificationSuccessMessage}>Verification Email Sent</div>
             <div className="message-box success login" style={styleLoginSuccessMessage}>You have logged in successfully</div>
