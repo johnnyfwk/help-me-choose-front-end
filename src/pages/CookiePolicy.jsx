@@ -73,7 +73,7 @@ export default function CookiePolicy() {
                         <p>We may update this Cookie Policy from time to time. Any changes will be posted on this page with an updated date.</p>
 
                         <h2>Contact Information</h2>
-                        <p>If you have any questions about this Cookie Policy, please contact us at HelpMeChoose.uk.</p>
+                        <p>If you have any questions about this Cookie Policy, please contact us at hi@helpmechoose.uk.</p>
                     </div>
                 </section>
             </main>
