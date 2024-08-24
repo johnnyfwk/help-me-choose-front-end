@@ -539,7 +539,7 @@ button {
 
 .poll-options-wrapper {
     display: grid;
-    gap: 30px;
+    gap: 40px;
 }
 
 .poll-option-wrapper {
@@ -549,6 +549,10 @@ button {
 
 .poll-option-name {
     font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.poll-option-votes {
     font-size: 1.2rem;
 }
 
@@ -713,10 +717,6 @@ footer a:hover {
 
     .poll-card-title {
         font-size: 1.2rem;
-    }
-
-    .poll-option-name {
-        font-size: 1.3rem;
     }
 
     .footer-links-wrapper {
