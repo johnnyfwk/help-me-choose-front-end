@@ -126,8 +126,10 @@ export function convertSlugToCategory(slug) {
     }
     return slug
         .replace(/-/g, ' ')
-        .replace(/\band\b/g, '&')
-        .replace(/\b\w/g, char => char.toUpperCase());
+        .replace(/\b[a-z]/g, char => char.toUpperCase())
+        .replace(/\bAnd\b/gi, '&')
+        .replace(/\bTv\b/gi, 'TV')
+        .replace(/\bDiy\b/gi, 'DIY')
 }
 
 export function getDocumentCount(getCountFromServer, query, setTotalDocuments) {
