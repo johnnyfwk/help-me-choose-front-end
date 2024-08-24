@@ -688,14 +688,14 @@ export default function Poll({
                                 ? <div className="buttons">
                                     <button onClick={handleCancelEditPoll}>Cancel</button>
                                     <button onClick={handleUpdatePoll}>Update</button>
-                                    <button onClick={handleDeletePoll}>Delete</button>
+                                    {/* <button onClick={handleDeletePoll}>Delete</button> */}
                                 </div>
                                 : null
                             }
 
                             {isConfirmDeletePollVisible
                                 ? <div id="delete-poll">
-                                    <div className="confirm">Delete poll? All votes and comments will also be deleted and can't be recovered.</div>
+                                    <p className="confirm">Delete poll? All votes and comments will also be deleted and can't be recovered.</p>
                                     <div className="buttons">
                                         <button onClick={handleDeletePollNo}>No</button>
                                         <button onClick={handleDeletePollYes}>Yes</button>

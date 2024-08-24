@@ -447,7 +447,7 @@ export default function Profile({
                             ? <div className="profile buttons">
                                 <button onClick={handleChangeProfileImage}>Change Profile Image</button>
                                 <button onClick={handleChangePassword}>Change Password</button>
-                                <button onClick={handleDeleteAccount}>Delete Account</button>
+                                {/* <button onClick={handleDeleteAccount}>Delete Account</button> */}
                             </div>
                             : null
                         }
@@ -508,7 +508,7 @@ export default function Profile({
                                     : null
                                 }
 
-                                <div className="confirm">Delete account? Your polls and comments will be deleted permanently.</div>
+                                <p className="confirm">Delete account? Your polls and comments will be deleted permanently.</p>
 
                                 <div className="buttons">
                                     <button onClick={handleDeleteAccountNo}>No</button>
