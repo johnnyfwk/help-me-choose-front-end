@@ -91,8 +91,6 @@ export default function Poll({
         setCommentsPage(1);
         window.scrollTo(0, 0);
 
-        setIsLoading(true);
-
         const fetchCommentCount = () => {
             const commentsRef = collection(db, "comments");
 
@@ -111,12 +109,11 @@ export default function Poll({
                         const data = pollSnap.data();
                         setPoll(data);
 
-                        setIsLoading(false);
-
                         if (user) {
                             const usersVote = data.pollOptions.find((option) => option.votes.includes(user.uid));
                             setUserVote(usersVote ? usersVote.name : "");
                         }
+
                         return data;
                     } else {
                         console.log("Poll doesn't exist.");
@@ -146,7 +143,6 @@ export default function Poll({
                     setRelatedPolls(similarPolls);
                 })
                 .catch((error) => {
-                    setIsLoading(false);
                     setGetPollError("Could not get poll.");
                     setFetchRelatedPollsError("Could not fetch related polls.");
                 })
