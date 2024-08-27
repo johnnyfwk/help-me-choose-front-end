@@ -130,6 +130,7 @@ export function convertSlugToCategory(slug) {
         .replace(/\bAnd\b/gi, '&')
         .replace(/\bTv\b/gi, 'TV')
         .replace(/\bDiy\b/gi, 'DIY')
+        .replace(/\bEreaders\b/gi, 'eReaders')
 }
 
 export function getDocumentCount(getCountFromServer, query, setTotalDocuments) {
