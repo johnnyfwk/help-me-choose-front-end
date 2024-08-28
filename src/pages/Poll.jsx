@@ -556,15 +556,33 @@ export default function Poll({
     }
 
     if (isLoading) {
-        return <p>Loading...</p>;
+        return (
+            <main>
+                <section>
+                    <p>Loading...</p>
+                </section>
+            </main>
+        );
     }
 
     if (!poll) {
-        return <div className="error">Could not retrieve poll.</div>;
+        return (
+            <main>
+                <section>
+                    <p className="error">Could not retrieve poll.</p>
+                </section>
+            </main>
+        );
     }
 
     if (getPollError) {
-        return <div className="error">Error: {getPollError}</div>;
+        return (
+            <main>
+                <section>
+                    <p className="error">Error: {getPollError}</p>
+                </section>
+            </main>
+        );
     }
 
     const schemaData = {
